@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 2 Load and Filter ADAT | ProViz User’s Guide</title>
+  <meta name="description" content="Chapter 2 Load and Filter ADAT | ProViz User’s Guide" />
+  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 2 Load and Filter ADAT | ProViz User’s Guide" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 2 Load and Filter ADAT | ProViz User’s Guide" />
+  
+  
+  
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="installation-and-prerequisites.html"/>
+<link rel="next" href="merge-data.html"/>
+<script src="libs/header-attrs-2.6/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">ProViz User's Guide</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>ProViz</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#license"><i class="fa fa-check"></i>License</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html"><i class="fa fa-check"></i><b>1</b> Installation and Prerequisites</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#installation"><i class="fa fa-check"></i><b>1.1</b> Installation</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#github"><i class="fa fa-check"></i><b>1.1.1</b> GitHub</a></li>
+<li class="chapter" data-level="1.1.2" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#dockerhub"><i class="fa fa-check"></i><b>1.1.2</b> DockerHub</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#example-data"><i class="fa fa-check"></i><b>1.2</b> Example Data</a></li>
+<li class="chapter" data-level="1.3" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#proviz-navigation"><i class="fa fa-check"></i><b>1.3</b> ProViz Navigation</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="load-and-filter-adat.html"><a href="load-and-filter-adat.html"><i class="fa fa-check"></i><b>2</b> Load and Filter ADAT</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="load-and-filter-adat.html"><a href="load-and-filter-adat.html#the-load-and-filter-adat-panel"><i class="fa fa-check"></i><b>2.1</b> The Load and Filter ADAT Panel</a></li>
+<li class="chapter" data-level="2.2" data-path="load-and-filter-adat.html"><a href="load-and-filter-adat.html#load-an-adat-file"><i class="fa fa-check"></i><b>2.2</b> Load an ADAT file</a></li>
+<li class="chapter" data-level="2.3" data-path="load-and-filter-adat.html"><a href="load-and-filter-adat.html#filter-adat-contents"><i class="fa fa-check"></i><b>2.3</b> Filter ADAT contents</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="load-and-filter-adat.html"><a href="load-and-filter-adat.html#categorical-filters"><i class="fa fa-check"></i><b>2.3.1</b> Categorical Filters</a></li>
+<li class="chapter" data-level="2.3.2" data-path="load-and-filter-adat.html"><a href="load-and-filter-adat.html#continuous-filters"><i class="fa fa-check"></i><b>2.3.2</b> Continuous Filters</a></li>
+<li class="chapter" data-level="2.3.3" data-path="load-and-filter-adat.html"><a href="load-and-filter-adat.html#reset-filters"><i class="fa fa-check"></i><b>2.3.3</b> Reset Filters</a></li>
+<li class="chapter" data-level="2.3.4" data-path="load-and-filter-adat.html"><a href="load-and-filter-adat.html#download-adat"><i class="fa fa-check"></i><b>2.3.4</b> Download ADAT</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="merge-data.html"><a href="merge-data.html"><i class="fa fa-check"></i><b>3</b> Merge Data</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="merge-data.html"><a href="merge-data.html#selecting-a-data-file-to-merge"><i class="fa fa-check"></i><b>3.1</b> Selecting a Data File to Merge</a></li>
+<li class="chapter" data-level="3.2" data-path="merge-data.html"><a href="merge-data.html#selecting-columns-in-the-adat-and-the-data-file"><i class="fa fa-check"></i><b>3.2</b> Selecting Columns in the ADAT and the Data File</a></li>
+<li class="chapter" data-level="3.3" data-path="merge-data.html"><a href="merge-data.html#specifying-the-type-of-merge"><i class="fa fa-check"></i><b>3.3</b> Specifying the Type of Merge</a></li>
+<li class="chapter" data-level="3.4" data-path="merge-data.html"><a href="merge-data.html#merge"><i class="fa fa-check"></i><b>3.4</b> Merge</a></li>
+<li class="chapter" data-level="3.5" data-path="merge-data.html"><a href="merge-data.html#download-adat-1"><i class="fa fa-check"></i><b>3.5</b> Download Adat</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="create-group.html"><a href="create-group.html"><i class="fa fa-check"></i><b>4</b> Create Group</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="create-group.html"><a href="create-group.html#creating-a-new-group-from-continuous-data"><i class="fa fa-check"></i><b>4.1</b> Creating a New Group from Continuous Data</a></li>
+<li class="chapter" data-level="4.2" data-path="create-group.html"><a href="create-group.html#creating-a-new-group-from-categorical-data"><i class="fa fa-check"></i><b>4.2</b> Creating a New Group from Categorical Data</a></li>
+<li class="chapter" data-level="4.3" data-path="create-group.html"><a href="create-group.html#download-adat-2"><i class="fa fa-check"></i><b>4.3</b> Download ADAT</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="plots.html"><a href="plots.html"><i class="fa fa-check"></i><b>5</b> Plots</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="plots.html"><a href="plots.html#plot-features"><i class="fa fa-check"></i><b>5.1</b> Plot Features</a></li>
+<li class="chapter" data-level="5.2" data-path="plots.html"><a href="plots.html#dynamic-plot-interactions"><i class="fa fa-check"></i><b>5.2</b> Dynamic Plot Interactions</a></li>
+<li class="chapter" data-level="5.3" data-path="plots.html"><a href="plots.html#boxplots"><i class="fa fa-check"></i><b>5.3</b> Boxplots</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="plots.html"><a href="plots.html#axes"><i class="fa fa-check"></i><b>5.3.1</b> Axes</a></li>
+<li class="chapter" data-level="5.3.2" data-path="plots.html"><a href="plots.html#colors-and-points"><i class="fa fa-check"></i><b>5.3.2</b> Colors and Points</a></li>
+<li class="chapter" data-level="5.3.3" data-path="plots.html"><a href="plots.html#title-and-size"><i class="fa fa-check"></i><b>5.3.3</b> Title and Size</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="plots.html"><a href="plots.html#cdf-plots"><i class="fa fa-check"></i><b>5.4</b> CDF Plots</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="plots.html"><a href="plots.html#axes-1"><i class="fa fa-check"></i><b>5.4.1</b> Axes</a></li>
+<li class="chapter" data-level="5.4.2" data-path="plots.html"><a href="plots.html#lines-and-points"><i class="fa fa-check"></i><b>5.4.2</b> Lines and Points</a></li>
+<li class="chapter" data-level="5.4.3" data-path="plots.html"><a href="plots.html#title-and-size-1"><i class="fa fa-check"></i><b>5.4.3</b> Title and Size</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="plots.html"><a href="plots.html#scatter-plots"><i class="fa fa-check"></i><b>5.5</b> Scatter Plots</a>
+<ul>
+<li class="chapter" data-level="5.5.1" data-path="plots.html"><a href="plots.html#axes-2"><i class="fa fa-check"></i><b>5.5.1</b> Axes</a></li>
+<li class="chapter" data-level="5.5.2" data-path="plots.html"><a href="plots.html#points"><i class="fa fa-check"></i><b>5.5.2</b> Points</a></li>
+<li class="chapter" data-level="5.5.3" data-path="plots.html"><a href="plots.html#lines"><i class="fa fa-check"></i><b>5.5.3</b> Lines</a></li>
+<li class="chapter" data-level="5.5.4" data-path="plots.html"><a href="plots.html#title-and-size-2"><i class="fa fa-check"></i><b>5.5.4</b> Title and Size</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="statistical-tests.html"><a href="statistical-tests.html"><i class="fa fa-check"></i><b>6</b> Statistical Tests</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="statistical-tests.html"><a href="statistical-tests.html#group-tests"><i class="fa fa-check"></i><b>6.1</b> 2-group Tests</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="statistical-tests.html"><a href="statistical-tests.html#selecting-a-response"><i class="fa fa-check"></i><b>6.1.1</b> Selecting a Response</a></li>
+<li class="chapter" data-level="6.1.2" data-path="statistical-tests.html"><a href="statistical-tests.html#plots-1"><i class="fa fa-check"></i><b>6.1.2</b> Plots</a></li>
+<li class="chapter" data-level="6.1.3" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-results-table"><i class="fa fa-check"></i><b>6.1.3</b> Statistical Results Table</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">ProViz User’s Guide</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="load-and-filter-adat" class="section level1" number="2">
+<h1><span class="header-section-number">Chapter 2</span> Load and Filter ADAT</h1>
+<div id="the-load-and-filter-adat-panel" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> The Load and Filter ADAT Panel</h2>
+<div class="figure">
+<img src="images/LoadAndFilter.png" alt="" />
+<p class="caption">The ProViz Load and Filter ADAT panel after opening the <code>example_data.adat</code> file.</p>
+</div>
+</div>
+<div id="load-an-adat-file" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Load an ADAT file</h2>
+<p>To open an ADAT file, click on the <strong>Browse…</strong> button and locate your ADAT file. Once selected, the ADAT file will be opened and processed, and a preview of the content will be shown in the table at the right. ADAT files may have over 7,000 columns of SomaScan data for every row in the file, so large files may take a few moments to load.</p>
+<p>After the ADAT file is loaded, details of the file content are displayed. Here we see that there are 192 total rows (corresponding to individual samples), and 5,318 data columns. Of those data columns, 5,284 are SOMAmer data columns and 34 are Meta Data columns. These Meta Data columns contain assay-related data such as the Plate ID, Scanner ID, normalization data, and any sample-specific data that was submitted to SomaLogic with the samples. For the <code>example_data.adat</code> file, Sex and Age are included as well as various assay-related content.</p>
+<p>You can scroll through the ADAT Preview table as well as searching for specific content (<strong>Search:</strong> box in upper-right). SOMAmer-related data are not displayed in the preview table.</p>
+</div>
+<div id="filter-adat-contents" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Filter ADAT contents</h2>
+<p>Samples present in the ADAT file can be filtered based on Meta Data or SOMAmer data. When the ADAT file is processed, data columns are divided into Categorical (non-numeric) or Continuous (numeric) categories.</p>
+<p>All filtering operations are cumulative.</p>
+<div id="categorical-filters" class="section level3" number="2.3.1">
+<h3><span class="header-section-number">2.3.1</span> Categorical Filters</h3>
+<div class="figure">
+<img src="images/CategoricalFilters.png" alt="" />
+<p class="caption">The categorical filters box.</p>
+</div>
+<p>Samples can be filtered from the ADAT based on categorical data using the Categorical Filters box. The column name can be selected from the <strong>Filter By</strong> selection box, which populates the <strong>Remove</strong> selection box with the unique categorical values in the ADAT file. Data values can be selected by clicking on one or more values in the <strong>Remove</strong> selection box. Once all selections are made, clicking the <strong>Apply</strong> button will remove those samples from the data, and the Data Dimensions box will be updated with new information.</p>
+<p>In this example, the <em>SampleType</em> column is selected and the unique entries for this column are shown: Buffer, Calibrator, QC, and Sample. By selecting Buffer, Calibrator, and QC, the assay control samples can be removed from the data file.</p>
+<p>Checking the <strong>Filter samples with no entry</strong> box will remove all samples lacking a value for the selected column.</p>
+</div>
+<div id="continuous-filters" class="section level3" number="2.3.2">
+<h3><span class="header-section-number">2.3.2</span> Continuous Filters</h3>
+<div class="figure">
+<img src="images/ContinousFilters.png" alt="" />
+<p class="caption">The continuous filters box.</p>
+</div>
+<p>Samples can be filtered from the ADAT based on continuous data using the Continuous Filters box. The column name can be selected from the <strong>Filter By</strong> which will update the <strong>Range</strong> slider with the minimum and maximum values for that data column. By moving the minimum and maximum sliders, a desired range of the selected variable can be chosen and all samples with values outside that range will be removed.</p>
+<p>In this example, the <em>Age</em> column is seleted and the sliders adjusted to keep only those samples with Age from 35 to 70.</p>
+<p>Checking the <strong>Filter samples with no entry</strong> box will remove all samples lacking a value for the selected column.</p>
+</div>
+<div id="reset-filters" class="section level3" number="2.3.3">
+<h3><span class="header-section-number">2.3.3</span> Reset Filters</h3>
+<p>The original ADAT contents are always preserved and can be retrieved by clicking the <strong>Reset All Filters</strong> button.</p>
+</div>
+<div id="download-adat" class="section level3" number="2.3.4">
+<h3><span class="header-section-number">2.3.4</span> Download ADAT</h3>
+<p>Once filtering has been performed, a version of the ADAT can be downloaded by clicking the <strong>Download ADAT</strong> button. As this new ADAT file may be significantly modified for content relative to the original, ensure that a new, unique, descriptive filename is specified so that the original ADAT is not overwritten and that the filtering operations can be determined if you return to the modified file at a later date.</p>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="installation-and-prerequisites.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="merge-data.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["PVtest.pdf", "PVtest.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

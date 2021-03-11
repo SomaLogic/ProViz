@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 5 Plots | ProViz User’s Guide</title>
+  <meta name="description" content="Chapter 5 Plots | ProViz User’s Guide" />
+  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 5 Plots | ProViz User’s Guide" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 5 Plots | ProViz User’s Guide" />
+  
+  
+  
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="create-group.html"/>
+<link rel="next" href="statistical-tests.html"/>
+<script src="libs/header-attrs-2.6/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">ProViz User's Guide</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>ProViz</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#license"><i class="fa fa-check"></i>License</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html"><i class="fa fa-check"></i><b>1</b> Installation and Prerequisites</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#installation"><i class="fa fa-check"></i><b>1.1</b> Installation</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#github"><i class="fa fa-check"></i><b>1.1.1</b> GitHub</a></li>
+<li class="chapter" data-level="1.1.2" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#dockerhub"><i class="fa fa-check"></i><b>1.1.2</b> DockerHub</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#example-data"><i class="fa fa-check"></i><b>1.2</b> Example Data</a></li>
+<li class="chapter" data-level="1.3" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#proviz-navigation"><i class="fa fa-check"></i><b>1.3</b> ProViz Navigation</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="load-and-filter-adat.html"><a href="load-and-filter-adat.html"><i class="fa fa-check"></i><b>2</b> Load and Filter ADAT</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="load-and-filter-adat.html"><a href="load-and-filter-adat.html#the-load-and-filter-adat-panel"><i class="fa fa-check"></i><b>2.1</b> The Load and Filter ADAT Panel</a></li>
+<li class="chapter" data-level="2.2" data-path="load-and-filter-adat.html"><a href="load-and-filter-adat.html#load-an-adat-file"><i class="fa fa-check"></i><b>2.2</b> Load an ADAT file</a></li>
+<li class="chapter" data-level="2.3" data-path="load-and-filter-adat.html"><a href="load-and-filter-adat.html#filter-adat-contents"><i class="fa fa-check"></i><b>2.3</b> Filter ADAT contents</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="load-and-filter-adat.html"><a href="load-and-filter-adat.html#categorical-filters"><i class="fa fa-check"></i><b>2.3.1</b> Categorical Filters</a></li>
+<li class="chapter" data-level="2.3.2" data-path="load-and-filter-adat.html"><a href="load-and-filter-adat.html#continuous-filters"><i class="fa fa-check"></i><b>2.3.2</b> Continuous Filters</a></li>
+<li class="chapter" data-level="2.3.3" data-path="load-and-filter-adat.html"><a href="load-and-filter-adat.html#reset-filters"><i class="fa fa-check"></i><b>2.3.3</b> Reset Filters</a></li>
+<li class="chapter" data-level="2.3.4" data-path="load-and-filter-adat.html"><a href="load-and-filter-adat.html#download-adat"><i class="fa fa-check"></i><b>2.3.4</b> Download ADAT</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="merge-data.html"><a href="merge-data.html"><i class="fa fa-check"></i><b>3</b> Merge Data</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="merge-data.html"><a href="merge-data.html#selecting-a-data-file-to-merge"><i class="fa fa-check"></i><b>3.1</b> Selecting a Data File to Merge</a></li>
+<li class="chapter" data-level="3.2" data-path="merge-data.html"><a href="merge-data.html#selecting-columns-in-the-adat-and-the-data-file"><i class="fa fa-check"></i><b>3.2</b> Selecting Columns in the ADAT and the Data File</a></li>
+<li class="chapter" data-level="3.3" data-path="merge-data.html"><a href="merge-data.html#specifying-the-type-of-merge"><i class="fa fa-check"></i><b>3.3</b> Specifying the Type of Merge</a></li>
+<li class="chapter" data-level="3.4" data-path="merge-data.html"><a href="merge-data.html#merge"><i class="fa fa-check"></i><b>3.4</b> Merge</a></li>
+<li class="chapter" data-level="3.5" data-path="merge-data.html"><a href="merge-data.html#download-adat-1"><i class="fa fa-check"></i><b>3.5</b> Download Adat</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="create-group.html"><a href="create-group.html"><i class="fa fa-check"></i><b>4</b> Create Group</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="create-group.html"><a href="create-group.html#creating-a-new-group-from-continuous-data"><i class="fa fa-check"></i><b>4.1</b> Creating a New Group from Continuous Data</a></li>
+<li class="chapter" data-level="4.2" data-path="create-group.html"><a href="create-group.html#creating-a-new-group-from-categorical-data"><i class="fa fa-check"></i><b>4.2</b> Creating a New Group from Categorical Data</a></li>
+<li class="chapter" data-level="4.3" data-path="create-group.html"><a href="create-group.html#download-adat-2"><i class="fa fa-check"></i><b>4.3</b> Download ADAT</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="plots.html"><a href="plots.html"><i class="fa fa-check"></i><b>5</b> Plots</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="plots.html"><a href="plots.html#plot-features"><i class="fa fa-check"></i><b>5.1</b> Plot Features</a></li>
+<li class="chapter" data-level="5.2" data-path="plots.html"><a href="plots.html#dynamic-plot-interactions"><i class="fa fa-check"></i><b>5.2</b> Dynamic Plot Interactions</a></li>
+<li class="chapter" data-level="5.3" data-path="plots.html"><a href="plots.html#boxplots"><i class="fa fa-check"></i><b>5.3</b> Boxplots</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="plots.html"><a href="plots.html#axes"><i class="fa fa-check"></i><b>5.3.1</b> Axes</a></li>
+<li class="chapter" data-level="5.3.2" data-path="plots.html"><a href="plots.html#colors-and-points"><i class="fa fa-check"></i><b>5.3.2</b> Colors and Points</a></li>
+<li class="chapter" data-level="5.3.3" data-path="plots.html"><a href="plots.html#title-and-size"><i class="fa fa-check"></i><b>5.3.3</b> Title and Size</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="plots.html"><a href="plots.html#cdf-plots"><i class="fa fa-check"></i><b>5.4</b> CDF Plots</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="plots.html"><a href="plots.html#axes-1"><i class="fa fa-check"></i><b>5.4.1</b> Axes</a></li>
+<li class="chapter" data-level="5.4.2" data-path="plots.html"><a href="plots.html#lines-and-points"><i class="fa fa-check"></i><b>5.4.2</b> Lines and Points</a></li>
+<li class="chapter" data-level="5.4.3" data-path="plots.html"><a href="plots.html#title-and-size-1"><i class="fa fa-check"></i><b>5.4.3</b> Title and Size</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="plots.html"><a href="plots.html#scatter-plots"><i class="fa fa-check"></i><b>5.5</b> Scatter Plots</a>
+<ul>
+<li class="chapter" data-level="5.5.1" data-path="plots.html"><a href="plots.html#axes-2"><i class="fa fa-check"></i><b>5.5.1</b> Axes</a></li>
+<li class="chapter" data-level="5.5.2" data-path="plots.html"><a href="plots.html#points"><i class="fa fa-check"></i><b>5.5.2</b> Points</a></li>
+<li class="chapter" data-level="5.5.3" data-path="plots.html"><a href="plots.html#lines"><i class="fa fa-check"></i><b>5.5.3</b> Lines</a></li>
+<li class="chapter" data-level="5.5.4" data-path="plots.html"><a href="plots.html#title-and-size-2"><i class="fa fa-check"></i><b>5.5.4</b> Title and Size</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="statistical-tests.html"><a href="statistical-tests.html"><i class="fa fa-check"></i><b>6</b> Statistical Tests</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="statistical-tests.html"><a href="statistical-tests.html#group-tests"><i class="fa fa-check"></i><b>6.1</b> 2-group Tests</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="statistical-tests.html"><a href="statistical-tests.html#selecting-a-response"><i class="fa fa-check"></i><b>6.1.1</b> Selecting a Response</a></li>
+<li class="chapter" data-level="6.1.2" data-path="statistical-tests.html"><a href="statistical-tests.html#plots-1"><i class="fa fa-check"></i><b>6.1.2</b> Plots</a></li>
+<li class="chapter" data-level="6.1.3" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-results-table"><i class="fa fa-check"></i><b>6.1.3</b> Statistical Results Table</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">ProViz User’s Guide</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="plots" class="section level1" number="5">
+<h1><span class="header-section-number">Chapter 5</span> Plots</h1>
+<p>ProViz provides tools to dynamically create a variety of plots with custom options. Plots can be created using SomaScan data as well as meta data in the ADAT or data imported in the <strong>Merge Data</strong> panel, and plot features such as titles, colors, and lines can be added and customized using selectiable options in the ProViz plotting panels.</p>
+<div id="plot-features" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Plot Features</h2>
+<p>At any point during plotting, moving the mouse over the plot will show a toolbar a the top of the plot.</p>
+<div class="figure">
+<img src="images/modebar.png" alt="" />
+<p class="caption">Plot toolbar</p>
+</div>
+<p>The icons from left to right provide the following features.</p>
+<ul>
+<li><p>download as PNG - saves the image to a file</p></li>
+<li><p>zoom - when selected, the plot can be zoomed by clicking and dragging the mouse</p></li>
+<li><p>pan - when selected, the plot can be moved by clicking a dragging</p></li>
+<li><p>zoom in - zooms into the plot, keeping the current center</p></li>
+<li><p>zoom out - zooms into the plot, keping the current center</p></li>
+<li><p>autoscale - resets the coordinates of the plot if it has been zoomed or panned (similar to reset axes, below)</p></li>
+<li><p>reset axes - resets coordinates of the plot if it has been zoomed or panned (similar to autoscael, above)</p></li>
+<li><p>toggle spike lines - when selected, hovering over points on the graph will also include lines from teh point to the axes</p></li>
+<li><p>show closest data on hover - only informaiton about the closest data point will be shown when the point is hovered over</p></li>
+<li><p>compare data on hover - if multiple points are plotted at the same location, data for all points will be shown</p></li>
+<li><p>Plotly icon - a link to the Plotly website. Plotly is the tool used by ProViz to produce graphs.</p></li>
+</ul>
+</div>
+<div id="dynamic-plot-interactions" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> Dynamic Plot Interactions</h2>
+<p>At any point during plotting, the plots provide dynamic interaction capabilities. Hovering on the plotted elements themselves, such as boxes in a box plot or points in any plot, provides additional information about the samples corresponding to that plotting element. Plot can be zoomed or panned by clicking and dragging - see the details above in <strong>Plot Features</strong>.</p>
+</div>
+<div id="boxplots" class="section level2" number="5.3">
+<h2><span class="header-section-number">5.3</span> Boxplots</h2>
+<div class="figure">
+<img src="images/BoxPlot_Panel.png" alt="" />
+<p class="caption">The Boxplot panel with a customized plot.</p>
+</div>
+<div id="axes" class="section level3" number="5.3.1">
+<h3><span class="header-section-number">5.3.1</span> Axes</h3>
+<div class="figure">
+<img src="images/Boxplot_Axes.png" alt="" />
+<p class="caption">The Axes tab in the Plot Settings box.</p>
+</div>
+<p>A categorical variable that defines the boxes in the boxplot can be selected from the <strong>X-axis</strong> select box. If the categorical variable has missing values (NAs), those can be removed by selected <strong>Remove NAs</strong>.</p>
+<p>A continuous variable can be selecged from the <strong>Y-axis</strong> select box. The continuous variable can be transformed by log10 by selecting <strong>Y-axis Log10</strong>.</p>
+</div>
+<div id="colors-and-points" class="section level3" number="5.3.2">
+<h3><span class="header-section-number">5.3.2</span> Colors and Points</h3>
+<div class="figure">
+<img src="images/Boxplot_ColorsPoints.png" alt="" />
+<p class="caption">The Colors and Points tabs in the Plot Settings box.</p>
+</div>
+<p>Colors of boxes can be customized by selecting from the <strong>Color</strong> select box, and the degree of transparency can be adjusted with the <strong>Alpha</strong> slider on the left.</p>
+<p>Individual points for each sample can be displayed by selected <strong>Beeswarm</strong>. Colors of the points can be customized by selecting a color from <strong>Beeswarm point color</strong> and the transparency can be adjusted with the <strong>Alpha</strong> slider on the right. The size of the points can be adjusted with the <strong>Point Size</strong> slider.</p>
+</div>
+<div id="title-and-size" class="section level3" number="5.3.3">
+<h3><span class="header-section-number">5.3.3</span> Title and Size</h3>
+<div class="figure">
+<img src="images/Boxplot_TitleSize.png" alt="" />
+<p class="caption">The Title and Size tab in the Plot Settings box.</p>
+</div>
+<p>A title and subtitle can be added to the plot by entering text into the <strong>Title</strong> and <strong>Subtitle</strong> boxes. The plot size can be adjusted using the <strong>Plot Height</strong> and <strong>Plot Width</strong> sliders.</p>
+</div>
+</div>
+<div id="cdf-plots" class="section level2" number="5.4">
+<h2><span class="header-section-number">5.4</span> CDF Plots</h2>
+<div class="figure">
+<img src="images/CDF_Panel.png" alt="" />
+<p class="caption">The CDF panel with a customized plot.</p>
+</div>
+<div id="axes-1" class="section level3" number="5.4.1">
+<h3><span class="header-section-number">5.4.1</span> Axes</h3>
+<div class="figure">
+<img src="images/CDF_Axes.png" alt="" />
+<p class="caption">The Axes tab in the Plot Settings box.</p>
+</div>
+<p>A continuous variable can be selecged from the *X-axis<strong> select box. The continuous variable can be transformed by log10 by selecting </strong>X-axis Log10**.</p>
+</div>
+<div id="lines-and-points" class="section level3" number="5.4.2">
+<h3><span class="header-section-number">5.4.2</span> Lines and Points</h3>
+<div class="figure">
+<img src="images/CDF_LinesPoints.png" alt="" />
+<p class="caption">The Lines and Points tab in the Plot Settings box.</p>
+</div>
+<p>A categorical variable can be selected from the <strong>Color By</strong> select box, which will produce one CDF for each category in that variable. If there are NAs for some samples, they will produce another CDF or can be removed by selecting <strong>Remove NAs</strong>. Line width can be adjusted using the <strong>Line Width</strong> slider, and point sizes can e adjusted with the <strong>Point Size</strong> slider. If the <strong>Point Size</strong> slider is set to <em>0</em>, points will be removed from the plot.</p>
+</div>
+<div id="title-and-size-1" class="section level3" number="5.4.3">
+<h3><span class="header-section-number">5.4.3</span> Title and Size</h3>
+<div class="figure">
+<img src="images/CDF_TitleSize.png" alt="" />
+<p class="caption">The Title and Size tab in the Plot Settings box.</p>
+</div>
+<p>A title and subtitle can be added to the plot by entering text into the <strong>Title</strong> and <strong>Subtitle</strong> boxes. The plot size can be adjusted using the <strong>Plot Height</strong> and <strong>Plot Width</strong> sliders.</p>
+</div>
+</div>
+<div id="scatter-plots" class="section level2" number="5.5">
+<h2><span class="header-section-number">5.5</span> Scatter Plots</h2>
+<div class="figure">
+<img src="images/Scatter_Panel.png" alt="" />
+<p class="caption">The Scatter Plot panel with a customized plot.</p>
+</div>
+<div id="axes-2" class="section level3" number="5.5.1">
+<h3><span class="header-section-number">5.5.1</span> Axes</h3>
+<div class="figure">
+<img src="images/Scatter_Axes.png" alt="" />
+<p class="caption">The Axes tab in the Plot Settings box.</p>
+</div>
+<p>To set the X- and Y-axes, select a continuous varaible from the <strong>X-axis</strong> and <strong>Y-axis</strong> select boxes. Selecting <strong>X-axis Log10</strong> or <strong>Y-axis Log10</strong> will log10 transoform the data for that axis.</p>
+</div>
+<div id="points" class="section level3" number="5.5.2">
+<h3><span class="header-section-number">5.5.2</span> Points</h3>
+<div class="figure">
+<img src="images/Scatter_Points.png" alt="" />
+<p class="caption">The Points tab in the Plot Settings box.</p>
+</div>
+<p>Individual points can be colored in multiple ways depending on the selection for <strong>Color By</strong>.</p>
+<ul>
+<li><p>If <em>Static</em> is selected, all points will be the same color, and that color can be chosen from the <strong>Point Color</strong> select box. Points can also be sized by adjusting the <strong>Point Size</strong> slider, and their transparncy adjusted using the <strong>Point Alpha</strong> slider. If there are NAs present, they can be removed by selecting <strong>Remove NAs</strong>.</p></li>
+<li><p>if <em>Continuous</em> is selected, points can be colored by a gradient across two colors based upon the value of a chosen variable. Chose the variable using the <strong>Variable</strong> select box. The values for the varaible can be log10 transformed by selecting <strong>Log10 Transform</strong>. The colors to use for the gradient can be chosen by selecting colors from <strong>Start Color</strong> and <strong>End Color</strong>.</p></li>
+<li><p>If <em>Category</em> is selected, points can be colored based upon a categorical variable. The variable can be chosen from the <strong>Variable</strong> select box.</p></li>
+</ul>
+</div>
+<div id="lines" class="section level3" number="5.5.3">
+<h3><span class="header-section-number">5.5.3</span> Lines</h3>
+<div class="figure">
+<img src="images/Scatter_Lines.png" alt="" />
+<p class="caption">The Lines tab in the Plot Settings box.</p>
+</div>
+<p>A linear regression line can be added to the plot by selecting <strong>Regression Line</strong>. The width of the line can be adjusted with the <strong>Regression Line Width</strong> slider, it can be colored by selecting a color from <strong>Regression Line Color</strong>, it the plotting style (solid, dashed, dotted, etc.) can be selected from the <strong>Regression Liney Style</strong> select box. An <span class="math inline">\(R^2\)</span> of the correlation can be added to the plot by selecting an position option from the <strong>Add R^2 to Plot</strong> select box.</p>
+<p>An identity line can be added to the plot by selecting <strong>Identity Line</strong>. Identity lines are useful to illustrate the expected, perfect one-to-one relationship between two variables. Selecting <strong>Make axes equivalent</strong> will create a squar plot in which the extents of the X- and Y-axes are the same. The identity line can be adjusted for width with the <strong>Identity Line Width</strong> slider, the color can be selected from the <strong>Identity Line Color</strong> select box, and the plotting style selected from the <strong>Identity Line Style</strong> select box.</p>
+</div>
+<div id="title-and-size-2" class="section level3" number="5.5.4">
+<h3><span class="header-section-number">5.5.4</span> Title and Size</h3>
+<div class="figure">
+<img src="images/Scatter_TitleSize.png" alt="" />
+<p class="caption">The Title and Size tab int he Plot Settings box.</p>
+</div>
+<p>A title and subtitle can be added to the plot by entering text into the <strong>Title</strong> and <strong>Subtitle</strong> boxes. The plot size can be adjusted using the <strong>Plot Height</strong> and <strong>Plot Width</strong> sliders.</p>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="create-group.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="statistical-tests.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["PVtest.pdf", "PVtest.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
