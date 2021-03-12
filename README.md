@@ -6,9 +6,13 @@ ProViz is a basic data visualization and analysis tool developed at SomaLogic.  
 * Filter the ADAT to only the samples with desired characteristics
 * Create groups of data through aggregating samples or splitting at specific data points
 * Create interactive boxplots, CDFs, and scatter plots
-* Perfrom basic statistical tests such as t-test, U-test, and KS-tests
+* Perform basic statistical tests such as t-test, U-test, and KS-tests
 
-## License
+# Documentation
+
+[ProViz User's Guide](https://somalogic.github.io/ProViz/)
+
+# License
 
 ProViz is distributed under the MIT License and use of ProViz constitutes acceptance of this license.
 
