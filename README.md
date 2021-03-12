@@ -10,7 +10,7 @@ ProViz is a basic data visualization and analysis tool developed at SomaLogic.  
 
 # Documentation
 
-![ProViz User's Guide](https://somalogic.github.io/ProViz/)
+[ProViz User's Guide](https://somalogic.github.io/ProViz/)
 
 # License
 
