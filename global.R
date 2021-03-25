@@ -51,6 +51,9 @@ lineStyleNames <- c('Solid', 'Dashed', 'Dotted', 'Dash-Dot', 'Long Dash')
 ####################################
 rv <- reactiveValues()
 
+# label update process
+rv$labelMessage = '' 
+
 # ADAT variables
 rv$adat <- NULL
 rv$adatOrig <- NULL
@@ -75,12 +78,23 @@ rv$mergeMessageDefault <-  paste('Only files with comma-separated values ',
 rv$mergeMessage <- NULL
 
 # grouping variables
-rv$grpWarning <- ""
+rv$grpWarning <- '' 
 rv$grpNewGroupData <- NULL
 
 # stats variables
 rv$stat2GrpTable <- NULL
-rv$stat2GrpRowSelect <- NULL
+rv$stat2GrpResp <- '<NONE>' 
+rv$stat2GrpTest <- ''
+
+rv$statCorrTable <- NULL
+rv$statCorrResp <- '<NONE>'
+rv$statCorrMethod <- ''
+
+rv$statMultiTable <- NULL
+rv$statMultiResp <- '<NONE>'
+rv$statMultiTest <- ''
+
+rv$statTableRowSelect <- NULL
 
 # variables for preserving state of selections and settings
 # that get adjusted during UI updates
@@ -103,9 +117,6 @@ rv$pltCDFColorBy <- NULL
 rv$pltSctrXaxis <- NULL
 rv$pltSctrYaxis <- NULL
 rv$pltSctrColorByVar <- NULL
-
-# stats
-rv$stat2GrpResp <- '<NONE>' 
 
 ####################################
 # utility functions          

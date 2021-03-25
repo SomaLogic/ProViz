@@ -49,6 +49,7 @@ dashboardPage(skin='blue',
                       label = 'Label SOMAmers by:', 
                       choices = c('SOMAmer ID', 'Protein Name', 'Gene Symbol')
          ),
+         htmlOutput(outputId = 'docs'),
          htmlOutput(outputId = 'SLlogo')
       )
    ),
@@ -480,7 +481,7 @@ dashboardPage(skin='blue',
                                                  label = 'Point Size',
                                                  value = 1.0,
                                                  min = 0.5, max = 2.5,
-                                                 step = 0.1),
+                                                 step = 0.1)
                                    ),
                                    column(6,
                                      sliderInput(inputId = 'pltSctrPtAlpha',
@@ -552,7 +553,7 @@ dashboardPage(skin='blue',
                                                label = 'Regression Line Style',
                                                choices = lineStyleNames),
                                    selectInput(inputId = 'pltSctrRegrAddStats',
-                                               label = 'Add R^2 to Plot',
+                                               label = 'Add Correlation to Plot',
                                                choices = c('<NONE>',
                                                            'Top-left',
                                                            'Top-right',
@@ -581,7 +582,7 @@ dashboardPage(skin='blue',
                                              choices = colorNames),
                                  selectInput(inputId = 'pltSctrIdLineStyle',
                                              label = 'Identity Line Style',
-                                             choices = lineStyleNames),
+                                             choices = lineStyleNames)
                                )
                         )
                        )
@@ -619,20 +620,65 @@ dashboardPage(skin='blue',
                    column(3,
                           box(width = 12, status = 'primary',
                               title = 'Plot Settings', solidHeader = TRUE,
-                              fluidRow(column(12,
-                                 selectInput(inputId = 'stat2GrpResp',
-                                             label = 'Two-group Response',
-                                             choices = '<NONE>'),
-                                 progressBar(id = 'statProgbar', value = 0,
-                                             display_pct = TRUE),
-                                 radioButtons(inputId = 'stat2GrpTest',
+                              fluidRow(
+                               column(6, 
+                                 radioButtons(inputId = 'statTests',
                                               label = 'Test Type',
-                                              choices = c('t-test',
+                                              choices = c('Correlation',
+                                                          't-test',
                                                           'U-test',
-                                                          'KS-test'))
+                                                          'KS-test',
+                                                          'ANOVA',
+                                                          'Kruskal-Wallis'))
+                               ),
+                               column(6,
+                                 conditionalPanel(condition =
+                                    'input.statTests == "Correlation"',
+                                    selectInput(inputId = 'statCorrMethod',
+                                                label = 'Correlation Method',
+                                                choices = c('Pearson', 'Spearman')
+                                                )
+                                    )#,
+                                 # conditionalPanel(condition =
+                                 #   'input.statTests == "t-test" |
+                                 #    input.statTests == "U-test" |
+                                 #    input.statTests == "ANOVA" |
+                                 #    input.statTests == "Kruskal-Wallis"',
+                                 #   checkboxInput(inputId = 'statMatched',
+                                 #                 label = 'Matched Test'),
+                                 #   conditionalPanel(condition = 'input.statMatched',
+                                 #      selectInput(inputId = 'statMatchCol',
+                                 #                  label = 'Matching Variable',
+                                 #                  choices = '<NONE>')
+                                 #   )
+                                 # )
+                               )
+                              ),
+                              fluidRow(column(12,
+                                 conditionalPanel(condition = 
+                                   'input.statTests == "t-test" |
+                                    input.statTests == "U-test" |
+                                    input.statTests == "KS-test"',
+                                   selectInput(inputId = 'stat2GrpResp',
+                                               label = 'Two-group Response',
+                                               choices = '<NONE>')),
+                                 conditionalPanel(condition = 
+                                    'input.statTests == "Correlation"',
+                                    selectInput(inputId = 'statCorrResp',
+                                                label = 'Continuous Response',
+                                                choices = '<NONE>')),
+                                 conditionalPanel(condition = 
+                                    'input.statTests == "ANOVA" |
+                                     input.statTests == "Kruskal-Wallis"',
+                                    selectInput(inputId = 'statMultiResp',
+                                                label = 'Multi-group Response',
+                                                choices = '<NONE>')),
+                                 progressBar(id = 'statProgbar', value = 0,
+                                             display_pct = TRUE)
                               )),
                               fluidRow(column(12,
-                                 downloadButton('downloadResults', 'Download')
+                                 downloadButton(outputId = 'downloadStatTable', 
+                                                'Download Results')
                               ))
                           ),
                           fluidRow(
@@ -677,25 +723,50 @@ dashboardPage(skin='blue',
                                        )
                                     ),
                                     fluidRow(
-                                       column(4,
-                                          radioButtons(inputId = 'stat2GrpBoxCDF',
-                                                       choices = c('Boxplot','CDF'),
-                                                       label = 'Plot Options',
-                                                       inline = TRUE)
+                                          conditionalPanel(condition = 
+                                            'input.statTests != "Correlation"',
+                                            column(4,
+                                            radioButtons(inputId = 'stat2GrpBoxCDF',
+                                                         choices = c('Boxplot','CDF'),
+                                                         label = 'Plot Options',
+                                                         inline = TRUE)
+                                          )
                                        ),
                                        column(4,
                                           br(),
                                           checkboxInput(inputId = 'stat2GrpPlotLog10',
                                                         label = 'Log10')
                                        ),
-                                       column(4, 
-                                        conditionalPanel(condition = 
-                                          'input.stat2GrpBoxCDF == "Boxplot"',
+                                       conditionalPanel(condition = 
+                                         'input.stat2GrpBoxCDF == "Boxplot" &
+                                          input.statTests != "Correlation"',
+                                        column(4, 
                                           br(),
                                           checkboxInput(inputId  = 'stat2GrpPlotBeeswarm',
                                                         label = 'Beeswarm')
-                                        )
-                                       )
+                                         )
+                                        ),
+                                        conditionalPanel(condition =
+                                          'input.statTests == "Correlation"',
+                                          column(4,
+                                            br(),
+                                            checkboxInput(inputId = 'statSelPlotRegLine',
+                                                          label = 'Regression Line')
+                                            ),
+                                         ),
+                                         conditionalPanel(condition = 
+                                           'input.statSelPlotRegLine',
+                                           column(4,
+                                             selectInput(inputId = 'statSelPlotAddCorr',
+                                                         label = 'Add Correlation to Plot',
+                                                         choices = c('<NONE>',
+                                                                     'Top-left',
+                                                                     'Top-right',
+                                                                     'Bottom-left',
+                                                                     'Bottom-right')
+                                             )
+                                         )
+                                       ) 
                                     ),
                                     fluidRow(
                                      column(12,
@@ -711,7 +782,7 @@ dashboardPage(skin='blue',
                              )
                           ),
                           fluidRow(
-                             DT::dataTableOutput(outputId = 'stat2GrpResTable')
+                             DT::dataTableOutput(outputId = 'statResTable')
                           )
                    )
                 )
