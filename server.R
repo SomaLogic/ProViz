@@ -26,13 +26,14 @@
 # THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # enlarge the allowable import file size max
-options(shiny.maxRequestSize = 30 * 1024 ^ 2)
+options(shiny.maxRequestSize = 100 * 1024 ^ 2)
 
 function(input, output, session) {
 
    ########################################
    # License
    ########################################
+   
    output$license <- renderUI(HTML(paste(
       a(img(src = 'SomaLogic_fullLogo.png', 
             width = '600px', height = '400px',
@@ -71,7 +72,8 @@ function(input, output, session) {
    ########################################
    # SL logo and link in left panel
    ########################################
-   output$SLlogo<- renderUI(HTML(paste(
+   
+   output$SLlogo <- renderUI(HTML(paste(
       br(), br(), br(), br(),
       a(img(src = 'SomaLogic_icon.png', 
             width = 75, height = 75,
@@ -86,8 +88,21 @@ function(input, output, session) {
    )))
       
    ########################################
+   # SL logo and link in left panel
+   ########################################
+   
+   output$docs <- renderUI(HTML(paste(
+      br(), br(),
+      HTML('<center>'),
+      a(strong("ProViz User's Guide"), 
+        href = 'https://somalogic.github.io/ProViz/'),
+      HTML('</center>')
+   )))
+   
+   ########################################
    # utility function to keep UI up to date
    ########################################
+   
    UpdateUI <- function() {
       if(is.null(rv$adat)){
          return(NULL)
@@ -116,12 +131,12 @@ function(input, output, session) {
       
       # get continuous and categorical variables
       con_i <- which(sapply(rv$adat, function(column) {
-         return(is.numeric(column) &
-                length(unique(na.omit(column))) > 10)
+         return(is.numeric(column))# &
+                # length(unique(na.omit(column))) > 10)
       }))
       cat_i <- which(sapply(rv$adat, function(column) {
                                column <- na.omit(column)
-                               (!is.numeric(column) & length(column) > 0) |
+                               (!is.numeric(column) & length(column) > 0)# |
                                (is.numeric(column) & length(unique(column)) <= 10)
                             })
       )
@@ -157,16 +172,32 @@ function(input, output, session) {
                                     rv$catColumns)
       )
 
-      # get continuous variables with only two groups
-      twoGrp <- which(sapply(rv$adat, function(c){
-         length(unique(na.omit(c))) == 2
+      # update stat tests panel select boxes with only meta data columns
+      metaColumns <- SomaDataIO::getMeta(rv$adat)
+      
+      # get variables with only two groups
+      twoGrp <- which(sapply(metaColumns, function(c){
+         length(unique(na.omit(rv$adat[[c]]))) == 2
       }))
-      twoGrpCols <- sapply(colnames(rv$adat)[twoGrp], function(cn) {
-         lookupID(cn, input$rdoIDChoice)
-      })
+      twoGrpCols <- metaColumns[twoGrp]
       updateSelectInput(session, 'stat2GrpResp',
                         choices = c('<NONE>', twoGrpCols))
 
+      # update correlation variable select box
+      metaConColumns <- metaColumns[which(metaColumns %in% rv$conColumns)]
+      updateSelectInput(session, 'statCorrResp',
+                        choices = c('<NONE>', metaConColumns)
+      )
+      
+      # get variables with more than two but less then or equal to 10 groups
+      multiGrp <- which(sapply(metaColumns, function(c){
+         length(unique(na.omit(rv$adat[[c]]))) > 2 &
+         length(unique(na.omit(rv$adat[[c]]))) <= 10 
+      }))
+      multiGrpCols <- metaColumns[multiGrp]
+      updateSelectInput(session, 'statMultiResp',
+                        choices = c('<NONE>', multiGrpCols))
+      
       #update the scatter plot color by variable selection
       if(input$pltSctrColorBy == 'Continuous'){
          updateSelectInput(session, 'pltSctrColorByVar',
@@ -238,7 +269,9 @@ function(input, output, session) {
       rv$pltSctrColorByVar <- input$pltSctrColorByVar
       
       # stats
+      rv$statCorrResp <- input$statCorrResp
       rv$stat2GrpResp  <- input$stat2GrpResp
+      rv$statMultiResp <- input$statMultiResp
    }
    
    RevertPlotStates <- function() {
@@ -271,8 +304,12 @@ function(input, output, session) {
                                              input$rdoIDChoice))
       
       # stats
+      updateSelectInput(session, 'statCorrResp',
+                        selected = rv$statCorrResp)
       updateSelectInput(session, 'stat2GrpResp',
                         selected = rv$stat2GrpResp)
+      updateSelectInput(session, 'statMultiResp',
+                        selected = rv$statMultiResp)
    }
    
    # change in choice of ID cascades to UpdateUI
@@ -282,14 +319,27 @@ function(input, output, session) {
       RevertPlotStates()
    })
    
-   # always update in the data changes
+   # always update if the data changes
    observeEvent(rv$adat, {
       UpdateUI()
    })
-
+   
    ########################################
-   # Handlers for loading
+   # common handler for downloading 
+   # a modified ADAT
    ########################################
+   
+   dlHandler <- downloadHandler(
+      filename = 'ProViz_modified.adat',
+      content = function(file) {
+            SomaDataIO::write_adat(x = rv$adat, file = file)
+      }
+   )
+   
+   ########################################
+   # Handlers for loading an ADAT
+   ########################################
+   
    # code to handle opening the ADAT, parsing the contents as needed
    observeEvent(input$adat_file, {
                 if(is.null(input$adat_file)) {
@@ -338,13 +388,6 @@ function(input, output, session) {
                 }
    })
 
-   dlHandler <- downloadHandler(
-      filename = 'ProViz_modified.adat',
-      content = function(file) {
-            SomaDataIO::write_adat(x = rv$adat, file = file)
-      }
-   )
-   
    output$fltrDownloadADAT <- dlHandler 
    
    output$loadPreviewText <- renderUI(
@@ -352,7 +395,7 @@ function(input, output, session) {
    )
 
    output$loadPreviewTable <- DT::renderDataTable(
-      server = FALSE, rownames = FALSE,
+      server = TRUE, rownames = FALSE,
       options = list(scrollX = TRUE,
                      deferRender = TRUE), {
          if(is.null(input$adat_file)){
@@ -367,8 +410,9 @@ function(input, output, session) {
    )
 
    ####################################
-   # UI observers for filtering 
+   # Handlers for filtering 
    ####################################
+   
    observeEvent(input$fltrReset, {
       rv$adat <- rv$adatOrig
       UpdateUI()
@@ -478,7 +522,7 @@ function(input, output, session) {
    })
    
    output$mergeADATPreview <- DT::renderDataTable(
-      server = FALSE,
+      server = TRUE,
       options = list(scrollX = TRUE, pageLength = 5,
                      deferRender = TRUE), {
          if(is.null(rv$adat)){
@@ -492,7 +536,7 @@ function(input, output, session) {
    )
 
    output$mergeDataPreview <- DT::renderDataTable(
-      server = FALSE,
+      server = TRUE,
       options = list(scrollX = TRUE, pageLength = 5), {
          if(is.null(rv$mergedData)){
             return(NULL)
@@ -551,8 +595,9 @@ function(input, output, session) {
    )
    
    ####################################
-   # UI observers for grouping 
+   # Handlers for grouping 
    ####################################
+   
    observeEvent(input$grpCreateFrom, {
       if(input$grpCreateFrom == 'Continuous'){
          updateSelectInput(session, 'grpSourceColName',
@@ -675,7 +720,7 @@ function(input, output, session) {
    })
 
    output$grpPreviewTable = DT::renderDataTable(
-      server = FALSE, 
+      server = TRUE, 
       options = list(deferRender = TRUE), {
       if(input$grpSourceColName == '<NONE>'){
          rv$grpNewGroupData <- NULL
@@ -742,8 +787,9 @@ function(input, output, session) {
    )
    
    ####################################
-   # Boxplot handlers
+   # Handlers for Boxplot 
    ####################################
+   
    output$pltBxUI <- renderUI({
       plotlyOutput('boxPlot',
                    height = input$pltBxHeight,
@@ -819,12 +865,13 @@ function(input, output, session) {
                c(pltly$x$layout$xaxis$ticktext, 'NA')
          }
          
-         pltly
+         return(pltly)
       })
 
    ####################################
-   # CDF plots handlers
+   # Handlers for CDF plots 
    ####################################
+   
    output$pltCDFUI <- renderUI({
       plotlyOutput('cdfPlot',
                  height = input$pltCDFHeight,
@@ -925,12 +972,13 @@ function(input, output, session) {
          pltly$x$data[[i]]$name <- unq_grps[i]
       }
       
-      pltly     
+      return(pltly)
    })
 
    ####################################
-   # scatter plot handlers
+   # Handlers for scatter plot 
    ####################################
+   
    observeEvent(input$pltSctrColorBy, {
       if(is.null(rv$adat)){
          return(NULL)
@@ -1078,9 +1126,9 @@ function(input, output, session) {
             }
             plt <- plt +
                geom_text(aes(x = reg_x, y = reg_y, 
-                             label = paste0('R^2 = ', 
+                             label = paste0('r = ', 
                                             round(cor(X, Y, 
-                                                      use = 'complete.obs'), 3)
+                                                      use = 'complete.obs'), 2)
                                             )),
                          hjust = hj, vjust = vj)
          }
@@ -1127,149 +1175,339 @@ function(input, output, session) {
                              paste0(input$pltSctrTitle, '<br>',
                                     '<sup>', input$pltSctrSubtitle, '</sup>')))  
       
-         if(input$pltSctrRegrLine &
-            input$pltSctrRegrAddStats != '<NONE>'){
-            pltly <- pltly %>% 
-               style(textposition = hj)
-               #note ggplot's interpretation of hj is opposite to plotly's
-         }
+      if(input$pltSctrRegrLine &
+         input$pltSctrRegrAddStats != '<NONE>'){
+         pltly <- pltly %>% 
+            style(textposition = hj)
+            #note ggplot's interpretation of hj is opposite to plotly's
+      }
       
-      pltly
+      return(pltly)
    })
    
    ####################################
-   # define pieces of the Stats Tests tab
+   # Handlers for Stats Tests tab
    ####################################
-   output$downloadResults <- downloadHandler(
-      filename = sprintf('ProViz_%s_table.csv', input$stat2GrpTest),
-      content = function(file) {
-            write.csv(rv$stat2GrpTable, file, row.names=FALSE)
+   
+   # Utility functions
+   
+   getStatResultsTable <- function() {
+      # return the appropriate statistical test results table
+      if(input$statTests == 'Correlation'){
+         resTable <- rv$statCorrTable
+      } else if(input$statTests == 't-test' |
+                input$statTests == 'U-test' |
+                input$statTests == 'KS-test') {
+         resTable <- rv$stat2GrpTable
+      } else if(input$statTests == 'ANOVA' |
+                input$statTests == 'Kruskal-Wallis') {
+         resTable <- rv$statMultiTable
       }
-   )
+      
+      return(resTable)
+   }
+  
    
-   output$stat2GrpAnnoTable <- DT::renderDataTable(
-      server = FALSE, rownames = FALSE, colnames = '',
-      selection = 'none', options = list(dom = 't'), 
-      {
-         if(is.null(rv$stat2GrpRowSelect)){
-            return(NULL)
-         } else {
-            var_name <- rv$stat2GrpTable$AptName[rv$stat2GrpRowSelect]
-            row_num <- which(rv$featureData$AptName == var_name)
-            df <- data.frame(
-               Label = c('SOMAmer', 'Protein Full Name', 'Protein Short Name',
-                         'UniProt ID', 'Entrez Gene Id', 'Entrez Gene Symbol'),
-               Details = t(rv$featureData[row_num, 
-                            c('AptName', 'TargetFullName', 'Target', 
-                              'UniProt', 'EntrezGeneID',
-                              'EntrezGeneSymbol')]))
+   # statistical test functions
+   getMaxFoldChange <- function(df) {
+      # find the maximum fold change between groups
+      # for all pairs of groups
+      # df is expected to have 2 columns - data, grps
+      
+      df <- df[complete.cases(df), ]
+      grps <- unique(df$grps)
+      max_fold_change <- 0.0
+      for(g1_idx in 1:(length(grps)-1)) {
+         for(g2_idx in (g1_idx + 1):length(grps)) {
+            g1 <- which(df$grps == grps[g1_idx])
+            g2 <- which(df$grps == grps[g2_idx])
+            fold_change <- log2(abs(median(df$data[g1])) /
+                                abs(median(df$data[g2])))
+            if(abs(fold_change) > abs(max_fold_change)) {
+               max_fold_change <- fold_change
+            }
          }
-         df
       }
-   )
+      
+      return(max_fold_change)
+   }
    
-   output$stat2GrpResTable <- DT::renderDataTable(
-      server=FALSE,
-      rownames = FALSE,
-      selection = 'single',
-      options = list(scrollX = TRUE, deferRender = TRUE),
-      {
-         if(is.null(rv$adat) | input$stat2GrpResp == '<NONE>'){
-            return(NULL)
-         }
-         
-         print(input$stat2GrpResp)
-         print(rv$stat2GrpResp)
-         
-         if(input$stat2GrpResp == rv$stat2GrpResp){
-            df <- rv$stat2GrpTable
-            # user-friendly column names
-            colnames(df)[1:3] = c('SOMAmer', 'Protein Name', 'Gene Symbol')
-            return(df)
-         }
-         
-         respID <- lookupID(input$stat2GrpResp, 'SOMAmer ID')
-         vars <- SomaDataIO::getFeatures(rv$adat)
-         df <- data.frame(rv$featureData[, c('AptName', 
-                                             'TargetFullName', 'EntrezGeneSymbol')])
-         
-         grps <- unique(rv$adat[[respID]])
-         i <- which(rv$adat[[respID]] == grps[1])
-         
-         df$Fold.Change <- sapply(vars, function(v){
-            signif(log2(median(rv$adat[i,v])/median(rv$adat[-i,v])), 2)
-         })
-   
-         adat <- log10(rv$adat)
-   
-         if(input$stat2GrpTest == 'KS-test'){
-            tbl <- data.frame(t(sapply(vars, function(v){
-               z <- suppressWarnings(ks.test(adat[i,v], adat[-i,v]))
-               j <- which(df$AptName== v)
-               if(df$Fold.Change[j] < 0){
-                  z$signedKS <- -z$statistic
-               } else {
-                  z$signedKS <- z$statistic
-               }
-               
-               # increment the progress bar
-               i <- which(vars == v)
-               if((i / length(vars) * 100) %% 5 == 0){
-                  updateProgressBar(session = session, id = 'statProgbar',
-                                    value = i / length(vars) * 100)
-               }
-               
-               c(KS.Dist = round(as.numeric(z$statistic),2),
-                 Signed.KS.Dist = round(as.numeric(z$signedKS),2),
-                 p.value = z$p.value)
-            })))
-         } else if(input$stat2GrpTest == 't-test'){
-            tbl <- data.frame(t(sapply(vars, function(v){
-               z <- suppressWarnings(t.test(adat[i,v], adat[-i,v],
-                                     var.equal = FALSE))
-               
-               # increment the progress bar
-               i <- which(vars == v)
-               if((i / length(vars) * 100) %% 5 == 0){
-                  updateProgressBar(session = session, id = 'statProgbar',
-                                    value = i / length(vars) * 100)
-               }
-               
-               c(t.statistic = round(as.numeric(z$statistic),2),
-                 p.value = z$p.value)
-            })))
-         } else if(input$stat2GrpTest == 'U-test'){
-            tbl <- data.frame(t(sapply(vars, function(v){
-               z <- suppressWarnings(wilcox.test(adat[i,v], adat[-i,v]))
-               
-               # increment the progress bar
-               i <- which(vars == v)
-               updateProgressBar(session = session, id = 'statProgbar',
-                                 value = i / length(vars) * 100)
-               
-               c(W.statistic = round(as.numeric(z$statistic)),
-                 p.value = z$p.value)
-            })))
-         }
-         
-         # provide multiple testing corrections
-         tbl$FDR <- signif(p.adjust(tbl$p.value, method='BH'), 2)
-         tbl$Bonferroni <- signif(p.adjust(tbl$p.value, method='bonferroni'), 2)
-         df <- cbind(df, tbl)
-         df$p.value <- signif(df$p.value, 2)
-         rv$stat2GrpTable <- df
-         
-         # user-friendly column names
-         colnames(df)[1:3] = c('SOMAmer', 'Protein Name', 'Gene Symbol')
-         df
-   })
-
-   output$stat2GrpVolcano <- renderPlotly({
-      if(is.null(rv$adat) || input$stat2GrpResp == '<NONE>'){
+   statCorrTests <- function() {
+      # perform correlation tests
+      if(is.null(rv$adat) | input$statCorrResp == '<NONE>'){
          return(NULL)
       }
       
-      df <- rv$stat2GrpTable
+      # if the selection didn't change
+      if(input$statCorrResp == rv$statCorrResp &
+         input$statCorrMethod == rv$statCorrMethod){
+         df <- rv$statCorrTable
+         # user-friendly column names
+         colnames(df)[1:3] = c('SOMAmer', 'Protein Name', 'Gene Symbol')
+         return(df)
+      }
+     
+      # prepare the results table 
+      respID <- input$statCorrResp -> rv$statCorrResp
+      rv$statCorrMethod <- input$statCorrMethod
+      vars <- SomaDataIO::getFeatures(rv$adat)
+      df <- data.frame(rv$featureData[, c('AptName', 
+                                          'TargetFullName', 'EntrezGeneSymbol')])
+      
+      # get log10 SOMAmers
+      adat <- log10(rv$adat)
+   
+      # perform the tests 
+      tbl <- data.frame(t(sapply(vars, function(v){
+         z <- suppressWarnings(cor.test(adat[[respID]], adat[[v]],
+                        method = ifelse(input$statCorrMethod == 'Pearson',
+                                        'pearson', 'spearman')))
+         
+         # increment the progress bar
+         p <- which(vars == v)
+         if((p / length(vars) * 100) %% 5 == 0){
+            updateProgressBar(session = session, id = 'statProgbar',
+                              value = p / length(vars) * 100)
+         }
+         
+         if(input$statCorrMethod == 'Pearson'){
+            c(t.statistic = round(as.numeric(z$statistic), 2),
+              r = round(as.numeric(z$estimate), 2),
+              p.value = z$p.value)
+         } else {
+            c(S.statistic = round(as.numeric(z$statistic), 2),
+              rho = round(as.numeric(z$estimate), 2),
+              p.value = z$p.value)
+         }
+      })))
+      
+      # provide multiple testing corrections
+      tbl$FDR <- signif(p.adjust(tbl$p.value, method='BH'), 2)
+      tbl$Bonferroni <- signif(p.adjust(tbl$p.value, method='bonferroni'), 2)
+      df <- cbind(df, tbl)
+      df$p.value <- signif(df$p.value, 2)
+      
+      # store the results table
+      rv$statCorrTable <- df
+      
+      # user-friendly column names
+      colnames(df)[1:3] = c('SOMAmer', 'Protein Name', 'Gene Symbol')
+      rv$statCorrTable 
+   }
+   
+   statMultiGrpTests <- function() {
+      # perform multi-group tests
+      if(is.null(rv$adat) | input$statMultiResp== '<NONE>'){
+         return(NULL)
+      }
+     
+      # if the selection didn't change
+      if(input$statMultiResp == rv$statMultiResp &
+         input$statTests == rv$statMultiTest) {
+         df <- rv$statMultiTable
+         # user-friendly column names
+         colnames(df)[1:3] = c('SOMAmer', 'Protein Name', 'Gene Symbol')
+         return(df)
+      }
+     
+      # prepare the results table 
+      respID <- lookupID(input$statMultiResp, 'SOMAmer ID') 
+      rv$statMultiResp <- respID
+      rv$statMultiTest <- input$statTests
+      vars <- SomaDataIO::getFeatures(rv$adat)
+      df <- data.frame(rv$featureData[, c('AptName', 
+                                          'TargetFullName', 'EntrezGeneSymbol')])
+      
+      # log10 SOMAmers
+      adat <- log10(rv$adat)
+  
+      # perform the tests 
+      if(input$statTests == 'ANOVA'){
+         tbl <- data.frame(t(sapply(vars, function(v){
+            z <- suppressWarnings(aov(as.formula(sprintf('%s ~ %s', v, respID)),
+                                      adat))
+            max_fold_change <- getMaxFoldChange(data.frame(data = adat[[v]],
+                                                           grps = adat[[respID]])) 
+            # increment the progress bar
+            p <- which(vars == v)
+            if((p / length(vars) * 100) %% 5 == 0){
+               updateProgressBar(session = session, id = 'statProgbar',
+                                 value = p / length(vars) * 100)
+            }
+            
+            z_summary <- summary(z) 
+            c(Max.Fold.Change = signif(max_fold_change, 2),
+              F = round(as.numeric(z_summary[[1]][1,4]),2),
+              p.value = z_summary[[1]][1,5])
+         })))
+      } else if(input$statTests == 'Kruskal-Wallis'){
+         tbl <- data.frame(t(sapply(vars, function(v){
+            z <- suppressWarnings(kruskal.test(as.formula(sprintf('%s ~ %s', v, respID)),
+                                               adat))
+            max_fold_change <- getMaxFoldChange(data.frame(data = adat[[v]],
+                                                           grps = adat[[respID]])) 
+            # increment the progress bar
+            p <- which(vars == v)
+            if((p / length(vars) * 100) %% 5 == 0){
+               updateProgressBar(session = session, id = 'statProgbar',
+                                 value = p / length(vars) * 100)
+            }
+            
+            c(Max.Fold.Change = signif(max_fold_change, 2),
+              chi.squared = round(as.numeric(z$statistic, 2)),
+              p.value = z$p.value)
+         })))
+      }
+      
+      # provide multiple testing corrections
+      tbl$FDR <- signif(p.adjust(tbl$p.value, method='BH'), 2)
+      tbl$Bonferroni <- signif(p.adjust(tbl$p.value, method='bonferroni'), 2)
+      df <- cbind(df, tbl)
+      df$p.value <- signif(df$p.value, 2)
+      
+      # store the results table
+      rv$statMultiTable <- df
+      
+      # user-friendly column names
+      colnames(df)[1:3] = c('SOMAmer', 'Protein Name', 'Gene Symbol')
+      rv$statMultiTable 
+   }
+   
+   stat2GrpTests <- function() {
+      # perform 2-group tests
+      if(is.null(rv$adat) | input$stat2GrpResp == '<NONE>'){
+         return(NULL)
+      }
+      
+      # if the selection didn't change
+      if(input$stat2GrpResp == rv$stat2GrpResp &
+         input$statTests == rv$stat2GrpTest) {
+         df <- rv$stat2GrpTable
+         # user-friendly column names
+         colnames(df)[1:3] = c('SOMAmer', 'Protein Name', 'Gene Symbol')
+         return(df)
+      }
+     
+      # prepare the results table 
+      respID <- lookupID(input$stat2GrpResp, 'SOMAmer ID')
+      rv$stat2GrpResp <- respID
+      rv$stat2GrpTest <- input$statTests
+      vars <- SomaDataIO::getFeatures(rv$adat)
+      df <- data.frame(rv$featureData[, c('AptName', 
+                                          'TargetFullName', 'EntrezGeneSymbol')])
+      
+      # find the groups
+      grps <- unique(rv$adat[[respID]])
+      grp1_idx <- which(rv$adat[[respID]] == grps[1])
+      
+      # calculate fold change between group medians
+      df$Fold.Change <- sapply(vars, function(v){
+         signif(log2(median(rv$adat[grp1_idx, v]) / 
+                     median(rv$adat[-grp1_idx, v])), 2)
+      })
+    
+      # log10 SOMAmers
+      adat <- log10(rv$adat)
+   
+      # perform the tests 
+      if(input$statTests == 'KS-test'){
+         tbl <- data.frame(t(sapply(vars, function(v){
+            z <- suppressWarnings(ks.test(adat[grp1_idx, v], 
+                                          adat[-grp1_idx,v]))
+            j <- which(df$AptName == v)
+            if(df$Fold.Change[j] < 0){
+               z$signedKS <- -z$statistic
+            } else {
+               z$signedKS <- z$statistic
+            }
+            
+            # increment the progress bar
+            p <- which(vars == v)
+            if((p / length(vars) * 100) %% 5 == 0){
+               updateProgressBar(session = session, id = 'statProgbar',
+                                 value = p / length(vars) * 100)
+            }
+            
+            c(KS.Dist = round(as.numeric(z$statistic),2),
+              Signed.KS.Dist = round(as.numeric(z$signedKS),2),
+              p.value = z$p.value)
+         })))
+      } else if(input$statTests == 't-test'){
+         tbl <- data.frame(t(sapply(vars, function(v){
+            z <- suppressWarnings(t.test(adat[grp1_idx, v], 
+                                         adat[-grp1_idx, v], var.equal = FALSE))
+            
+            # increment the progress bar
+            p <- which(vars == v)
+            if((p / length(vars) * 100) %% 5 == 0){
+               updateProgressBar(session = session, id = 'statProgbar',
+                                 value = p / length(vars) * 100)
+            }
+            
+            c(t.statistic = round(as.numeric(z$statistic),2),
+              p.value = z$p.value)
+         })))
+      } else if(input$statTests == 'U-test'){
+         tbl <- data.frame(t(sapply(vars, function(v){
+            z <- suppressWarnings(wilcox.test(adat[grp1_idx, v], 
+                                              adat[-grp1_idx, v]))
+            
+            # increment the progress bar
+            p <- which(vars == v)
+            if((p / length(vars) * 100) %% 5 == 0){
+               updateProgressBar(session = session, id = 'statProgbar',
+                                 value = p / length(vars) * 100)
+            }
+            
+            c(W.statistic = round(as.numeric(z$statistic), 2),
+              p.value = z$p.value)
+         })))
+      }
+      
+      # provide multiple testing corrections
+      tbl$FDR <- signif(p.adjust(tbl$p.value, method='BH'), 2)
+      tbl$Bonferroni <- signif(p.adjust(tbl$p.value, method='bonferroni'), 2)
+      df <- cbind(df, tbl)
+      df$p.value <- signif(df$p.value, 2)
+      
+      # store the results table
+      rv$stat2GrpTable <- df
+      
+      # user-friendly column names
+      colnames(df)[1:3] = c('SOMAmer', 'Protein Name', 'Gene Symbol')
+      rv$stat2GrpTable 
+   }
+
+   # stat test figures
+   output$stat2GrpVolcano <- renderPlotly({
+      if(is.null(rv$adat)) {
+         return(NULL)
+      }
+      
+      if(input$statTests == 'Correlation') {
+         if(input$statCorrResp == '<NONE>') {
+            return(NULL)
+         }
+         df <- rv$statCorrTable
+         ifelse(input$statCorrMethod == 'Pearson',
+                xAxis <- 'r',
+                xAxis <- 'rho')
+      } else if(input$statTests == 't-test' |
+                input$statTests == 'U-test' |
+                input$statTests == 'KS-test') {
+         if(input$stat2GrpResp == '<NONE>') {
+            return(NULL)
+         }
+         df <- rv$stat2GrpTable
+         xAxis <- 'Fold.Change'
+      } else if(input$statTests == 'ANOVA' |
+                input$statTests == 'Kruskal-Wallis') {
+         if(input$statMultiResp == '<NONE>') {
+            return(NULL)
+         }
+         df <- rv$statMultiTable
+         xAxis <- 'Max.Fold.Change'
+      }
       
       # set the p-value column name
       if(input$stat2GrpCorrection == 'p-value') {
@@ -1280,30 +1518,52 @@ function(input, output, session) {
       
       # mark the significant points from the volcano plot criteria
       df$pt_cols <- '0' # non-significant indicator
-      
-      i <- which(rv$stat2GrpTable$Fold.Change > input$stat2GrpFold |
-                 rv$stat2GrpTable$Fold.Change < (-input$stat2GrpFold))
-      j <- which(rv$stat2GrpTable[[pcolumn]] < input$stat2GrpPvalue )
+     
+      i <- which(df[[xAxis]] > input$stat2GrpFold |
+                 df[[xAxis]] < (-input$stat2GrpFold))
+      j <- which(df[[pcolumn]] < input$stat2GrpPvalue )
       k <- intersect(i,j)
       
       df$pt_cols[k] <- '1' # significant indicator
       
       # mark the selected points
-      df$pt_cols[rv$stat2GrpRowSelect] <- '2' # selected marker
+      df$pt_cols[rv$statTableRowSelect] <- '2' # selected marker
       
       # make the actual plot
-      plt <- ggplot(df, aes(x = Fold.Change, y = -log10(!!sym(pcolumn)),
-                            color = pt_cols, key = AptName,
-                            text = paste0(paste0('SOMAmer: ', AptName, '\n',
-                                                 'Protein Name: ', TargetFullName, '\n',
-                                                 'Gene Symbol: ', EntrezGeneSymbol, '\n',
-                                                 'Fold Change: ', Fold.Change, '\n',
-                                                 input$stat2GrpCorrection, ': ', 
-                                                      signif(!!sym(pcolumn), 3))
-                                   ))) +
+      plt <- ggplot(df, aes(x = !!sym(xAxis), y = -log10(!!sym(pcolumn)),
+                            color = pt_cols, key = AptName, size = pt_cols,
+                            text = paste0('SOMAmer: ', AptName, '\n',
+                                          'Protein Name: ', TargetFullName, '\n',
+                                          'Gene Symbol: ', EntrezGeneSymbol, '\n',
+                                          if(input$statTests == 'Correlation') {
+                                             if(input$statCorrMethod == 'Pearson') {
+                                                paste0('Pearson r: ', r, '\n')
+                                             } else {
+                                                paste0('Spearman rho: ', rho, '\n')
+                                             }
+                                          } else if(input$statTests == 'ANOVA' |
+                                                    input$statTests == 'Kruskal-Wallis') {
+                                             paste0('Maximum Fold Change: ', Max.Fold.Change, '\n')
+                                          } else {
+                                             paste0('Fold Change: ', Fold.Change, '\n')
+                                          },
+                                          input$stat2GrpCorrection, ': ', 
+                                               signif(!!sym(pcolumn), 3))
+                                   )) +
          geom_point(shape = 19) +
-         scale_color_manual(values = c('#132B43', '#56B1F7', 'darkorange')) +
-         xlab('Fold Change (log2)') +
+         scale_color_manual(values = 
+            c('#132B43', '#56B1F7', 'darkorange')[sort(as.numeric(unique(df$pt_cols))+1)]) +
+         scale_size_manual(values =
+            c(1.0, 1.0, 2.5)[sort(as.numeric(unique(df$pt_cols))+1)]) +
+         xlab(if(input$statTests == 'Correlation') {
+                 ifelse(input$statCorrMethod == 'Pearson',
+                        'Pearson r', 'Spearman rho')
+              } else if(input$statTests == 'ANOVA' |
+                        input$statTests == 'Kruskal-Wallis') {
+                 'Maximum Fold Change'
+              } else {
+                 'Fold Change (log2)'
+              }) +
          ylab(paste0('-log10(', input$stat2GrpCorrection, ')')) +
          geom_vline(xintercept = c(input$stat2GrpFold, -input$stat2GrpFold),
                     size = 0.5, color = 'red') +
@@ -1313,25 +1573,31 @@ function(input, output, session) {
          theme(legend.position = 'none',
                plot.margin = margin(1, 1, 1, 1, 'lines')) 
      
-         sel_df <- subset(df, pt_cols == '2')
-         if(nrow(sel_df) > 0){
-            plt <- plt + geom_point(data = sel_df, 
-                                    aes(x = Fold.Change, y = -log10(!!sym(pcolumn))),
-                                    color = 'darkorange', size = 2.5)
-         }
-            
       pltly <- ggplotly(p = plt, source = 'stat2GrpVolcano', tooltip = 'text') %>% 
          event_register(event = 'plotly_click') %>% 
          event_register(event = 'plotly_doubleclick')
       
-      pltly
+      return(pltly)
    })
    
    output$stat2GrpDistPlot <- renderPlotly({
+      # generate boxplots or CDFs of grouped data
+      # from the selected SOMAmer
+      if(input$statTests == 'Correlation') {
+         return(statScatterPlot())
+      } else {
+         return(statDistributionPlot())
+      }
+   })
 
-      if(!is.null(rv$stat2GrpRowSelect)){
-         row_sel <- rv$stat2GrpRowSelect
-         var_name <- rv$stat2GrpTable$AptName[row_sel]
+   statScatterPlot <- function() {
+      # generate scatter plot of the selected SOMAmer
+      # from the Volcano plot and the endpoint
+      resTable <- getStatResultsTable()
+      
+      if(!is.null(rv$statTableRowSelect)) {
+         row_sel <- rv$statTableRowSelect
+         var_name <- resTable$AptName[row_sel]
          if(input$stat2GrpDataLabel == 'SOMAmer') {
             lab_name <- var_name
          } else if(input$stat2GrpDataLabel == 'Protein Name') {
@@ -1355,16 +1621,138 @@ function(input, output, session) {
          df <- data.frame(SampleId = rv$adat$SampleId,
                           Y = rv$adat[,i])
       }
-      df$X<- rv$adat[[input$stat2GrpResp]]
+      df$X<- rv$adat[[input$statCorrResp]]
+      df <- df[complete.cases(df), ]
+      
+      plt <- ggplot(df, aes(x = X, y = Y, 
+                            text = paste0('SampleId: ', SampleId, '\n',
+                                          input$statCorrResp, ': ', X, '\n',
+                                          lab_name, ': ', round(Y, 2)
+                            ))) +  
+         geom_point(color = '#56B1F7') +
+         xlab(input$statCorrResp) +
+         ylab(paste0(ifelse(input$stat2GrpPlotLog10, 'log10(', ''), lab_name,
+                     ifelse(input$stat2GrpPlotLog10, ')', ''))) 
+         
+         # regression options
+         if(input$statSelPlotRegLine){
+            reg <- lm(Y ~ X, df)
+            plt <- plt +
+               geom_abline(intercept = coef(reg)[1], slope = coef(reg)[2],
+                           size = .75, color = 'black', linetype = 2)
+            if(input$statSelPlotAddCorr != '<NONE>'){
+               if(input$statSelPlotAddCorr == 'Top-left' |
+                  input$statSelPlotAddCorr == 'Bottom-left'){
+                  reg_x <- min(df$X)
+                  hj <- 'right' 
+                  #note ggplot's interpretation of hj is opposite to plotly's
+               } else {
+                  reg_x <- max(df$X)
+                  hj <- 'left'
+               }
+               if(input$statSelPlotAddCorr == 'Top-left' |
+                  input$statSelPlotAddCorr == 'Top-right'){
+                  reg_y <- max(df$Y)
+                  vj <- 'bottom'
+               } else {
+                  reg_y <- min(df$Y)
+                  vj <- 'top'
+               }
+               plt <- plt +
+                  geom_text(aes(x = reg_x, y = reg_y, 
+                       label = paste0(ifelse(input$statCorrMethod == "Pearson", 
+                                             'r = ', 'rho = '), 
+                                      round(cor(X, Y, 
+                                                method = ifelse(input$statCorrMethod == 'Pearson',
+                                                                'pearson', 'spearman'),
+                                                use = 'complete.obs'), 2)
+                       )),
+                       hjust = hj, vjust = vj)
+            }
+         }
+      
+         plt <- plt + theme_minimal() +
+            theme(plot.margin = margin(1, 1, 1, 1, 'lines'))
+      
+      pltly <- ggplotly(plt, tooltip = 'text')
+      
+      if(input$statSelPlotRegLine &
+         input$statSelPlotAddCorr != '<NONE>'){
+         pltly <- pltly %>% 
+            style(textposition = hj)
+            #note ggplot's interpretation of hj is opposite to plotly's
+      }
+      
+      return(pltly)
+   }
+   
+   statDistributionPlot <- function() {
+      # generate boxplot or cdf of the selected SOMAmer
+      # from the Volcano plot
+      resTable <- getStatResultsTable()
+      
+      if(!is.null(rv$statTableRowSelect)) {
+         row_sel <- rv$statTableRowSelect
+         var_name <- resTable$AptName[row_sel]
+         if(input$stat2GrpDataLabel == 'SOMAmer') {
+            lab_name <- var_name
+         } else if(input$stat2GrpDataLabel == 'Protein Name') {
+            lab_name <- 
+               rv$featureData$TargetFullName[which(rv$featureData$AptName == 
+                                                   var_name)]
+         } else if(input$stat2GrpDataLabel == 'Gene Symbol') {
+            lab_name <- 
+               rv$featureData$EntrezGeneSymbol[which(rv$featureData$AptName == 
+                                                        var_name)]
+         }
+      } else {
+         return(NULL)
+      }
+ 
+      i <- which(colnames(rv$adat) == var_name)
+      if(input$stat2GrpPlotLog10){
+         df <- data.frame(SampleId = rv$adat$SampleId,
+                          Y = log10(rv$adat[,i]))
+      } else {
+         df <- data.frame(SampleId = rv$adat$SampleId,
+                          Y = rv$adat[,i])
+      }
+      
+      if(input$statTests == 't-test' |
+         input$statTests == 'U-test' |
+         input$statTests == 'KS-test') {
+            df$X <- rv$adat[[input$stat2GrpResp]]
+      } else if (input$statTests == 'ANOVA' |
+                 input$statTests == 'Kruskal-Wallis') {
+            df$X <- rv$adat[[input$statMultiResp]]
+      }
+      df <- df[complete.cases(df), ]
       
       if(input$stat2GrpBoxCDF == 'Boxplot'){
          plt <- ggplot(df, aes(x = X, y = Y, 
                                text = paste0('SampleId: ', SampleId, '\n',
-                                             input$stat2GrpResp, ': ', X, '\n',
-                                             lab_name, ': ', round(Y, 2)
+                                             if(input$statTests == 't-test' |
+                                                input$statTests == 'U-test' |
+                                                input$statTests == 'KS-test') {
+                                                input$stat2GrpResp
+                                             } else if(input$statTests == 'ANOVA' | 
+                                                       input$statTests == 'Kruskal-Wallis') {
+                                                input$statMultiResp
+                                             }, ': ', X, '\n',
+                                             ifelse(input$stat2GrpPlotLog10, 
+                                                    'log10(', ''), lab_name,
+                                             ifelse(input$stat2GrpPlotLog10, 
+                                                    ')', ''), ': ', round(Y, 2)
                                ))) +  
             geom_boxplot(aes(fill = X), color = 'black') +
-            xlab(input$stat2GrpResp) +
+            xlab(if(input$statTests == 't-test' |
+                    input$statTests == 'U-test' |
+                    input$statTests == 'KS-test') {
+                        input$stat2GrpResp
+                 } else if(input$statTests == 'ANOVA' | 
+                           input$statTests == 'Kruskal-Wallis') {
+                    input$statMultiResp
+                 }) +
             ylab(paste0(ifelse(input$stat2GrpPlotLog10, 'log10(', ''), lab_name,
                         ifelse(input$stat2GrpPlotLog10, ')', ''))) +
             theme_minimal() +
@@ -1411,10 +1799,58 @@ function(input, output, session) {
          pltly <- ggplotly(plt, tooltip = 'text')
       }
      
-      pltly 
-   })
+      return(pltly)
+   }
    
-   # Stat tab UI observers
+   # UI reactives
+   
+   output$downloadStatTable<- downloadHandler(
+      filename = function() {
+         sprintf('ProViz_%s_table.csv', input$statTests)
+      },
+      content = function(file) {
+            write.csv(getStatResultsTable(), file, row.names=FALSE)
+      }
+   )
+   
+   output$stat2GrpAnnoTable <- DT::renderDataTable(
+      server = TRUE, rownames = FALSE, colnames = '',
+      selection = 'none', options = list(dom = 't'), 
+      {
+         if(is.null(rv$statTableRowSelect)){
+            return(NULL)
+         } else {
+            res_table <- getStatResultsTable()
+            var_name <- res_table$AptName[rv$statTableRowSelect]
+            row_num <- which(rv$featureData$AptName == var_name)
+            df <- data.frame(
+               Label = c('SOMAmer', 'Protein Full Name', 'Protein Short Name',
+                         'UniProt ID', 'Entrez Gene Id', 'Entrez Gene Symbol'),
+               Details = t(rv$featureData[row_num, 
+                            c('AptName', 'TargetFullName', 'Target', 
+                              'UniProt', 'EntrezGeneID',
+                              'EntrezGeneSymbol')]))
+         }
+         df
+      }
+   )
+   
+   output$statResTable <- DT::renderDataTable(
+      server = TRUE, rownames = FALSE,
+      selection = 'single',
+      options = list(scrollX = TRUE, deferRender = TRUE),
+      {
+         if(input$statTests == 'Correlation'){
+            return(statCorrTests())
+         } else if(input$statTests == 't-test' |
+                   input$statTests == 'U-test' |
+                   input$statTests == 'KS-test'){
+            return(stat2GrpTests())
+         } else if(input$statTests == 'ANOVA' |
+                   input$statTests == 'Kruskal-Wallis'){
+            return(statMultiGrpTests())
+         }
+      })
    observeEvent(input$stat2GrpCorrection, {
       updateSliderInput(session, inputId = 'stat2GrpPvalue',
                         label = input$stat2GrpCorrection)
@@ -1422,22 +1858,45 @@ function(input, output, session) {
    
    observeEvent(event_data(event = 'plotly_doubleclick', source = 'stat2GrpVolcano'), {
       # unset the selected variables
-      rv$stat2GrpRowSelect <- NULL
+      rv$statTableRowSelect <- NULL
    })
    
    observeEvent(event_data(event = 'plotly_click', source = 'stat2GrpVolcano'), {
       # set the selected variables globally
       clickData <- event_data(event = 'plotly_click', source = 'stat2GrpVolcano')
-      rv$stat2GrpRowSelect <- which(rv$stat2GrpTable$AptName == clickData$key)
+      resTable <- getStatResultsTable()
+      rv$statTableRowSelect <- which(resTable$AptName == clickData$key)
    })
    
-   observeEvent(input$stat2GrpResTable_cell_clicked, {
-      row_sel <- input$stat2GrpResTable_rows_selected
+   observeEvent(input$statResTable_cell_clicked, {
+      row_sel <- input$statResTable_rows_selected
       
       if(is.null(row_sel)){
-         rv$stat2GrpRowSelect <- NULL
+         rv$statTableRowSelect <- NULL
       } else {
-         rv$stat2GrpRowSelect <- row_sel
+         rv$statTableRowSelect <- row_sel
       }
    })
+   
+   observeEvent(input$statTests, {
+      # unset the plot selection
+      rv$statTableRowSelect <- NULL
+      
+      if(input$statTests == 'Correlation'){
+         updateSliderInput(session, inputId = 'stat2GrpFold',
+                           label = 'Correlation',
+                           min = 0.0, max = 1.0, step = 0.01, value = 0.75)
+      } else {
+         updateSliderInput(session, inputId = 'stat2GrpFold',
+                           label = 'Fold Change (log2)',
+                           min = 0, max = 10,
+                           step = 0.1, value = 2)
+      }
+   })
+   
+   observeEvent(input$statCorrMethod, {
+      # unset the plot selection
+      rv$statTableRowSelect <- NULL
+   })
 }
+
