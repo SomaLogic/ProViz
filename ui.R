@@ -638,7 +638,7 @@ dashboardPage(skin='blue',
                                                 label = 'Correlation Method',
                                                 choices = c('Pearson', 'Spearman')
                                                 )
-                                    )#,
+                                 )#,
                                  # conditionalPanel(condition =
                                  #   'input.statTests == "t-test" |
                                  #    input.statTests == "U-test" |
