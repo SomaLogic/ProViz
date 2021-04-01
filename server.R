@@ -136,7 +136,7 @@ function(input, output, session) {
       }))
       cat_i <- which(sapply(rv$adat, function(column) {
                                column <- na.omit(column)
-                               (!is.numeric(column) & length(column) > 0)# |
+                               (!is.numeric(column) & length(column) > 0) |
                                (is.numeric(column) & length(unique(column)) <= 10)
                             })
       )
