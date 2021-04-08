@@ -31,7 +31,7 @@
   
 <link rel="prev" href="installation-and-prerequisites.html"/>
 <link rel="next" href="merge-data.html"/>
-<script src="libs/header-attrs-2.6/header-attrs.js"></script>
+<script src="libs/header-attrs-2.7/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -134,7 +134,7 @@
 </ul></li>
 <li class="chapter" data-level="6" data-path="statistical-tests.html"><a href="statistical-tests.html"><i class="fa fa-check"></i><b>6</b> Statistical Tests</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="statistical-tests.html"><a href="statistical-tests.html#group-tests"><i class="fa fa-check"></i><b>6.1</b> 2-group Tests</a>
+<li class="chapter" data-level="6.1" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-tests-1"><i class="fa fa-check"></i><b>6.1</b> Statistical Tests</a>
 <ul>
 <li class="chapter" data-level="6.1.1" data-path="statistical-tests.html"><a href="statistical-tests.html#selecting-a-response"><i class="fa fa-check"></i><b>6.1.1</b> Selecting a Response</a></li>
 <li class="chapter" data-level="6.1.2" data-path="statistical-tests.html"><a href="statistical-tests.html#plots-1"><i class="fa fa-check"></i><b>6.1.2</b> Plots</a></li>
@@ -172,13 +172,13 @@
 </div>
 <div id="load-an-adat-file" class="section level2" number="2.2">
 <h2><span class="header-section-number">2.2</span> Load an ADAT file</h2>
-<p>To open an ADAT file, click on the <strong>Browse…</strong> button and locate your ADAT file. Once selected, the ADAT file will be opened and processed, and a preview of the content will be shown in the table at the right. ADAT files may have over 7,000 columns of SomaScan data for every row in the file, so large files may take a few moments to load.</p>
+<p>To open an ADAT file, click on the <strong>Browse…</strong> button and locate an ADAT file. Once selected, the ADAT file will be opened and processed, and a preview of the content will be shown in the table at the right. ADAT files may have over 7,000 columns of SomaScan Assay data for every row in the file, so large files may take a few moments to load.</p>
 <p>After the ADAT file is loaded, details of the file content are displayed. Here we see that there are 192 total rows (corresponding to individual samples), and 5,318 data columns. Of those data columns, 5,284 are SOMAmer data columns and 34 are Meta Data columns. These Meta Data columns contain assay-related data such as the Plate ID, Scanner ID, normalization data, and any sample-specific data that was submitted to SomaLogic with the samples. For the <code>example_data.adat</code> file, Sex and Age are included as well as various assay-related content.</p>
-<p>You can scroll through the ADAT Preview table as well as searching for specific content (<strong>Search:</strong> box in upper-right). SOMAmer-related data are not displayed in the preview table.</p>
+<p>The ADAT Preview table can be scroleld as well as searched for specific content (<strong>Search:</strong> box in upper-right). SomaScan Assay data are not displayed in the preview table.</p>
 </div>
 <div id="filter-adat-contents" class="section level2" number="2.3">
 <h2><span class="header-section-number">2.3</span> Filter ADAT contents</h2>
-<p>Samples present in the ADAT file can be filtered based on Meta Data or SOMAmer data. When the ADAT file is processed, data columns are divided into Categorical (non-numeric) or Continuous (numeric) categories.</p>
+<p>Samples present in the ADAT file can be filtered based on Meta Data or SomaScan Assay data. When the ADAT file is processed, data columns are divided into Categorical (non-numeric) or Continuous (numeric) categories.</p>
 <p>All filtering operations are cumulative.</p>
 <div id="categorical-filters" class="section level3" number="2.3.1">
 <h3><span class="header-section-number">2.3.1</span> Categorical Filters</h3>
@@ -187,7 +187,7 @@
 <p class="caption">The categorical filters box.</p>
 </div>
 <p>Samples can be filtered from the ADAT based on categorical data using the Categorical Filters box. The column name can be selected from the <strong>Filter By</strong> selection box, which populates the <strong>Remove</strong> selection box with the unique categorical values in the ADAT file. Data values can be selected by clicking on one or more values in the <strong>Remove</strong> selection box. Once all selections are made, clicking the <strong>Apply</strong> button will remove those samples from the data, and the Data Dimensions box will be updated with new information.</p>
-<p>In this example, the <em>SampleType</em> column is selected and the unique entries for this column are shown: Buffer, Calibrator, QC, and Sample. By selecting Buffer, Calibrator, and QC, the assay control samples can be removed from the data file.</p>
+<p>In this example, the <em>SampleType</em> column is selected and the unique entries for this column are shown: Buffer, Calibrator, QC, and Sample. By clicking on Buffer, Calibrator, and QC, to select them, the assay control samples can be removed from the data file.</p>
 <p>Checking the <strong>Filter samples with no entry</strong> box will remove all samples lacking a value for the selected column.</p>
 </div>
 <div id="continuous-filters" class="section level3" number="2.3.2">
@@ -206,7 +206,7 @@
 </div>
 <div id="download-adat" class="section level3" number="2.3.4">
 <h3><span class="header-section-number">2.3.4</span> Download ADAT</h3>
-<p>Once filtering has been performed, a version of the ADAT can be downloaded by clicking the <strong>Download ADAT</strong> button. As this new ADAT file may be significantly modified for content relative to the original, ensure that a new, unique, descriptive filename is specified so that the original ADAT is not overwritten and that the filtering operations can be determined if you return to the modified file at a later date.</p>
+<p>Once filtering has been performed, a version of the ADAT can be downloaded by clicking the <strong>Download ADAT</strong> button. As this new ADAT file may be significantly modified relative to the original, ensure that a new, unique, descriptive file name is specified so that the original ADAT is not overwritten. Keeping good notes regarding the filtering operations is essential to recall how the ADAT was modified when it is returned to at a later date.</p>
 
 </div>
 </div>

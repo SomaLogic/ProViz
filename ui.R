@@ -371,7 +371,7 @@ dashboardPage(skin='blue',
                                        textInput(inputId = 'pltCDFXaxisTitle',
                                                  label = 'X-axis Title'),
                                        checkboxInput(inputId = 'pltCDFLog10',
-                                                     label = 'Log10')
+                                                     label = 'X-axis Log10')
                                    )
                             )
                          )
@@ -619,7 +619,7 @@ dashboardPage(skin='blue',
                 fluidRow(
                    column(3,
                           box(width = 12, status = 'primary',
-                              title = 'Plot Settings', solidHeader = TRUE,
+                              title = 'Settings', solidHeader = TRUE,
                               fluidRow(
                                column(6, 
                                  radioButtons(inputId = 'statTests',
@@ -638,20 +638,7 @@ dashboardPage(skin='blue',
                                                 label = 'Correlation Method',
                                                 choices = c('Pearson', 'Spearman')
                                                 )
-                                 )#,
-                                 # conditionalPanel(condition =
-                                 #   'input.statTests == "t-test" |
-                                 #    input.statTests == "U-test" |
-                                 #    input.statTests == "ANOVA" |
-                                 #    input.statTests == "Kruskal-Wallis"',
-                                 #   checkboxInput(inputId = 'statMatched',
-                                 #                 label = 'Matched Test'),
-                                 #   conditionalPanel(condition = 'input.statMatched',
-                                 #      selectInput(inputId = 'statMatchCol',
-                                 #                  label = 'Matching Variable',
-                                 #                  choices = '<NONE>')
-                                 #   )
-                                 # )
+                                 )
                                )
                               ),
                               fluidRow(column(12,
@@ -755,7 +742,8 @@ dashboardPage(skin='blue',
                                             ),
                                          ),
                                          conditionalPanel(condition = 
-                                           'input.statSelPlotRegLine',
+                                           'input.statTests == "Correlation" &
+                                            input.statSelPlotRegLine',
                                            column(4,
                                              selectInput(inputId = 'statSelPlotAddCorr',
                                                          label = 'Add Correlation to Plot',
