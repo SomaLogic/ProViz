@@ -39,7 +39,7 @@ points
 lines
 title-and-size-2
 statistical-tests
-group-tests
+statistical-tests-1
 selecting-a-response
 plots-1
 statistical-results-table

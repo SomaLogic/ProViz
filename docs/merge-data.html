@@ -31,7 +31,7 @@
   
 <link rel="prev" href="load-and-filter-adat.html"/>
 <link rel="next" href="create-group.html"/>
-<script src="libs/header-attrs-2.6/header-attrs.js"></script>
+<script src="libs/header-attrs-2.7/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -134,7 +134,7 @@
 </ul></li>
 <li class="chapter" data-level="6" data-path="statistical-tests.html"><a href="statistical-tests.html"><i class="fa fa-check"></i><b>6</b> Statistical Tests</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="statistical-tests.html"><a href="statistical-tests.html#group-tests"><i class="fa fa-check"></i><b>6.1</b> 2-group Tests</a>
+<li class="chapter" data-level="6.1" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-tests-1"><i class="fa fa-check"></i><b>6.1</b> Statistical Tests</a>
 <ul>
 <li class="chapter" data-level="6.1.1" data-path="statistical-tests.html"><a href="statistical-tests.html#selecting-a-response"><i class="fa fa-check"></i><b>6.1.1</b> Selecting a Response</a></li>
 <li class="chapter" data-level="6.1.2" data-path="statistical-tests.html"><a href="statistical-tests.html#plots-1"><i class="fa fa-check"></i><b>6.1.2</b> Plots</a></li>
@@ -170,12 +170,12 @@
 </div>
 <div id="selecting-a-data-file-to-merge" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Selecting a Data File to Merge</h2>
-<p>External data must be stored in a comma-delimited or a tab-delimited file, and the first row should contain column names. The file containing the data can be uploaded to ProViz by selecting the Browse button and navigating to the file. Once uploaded, a preview of the data file will be displayed at the lower left, below the ADAT Preview.</p>
+<p>External data must be stored in a comma-delimited or a tab-delimited file, and the first row should contain column names. The file containing the data can be uploaded to ProViz by selecting the Browse button and navigating to the file. Once uploaded, a preview of the data file will be displayed below the ADAT Preview.</p>
 </div>
 <div id="selecting-columns-in-the-adat-and-the-data-file" class="section level2" number="3.2">
 <h2><span class="header-section-number">3.2</span> Selecting Columns in the ADAT and the Data File</h2>
 <p>In order to merge external data with the data in the ADAT file, each file should have one column that provides a way to match rows between the two files. Ideally, the columns should have all unique values and should match one-to-one between the ADAT file and the external data file. The target column in the ADAT can be selected with the <strong>ADAT Merge Column</strong> selection box, and the column in the external file can be selected with the <strong>Data Merge Column</strong> selection box. The columns do not need to have the same name.</p>
-<p>In this example, each file has a column titled SampleId. All this column’s entries in the external file are unique and correspond to the clinical samples SampleId values in the ADAT.</p>
+<p>In this example, each file has a column titled SampleId. All entries in this column in the external file are unique and correspond to the clinical samples’ SampleId values in the ADAT.</p>
 </div>
 <div id="specifying-the-type-of-merge" class="section level2" number="3.3">
 <h2><span class="header-section-number">3.3</span> Specifying the Type of Merge</h2>
@@ -183,11 +183,11 @@
 </div>
 <div id="merge" class="section level2" number="3.4">
 <h2><span class="header-section-number">3.4</span> Merge</h2>
-<p>Once all selections are made, initiate the merge by pressing the <strong>Merge</strong> button. If an error occurs, a message will be displayed in the message box at the bottom of the panel, otherwise, the message box will contain updated data dimension information.</p>
+<p>Once all selections are made, initiate the merge by pressing the <strong>Merge</strong> button. If an error occurs, a message will be displayed in the message box at the bottom of the panel, otherwise, the message box will contain updated data dimension information. The message box will provide the exact error message from the underlying R code, and may not be easily interpreted. Typically, if an error occurs, it is due to selecting columns in either the ADAT or the external file that are not campatible.</p>
 </div>
 <div id="download-adat-1" class="section level2" number="3.5">
 <h2><span class="header-section-number">3.5</span> Download Adat</h2>
-<p>Once merging has been performed, a version of the ADAT can be downloaded by clicking the <strong>Download ADAT</strong> button. As this new ADAT file may be significantly modified for content relative to the original, ensure that a new, unique, descriptive filename is specified so that the original ADAT is not overwritten and that the filtering operations can be determined if you return to the modified file at a later date.</p>
+<p>Once merging has been performed, a version of the ADAT can be downloaded by clicking the <strong>Download ADAT</strong> button. As this new ADAT file may be significantly modified relative to the original, ensure that a new, unique, descriptive file name is specified so that the original ADAT is not overwritten. Keeping good notes regarding the filtering operations is essential to recall how the ADAT was modified when it is returned to at a later date.</p>
 
 </div>
 </div>

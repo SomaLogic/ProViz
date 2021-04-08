@@ -31,7 +31,7 @@
   
 <link rel="prev" href="merge-data.html"/>
 <link rel="next" href="plots.html"/>
-<script src="libs/header-attrs-2.6/header-attrs.js"></script>
+<script src="libs/header-attrs-2.7/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -134,7 +134,7 @@
 </ul></li>
 <li class="chapter" data-level="6" data-path="statistical-tests.html"><a href="statistical-tests.html"><i class="fa fa-check"></i><b>6</b> Statistical Tests</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="statistical-tests.html"><a href="statistical-tests.html#group-tests"><i class="fa fa-check"></i><b>6.1</b> 2-group Tests</a>
+<li class="chapter" data-level="6.1" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-tests-1"><i class="fa fa-check"></i><b>6.1</b> Statistical Tests</a>
 <ul>
 <li class="chapter" data-level="6.1.1" data-path="statistical-tests.html"><a href="statistical-tests.html#selecting-a-response"><i class="fa fa-check"></i><b>6.1.1</b> Selecting a Response</a></li>
 <li class="chapter" data-level="6.1.2" data-path="statistical-tests.html"><a href="statistical-tests.html#plots-1"><i class="fa fa-check"></i><b>6.1.2</b> Plots</a></li>
@@ -163,7 +163,7 @@
             <section class="normal" id="section-">
 <div id="create-group" class="section level1" number="4">
 <h1><span class="header-section-number">Chapter 4</span> Create Group</h1>
-<p>New groups can be created from existing data. Samples labeled with categorical data can be combined to create only 2 groups, or continous values can be split to create 2 groups.</p>
+<p>New groups can be created from existing data. Samples labeled with categorical data can be combined to create only 2 groups, or continuous values can be split to create 2 groups.</p>
 <div class="figure">
 <img src="images/CreateGroup.png" alt="" />
 <p class="caption">The Create Group panel.</p>
@@ -186,7 +186,7 @@
 <li>A preview of the original data column and the newly created data column are shown at the right.</li>
 <li>When ready to create the new group, press the <strong>Create New Group Column</strong> button, and the new column will be added to the ADAT.</li>
 </ul>
-<p>In this example, a column titled <em>New Group</em> will be created from the existing <em>Age</em> column. Rows with values less than 50 will be given the label <em>Group A</em> and values greater than or equal to 50 will be given the label <em>Group B</em>.</p>
+<p>In this example, a column titled <em>New Group</em> will be created from the existing <em>Age</em> column. Rows with values less than 50 will be given the label <em>A</em> and values greater than or equal to 50 will be given the label <em>B</em>.</p>
 </div>
 <div id="creating-a-new-group-from-categorical-data" class="section level2" number="4.2">
 <h2><span class="header-section-number">4.2</span> Creating a New Group from Categorical Data</h2>
@@ -199,16 +199,16 @@
 </li>
 <li>For splitting a categorical variable, select <em>Categorical</em> from the <strong>Create From</strong> options.<br />
 </li>
-<li>Clicking on the <strong>Group A</strong> or <strong>Group B</strong> select boxes will be show the categorical values available from the chosen column. Selections can be made by clicking on the categorical values desired for that group.</li>
+<li>Clicking on the <strong>Group A</strong> or <strong>Group B</strong> select boxes will show the categorical values available from the chosen column. Selections can be made by clicking on the categorical values desired for that group.</li>
 <li>Labels for the two groups are specified under <strong>Group A Label</strong> and <strong>Group B Label</strong>.</li>
 <li>A preview of the original data column and the newly created data column are shown at the right.</li>
 <li>When ready to create the new group, press the <strong>Create New Group Column</strong> button, and the new column will be added to the ADAT.</li>
 </ul>
-<p>In this example, a column titled <em>New Group</em> will be created from the existing <em>SampleType</em> column. Rows with values of <em>Calibrator</em>, <em>Buffer</em>, or <em>QC</em> will be given the label <em>Controls</em> and values of <em>Sample</em> will be given the label <em>Saples</em>. This will provide a useful label to distinguish between all controls and all clinical samples in the ADAT file.</p>
+<p>In this example, a column titled <em>New Group</em> will be created from the existing <em>SampleType</em> column. Rows with values of <em>Calibrator</em>, <em>Buffer</em>, or <em>QC</em> will be given the label <em>Controls</em> and values of <em>Sample</em> will be given the label <em>Samples</em>. This will provide a useful label to distinguish between all controls and all clinical samples in the ADAT file.</p>
 </div>
 <div id="download-adat-2" class="section level2" number="4.3">
 <h2><span class="header-section-number">4.3</span> Download ADAT</h2>
-<p>Once new groups have been created, a version of the ADAT can be downloaded by clicking the <strong>Download ADAT</strong> button. As this new ADAT file may be significantly modified for content relative to the original, ensure that a new, unique, descriptive filename is specified so that the original ADAT is not overwritten and that the filtering operations can be determined if you return to the modified file at a later date.</p>
+<p>Once new groups have been created, a version of the ADAT can be downloaded by clicking the <strong>Download ADAT</strong> button. As this new ADAT file may be significantly modified relative to the original, ensure that a new, unique, descriptive file name is specified so that the original ADAT is not overwritten. Keeping good notes regarding the filtering operations is essential to recall how the ADAT was modified when it is returned to at a later date.</p>
 
 </div>
 </div>

@@ -1318,16 +1318,24 @@ function(input, output, session) {
       df <- data.frame(rv$featureData[, c('AptName', 
                                           'TargetFullName', 'EntrezGeneSymbol')])
       
+      # remove rows with NA for response 
+      adat <- rv$adat[-which(is.na(rv$adat[[respID]])), ]
+      
+      # calculate max-fold change between group medians
+      df$Max.Fold.Change <- sapply(vars, function(v){
+         getMaxFoldChange(data.frame(data = adat[[v]],
+                                     grps = adat[[respID]]))
+      })
+      
       # log10 SOMAmers
-      adat <- log10(rv$adat)
+      adat <- log10(adat)
   
       # perform the tests 
       if(input$statTests == 'ANOVA'){
          tbl <- data.frame(t(sapply(vars, function(v){
             z <- suppressWarnings(aov(as.formula(sprintf('%s ~ %s', v, respID)),
                                       adat))
-            max_fold_change <- getMaxFoldChange(data.frame(data = adat[[v]],
-                                                           grps = adat[[respID]])) 
+            
             # increment the progress bar
             p <- which(vars == v)
             if((p / length(vars) * 100) %% 5 == 0){
@@ -1336,16 +1344,14 @@ function(input, output, session) {
             }
             
             z_summary <- summary(z) 
-            c(Max.Fold.Change = signif(max_fold_change, 2),
-              F = round(as.numeric(z_summary[[1]][1,4]),2),
+            c(F = round(as.numeric(z_summary[[1]][1,4]),2),
               p.value = z_summary[[1]][1,5])
          })))
       } else if(input$statTests == 'Kruskal-Wallis'){
          tbl <- data.frame(t(sapply(vars, function(v){
             z <- suppressWarnings(kruskal.test(as.formula(sprintf('%s ~ %s', v, respID)),
                                                adat))
-            max_fold_change <- getMaxFoldChange(data.frame(data = adat[[v]],
-                                                           grps = adat[[respID]])) 
+            
             # increment the progress bar
             p <- which(vars == v)
             if((p / length(vars) * 100) %% 5 == 0){
@@ -1353,8 +1359,7 @@ function(input, output, session) {
                                  value = p / length(vars) * 100)
             }
             
-            c(Max.Fold.Change = signif(max_fold_change, 2),
-              chi.squared = round(as.numeric(z$statistic, 2)),
+            c(chi.squared = round(as.numeric(z$statistic, 2)),
               p.value = z$p.value)
          })))
       }
@@ -1396,24 +1401,28 @@ function(input, output, session) {
       df <- data.frame(rv$featureData[, c('AptName', 
                                           'TargetFullName', 'EntrezGeneSymbol')])
       
+      # remove rows with NA for response 
+      adat <- rv$adat[-which(is.na(rv$adat[[respID]])), ]
+      
       # find the groups
-      grps <- unique(rv$adat[[respID]])
-      grp1_idx <- which(rv$adat[[respID]] == grps[1])
+      grps <- unique(adat[[respID]])
+      grp1_idx <- which(adat[[respID]] == grps[1])
+      grp2_idx <- which(adat[[respID]] == grps[2])
       
       # calculate fold change between group medians
       df$Fold.Change <- sapply(vars, function(v){
-         signif(log2(median(rv$adat[grp1_idx, v]) / 
-                     median(rv$adat[-grp1_idx, v])), 2)
+         signif(log2(median(adat[grp1_idx, v]) / 
+                     median(adat[grp2_idx, v])), 2)
       })
     
       # log10 SOMAmers
-      adat <- log10(rv$adat)
+      adat <- log10(adat)
    
       # perform the tests 
       if(input$statTests == 'KS-test'){
          tbl <- data.frame(t(sapply(vars, function(v){
             z <- suppressWarnings(ks.test(adat[grp1_idx, v], 
-                                          adat[-grp1_idx,v]))
+                                          adat[grp2_idx,v]))
             j <- which(df$AptName == v)
             if(df$Fold.Change[j] < 0){
                z$signedKS <- -z$statistic
@@ -1435,7 +1444,7 @@ function(input, output, session) {
       } else if(input$statTests == 't-test'){
          tbl <- data.frame(t(sapply(vars, function(v){
             z <- suppressWarnings(t.test(adat[grp1_idx, v], 
-                                         adat[-grp1_idx, v], var.equal = FALSE))
+                                         adat[grp2_idx, v], var.equal = FALSE))
             
             # increment the progress bar
             p <- which(vars == v)
@@ -1450,7 +1459,7 @@ function(input, output, session) {
       } else if(input$statTests == 'U-test'){
          tbl <- data.frame(t(sapply(vars, function(v){
             z <- suppressWarnings(wilcox.test(adat[grp1_idx, v], 
-                                              adat[-grp1_idx, v]))
+                                              adat[grp2_idx, v]))
             
             # increment the progress bar
             p <- which(vars == v)

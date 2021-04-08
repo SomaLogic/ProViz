@@ -31,7 +31,7 @@
   
 <link rel="prev" href="index.html"/>
 <link rel="next" href="load-and-filter-adat.html"/>
-<script src="libs/header-attrs-2.6/header-attrs.js"></script>
+<script src="libs/header-attrs-2.7/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -134,7 +134,7 @@
 </ul></li>
 <li class="chapter" data-level="6" data-path="statistical-tests.html"><a href="statistical-tests.html"><i class="fa fa-check"></i><b>6</b> Statistical Tests</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="statistical-tests.html"><a href="statistical-tests.html#group-tests"><i class="fa fa-check"></i><b>6.1</b> 2-group Tests</a>
+<li class="chapter" data-level="6.1" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-tests-1"><i class="fa fa-check"></i><b>6.1</b> Statistical Tests</a>
 <ul>
 <li class="chapter" data-level="6.1.1" data-path="statistical-tests.html"><a href="statistical-tests.html#selecting-a-response"><i class="fa fa-check"></i><b>6.1.1</b> Selecting a Response</a></li>
 <li class="chapter" data-level="6.1.2" data-path="statistical-tests.html"><a href="statistical-tests.html#plots-1"><i class="fa fa-check"></i><b>6.1.2</b> Plots</a></li>
@@ -169,23 +169,24 @@
 <h3><span class="header-section-number">1.1.1</span> GitHub</h3>
 <p>ProViz is a Shiny application written in R. The source code is available on GitHub in SomaLogic’s <a href="https://github.com/SomaLogic/ProViz">ProViz repository</a>.</p>
 <p>To use ProViz, it is recommended to install RStudio, clone the ProViz repository, and run it using the RStudio IDE. See <a href="https://shiny.rstudio.com/">RStudio’s Shiny page</a> for details of using RStudio to run a Shiny application. <a href="https://rstudio.com/products/shiny/shiny-server/">RStudio’s Shiny Server</a> can also be used to run ProViz from a server, providing access through a managed web portal.</p>
-<p>Some additional packages are required for ProViz. Following is a list of the required packages and the versions used during ProViz development and testing. All of the following packages are available through <a href="https://cran.r-project.org/">CThe Comprehensive R Network - CRAN</a>.</p>
+<p>Some additional packages are required for ProViz. Following is a list of the required packages and the versions used during ProViz development and testing. All of the following packages are available through <a href="https://cran.r-project.org/">The Comprehensive R Network - CRAN</a>.</p>
 <ul>
-<li>shiny (v1.5.0)</li>
+<li>shiny (v1.6.0)</li>
 <li>shinydashboard (v0.7.1)</li>
-<li>shinyWidgets (0.5.7)</li>
+<li>shinyWidgets (0.6.0)</li>
 <li>DT (0.17)</li>
-<li>dplyr (1.0.4)</li>
+<li>dplyr (1.0.5)</li>
 <li>ggbeeswarm (0.6.0)</li>
 <li>ggplot2 (3.3.3)</li>
 <li>magrittr (2.0.1)</li>
 <li>plotly (4.9.3)</li>
 <li>readr (1.4.0)</li>
 </ul>
-<p>Additionally, ProViz uses the SomaDataIO v5.0.0 available from <a href="https://github.com/SomaLogic/SomaDataIO">SomaLogic’s SomaDataIO GitHub repository</a></p>
+<p>Additionally, ProViz uses the SomaDataIO v5.0.0 available from <a href="https://github.com/SomaLogic/SomaDataIO">SomaLogic’s SomaDataIO GitHub repository</a>.</p>
 </div>
 <div id="dockerhub" class="section level3" number="1.1.2">
 <h3><span class="header-section-number">1.1.2</span> DockerHub</h3>
+<p>A Docker image will be available soon.</p>
 </div>
 </div>
 <div id="example-data" class="section level2" number="1.2">
@@ -199,7 +200,7 @@
 <p class="caption">The main ProViz panel.</p>
 </div>
 <p>In ProViz, you can navigate to different panels using the navigation pane on the left by clicking on the name of the panel. Each chapter in this tutorial gives a brief tutorial on how to use the options in the corresponding panel.</p>
-<p>Under <strong>Label SOMAmers by:</strong> users can select how the SOMAmer-associated data will be listed in selection boxes across all panels. You can choose <em>SOMAmer ID</em>, <em>Protein Name</em>, or <em>Gene Symbol</em>. The latter two options are most likely more familiar to most users than SOMAmer IDs. You can change between label types at any point when using ProViz.</p>
+<p>Users can select how the SOMAmer-associated data will be listed in selection boxes across all ProViz panels by selecting an option under <strong>Label SOMAmers by</strong>: <em>SOMAmer ID</em>, <em>Protein Name</em>, or <em>Gene Symbol</em>. The latter two options are most likely more familiar to most users than SOMAmer IDs. Label types can be changed at any point when using ProViz.</p>
 
 </div>
 </div>
