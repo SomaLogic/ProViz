@@ -1317,6 +1317,19 @@ function(input, output, session) {
       vars <- SomaDataIO::getFeatures(rv$adat)
       df <- data.frame(rv$featureData[, c('AptName', 
                                           'TargetFullName', 'EntrezGeneSymbol')])
+      adat <- rv$adat
+      
+      # remove rows with NA for response 
+      na_i <- which(is.na(adat[[respID]]))
+      if(length(na_i) > 0) {
+         adat <- adat[-na_i, ]
+      }
+      
+      # calculate max-fold change between group medians
+      df$Max.Fold.Change <- sapply(vars, function(v){
+         getMaxFoldChange(data.frame(data = adat[[v]],
+                                     grps = adat[[respID]]))
+      })
       
       # remove rows with NA for response 
       adat <- rv$adat[-which(is.na(rv$adat[[respID]])), ]
@@ -1400,6 +1413,13 @@ function(input, output, session) {
       vars <- SomaDataIO::getFeatures(rv$adat)
       df <- data.frame(rv$featureData[, c('AptName', 
                                           'TargetFullName', 'EntrezGeneSymbol')])
+      adat <- rv$adat
+      
+      # remove rows with NA for response 
+      na_i <- which(is.na(adat[[respID]]))
+      if(length(na_i) > 0) {
+         adat <- adat[-na_i, ]
+      }
       
       # remove rows with NA for response 
       adat <- rv$adat[-which(is.na(rv$adat[[respID]])), ]
