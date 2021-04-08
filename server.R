@@ -1411,7 +1411,7 @@ function(input, output, session) {
       if(length(na_i) > 0) {
          adat <- adat[-na_i, ]
       }
-      
+
       # find the groups
       grps <- unique(adat[[respID]])
       grp1_idx <- which(adat[[respID]] == grps[1])
