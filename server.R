@@ -1331,15 +1331,6 @@ function(input, output, session) {
                                      grps = adat[[respID]]))
       })
       
-      # remove rows with NA for response 
-      adat <- rv$adat[-which(is.na(rv$adat[[respID]])), ]
-      
-      # calculate max-fold change between group medians
-      df$Max.Fold.Change <- sapply(vars, function(v){
-         getMaxFoldChange(data.frame(data = adat[[v]],
-                                     grps = adat[[respID]]))
-      })
-      
       # log10 SOMAmers
       adat <- log10(adat)
   
@@ -1420,10 +1411,7 @@ function(input, output, session) {
       if(length(na_i) > 0) {
          adat <- adat[-na_i, ]
       }
-      
-      # remove rows with NA for response 
-      adat <- rv$adat[-which(is.na(rv$adat[[respID]])), ]
-      
+
       # find the groups
       grps <- unique(adat[[respID]])
       grp1_idx <- which(adat[[respID]] == grps[1])
