@@ -566,8 +566,7 @@ function(input, output, session) {
          } else {
             rv$adat <- merged_adat
             rv$mergeMessage <- rv$mergeMessageDefault
-            i <- which(colnames(rv$mergedData) == input$mergeDataCol)
-            rv$metaColumns <- c(rv$metaColumns, colnames(rv$mergedData)[-i])
+            rv$metaColumns <- SomaDataIO::getMeta(rv$adat)
          }
       }
       
@@ -582,8 +581,7 @@ function(input, output, session) {
          } else {
             rv$adat <- merged_adat
             rv$mergeMessage <- rv$mergeMessageDefault
-            i <- which(colnames(rv$mergedData) == input$mergeDataCol)
-            rv$metaColumns <- c(rv$metaColumns, colnames(rv$mergedData)[-i])
+            rv$metaColumns <- SomaDataIO::getMeta(rv$adat)
          }
       }
    })
@@ -1300,7 +1298,6 @@ function(input, output, session) {
       if(is.null(rv$adat) | input$statMultiResp== '<NONE>'){
          return(NULL)
       }
-     
       # if the selection didn't change
       if(input$statMultiResp == rv$statMultiResp &
          input$statTests == rv$statMultiTest) {
@@ -1327,9 +1324,10 @@ function(input, output, session) {
       
       # calculate max-fold change between group medians
       df$Max.Fold.Change <- sapply(vars, function(v){
-         getMaxFoldChange(data.frame(data = adat[[v]],
-                                     grps = adat[[respID]]))
+         round(getMaxFoldChange(data.frame(data = adat[[v]],
+                                     grps = adat[[respID]])), 2)
       })
+      updateProgressBar(session = session, id = 'statProgbar', value = 5)
       
       # log10 SOMAmers
       adat <- log10(adat)
