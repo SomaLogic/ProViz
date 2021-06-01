@@ -13,6 +13,7 @@ RUN R -e "devtools::install_version('readr', version = '1.4.0', repos = 'http://
 RUN R -e "devtools::install_version('shiny', version = '1.6.0', repos = 'http://cran.us.r-project.org')"
 RUN R -e "devtools::install_version('shinydashboard', version = '0.7.1', repos = 'http://cran.us.r-project.org')"
 RUN R -e "devtools::install_version('shinyWidgets', version = '0.6.0', repos = 'http://cran.us.r-project.org')"
+RUN R -e "devtools::install_version('tidyr', version = '1.0.2', repos = 'http://cran.us.r-project.org')"
 RUN R -e "devtools::install_version('usethis', version = '1.6.0', repos = 'http://cran.us.r-project.org')"
 
 RUN R -e "devtools::install_github('Somalogic/SomaDataIO@v5.0.0')"

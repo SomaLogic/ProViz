@@ -68,9 +68,9 @@ dashboardPage(skin='blue',
                  fluidRow(
                     column(3, 
                       fileInput('adat_file', 'Choose ADAT file',
-                                accept=c('.adat')),
+                                accept=c('.adat', '.ADAT', '.Adat')),
                       progressBar(id = 'loadProgbar', value = 0,
-                                  display_pct = TRUE),
+                                  title = '', display_pct = TRUE),
                       htmlOutput('loadPreviewText'),
                       box(width = 12, solidHeader = TRUE,
                         status = 'primary',
@@ -619,7 +619,7 @@ dashboardPage(skin='blue',
                 fluidRow(
                    column(3,
                           box(width = 12, status = 'primary',
-                              title = 'Settings', solidHeader = TRUE,
+                              title = 'Statistical Tests', solidHeader = TRUE,
                               fluidRow(
                                column(6, 
                                  radioButtons(inputId = 'statTests',
@@ -638,6 +638,20 @@ dashboardPage(skin='blue',
                                                 label = 'Correlation Method',
                                                 choices = c('Pearson', 'Spearman')
                                                 )
+                                 ),
+                                 conditionalPanel(condition =
+                                   'input.statTests == "t-test" |
+                                    input.statTests == "U-test" |
+                                    input.statTests == "ANOVA" |
+                                    input.statTests == "Kruskal-Wallis" |
+                                    input.statTests == "Friedman\'s Test"',
+                                   checkboxInput(inputId = 'statMatched',
+                                                 label = 'Matched Samples'),
+                                   conditionalPanel(condition = 'input.statMatched',
+                                      selectInput(inputId = 'statMatchCol',
+                                                  label = 'Matching Variable',
+                                                  choices = '<NONE>')
+                                   )
                                  )
                                )
                               ),
@@ -656,14 +670,21 @@ dashboardPage(skin='blue',
                                                 choices = '<NONE>')),
                                  conditionalPanel(condition = 
                                     'input.statTests == "ANOVA" |
-                                     input.statTests == "Kruskal-Wallis"',
+                                     input.statTests == "Kruskal-Wallis" |
+                                     input.statTests == "Friedman\'s Test"',
                                     selectInput(inputId = 'statMultiResp',
                                                 label = 'Multi-group Response',
                                                 choices = '<NONE>')),
                                  progressBar(id = 'statProgbar', value = 0,
-                                             display_pct = TRUE)
+                                             display_pct = TRUE, title = '')
                               )),
-                              fluidRow(column(12,
+                              fluidRow(
+                               column(5,
+                                 actionButton(inputId = 'statStartTests',
+                                              label = 'Start Tests',
+                                              icon = icon('play'))
+                              ),
+                               column(7,
                                  downloadButton(outputId = 'downloadStatTable', 
                                                 'Download Results')
                               ))
@@ -706,20 +727,20 @@ dashboardPage(skin='blue',
                                 box(width = 12, status = 'primary',
                                     fluidRow(
                                        column(12,
-                                          plotlyOutput(outputId = 'stat2GrpDistPlot')
+                                          plotlyOutput(outputId = 'statDistPlot')
                                        )
                                     ),
                                     fluidRow(
                                           conditionalPanel(condition = 
                                             'input.statTests != "Correlation"',
-                                            column(4,
+                                            column(3,
                                             radioButtons(inputId = 'stat2GrpBoxCDF',
                                                          choices = c('Boxplot','CDF'),
                                                          label = 'Plot Options',
                                                          inline = TRUE)
                                           )
                                        ),
-                                       column(4,
+                                       column(3,
                                           br(),
                                           checkboxInput(inputId = 'stat2GrpPlotLog10',
                                                         label = 'Log10')
@@ -727,11 +748,23 @@ dashboardPage(skin='blue',
                                        conditionalPanel(condition = 
                                          'input.stat2GrpBoxCDF == "Boxplot" &
                                           input.statTests != "Correlation"',
-                                        column(4, 
+                                        column(3, 
                                           br(),
                                           checkboxInput(inputId  = 'stat2GrpPlotBeeswarm',
                                                         label = 'Beeswarm')
                                          )
+                                        ),
+                                        conditionalPanel(condition =
+                                          'input.stat2GrpBoxCDF == "Boxplot" &
+                                           (input.statTests == "t-test" |
+                                            input.statTests == "U-test" |
+                                            input.statTests == "ANOVA" |
+                                            input.statTests == "Friedman\'s Test") &
+                                            input.statMatched',
+                                         column(3, 
+                                           br(),
+                                           checkboxInput(inputId = 'statPlotMatched',
+                                                         label = 'Plot Matched'))
                                         ),
                                         conditionalPanel(condition =
                                           'input.statTests == "Correlation"',

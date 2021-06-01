@@ -81,18 +81,10 @@ rv$mergeMessage <- NULL
 rv$grpWarning <- '' 
 rv$grpNewGroupData <- NULL
 
-# stats variables
+# stats variables/tables
 rv$stat2GrpTable <- NULL
-rv$stat2GrpResp <- '<NONE>' 
-rv$stat2GrpTest <- ''
-
 rv$statCorrTable <- NULL
-rv$statCorrResp <- '<NONE>'
-rv$statCorrMethod <- ''
-
 rv$statMultiTable <- NULL
-rv$statMultiResp <- '<NONE>'
-rv$statMultiTest <- ''
 
 rv$statTableRowSelect <- NULL
 
