@@ -140,7 +140,7 @@ function(input, output, session) {
                                (is.numeric(column) & length(unique(column)) <= 10)
                             })
       )
-
+      
       # store these for other UI elements to use
       rv$conColumns <- sapply(colnames(rv$adat)[con_i], function(cn) {
          lookupID(cn, input$rdoIDChoice)
@@ -197,6 +197,18 @@ function(input, output, session) {
       multiGrpCols <- metaColumns[multiGrp]
       updateSelectInput(session, 'statMultiResp',
                         choices = c('<NONE>', multiGrpCols))
+      
+      # get variables that could be used for paired/repeated measures tests
+      pair_i <- which(sapply(metaColumns, function(col_name) {
+         column <- na.omit(rv$adat[[col_name]])
+         ifelse(is.numeric(column),
+                all(as.integer(column) == column),
+                length(column) > 0
+         )
+      }))
+      pairCols <- metaColumns[pair_i]
+      updateSelectInput(session, 'statMatchCol',
+                        choices = c('<NONE>', pairCols))
       
       #update the scatter plot color by variable selection
       if(input$pltSctrColorBy == 'Continuous'){
@@ -352,7 +364,7 @@ function(input, output, session) {
                 } else {
                    # update progress
                    updateProgressBar(session = session, id = 'loadProgbar',
-                                     value = 15)
+                                     title = 'Loading ADAT...', value = 15)
                    
                    adat <- try(SomaDataIO::read_adat(input$adat_file$datapath))
                    
@@ -383,7 +395,7 @@ function(input, output, session) {
                       
                       # update progress
                       updateProgressBar(session = session, id = 'loadProgbar',
-                                        value = 100)
+                                        title = '', value = 100)
                      }
                 }
    })
@@ -502,10 +514,11 @@ function(input, output, session) {
       } else {
          fn <- input$merge_file$name
          if(endsWith(fn, '.csv')){
-            data <- try(readr::read_csv(input$merge_file$datapath))
+            data <- try(readr::read_csv(input$merge_file$datapath,
+                                        col_types = cols()))
          } else if(endsWith(fn, '.txt')) {
             data <- try(readr::read_delim(input$merge_file$datapath, 
-                                          delim = '\t'))
+                                          delim = '\t', col_types = cols()))
          } else {
             rv$loadMessage <- rv$loadMessageDefault
             rv_mergedData <- NULL
@@ -529,7 +542,6 @@ function(input, output, session) {
             return(NULL)
          } else {
            # limit ADAT to only row metadata columns 
-           # table is too slow to deal with all SOMAmer columns
            rv$adat[, rv$metaColumns]
          }
       }
@@ -1198,7 +1210,8 @@ function(input, output, session) {
                 input$statTests == 'KS-test') {
          resTable <- rv$stat2GrpTable
       } else if(input$statTests == 'ANOVA' |
-                input$statTests == 'Kruskal-Wallis') {
+                input$statTests == 'Kruskal-Wallis' |
+                input$statTests == 'Friedman\'s Test') {
          resTable <- rv$statMultiTable
       }
       
@@ -1236,18 +1249,8 @@ function(input, output, session) {
          return(NULL)
       }
       
-      # if the selection didn't change
-      if(input$statCorrResp == rv$statCorrResp &
-         input$statCorrMethod == rv$statCorrMethod){
-         df <- rv$statCorrTable
-         # user-friendly column names
-         colnames(df)[1:3] = c('SOMAmer', 'Protein Name', 'Gene Symbol')
-         return(df)
-      }
-     
       # prepare the results table 
       respID <- input$statCorrResp -> rv$statCorrResp
-      rv$statCorrMethod <- input$statCorrMethod
       vars <- SomaDataIO::getFeatures(rv$adat)
       df <- data.frame(rv$featureData[, c('AptName', 
                                           'TargetFullName', 'EntrezGeneSymbol')])
@@ -1298,45 +1301,60 @@ function(input, output, session) {
       if(is.null(rv$adat) | input$statMultiResp== '<NONE>'){
          return(NULL)
       }
-      # if the selection didn't change
-      if(input$statMultiResp == rv$statMultiResp &
-         input$statTests == rv$statMultiTest) {
-         df <- rv$statMultiTable
-         # user-friendly column names
-         colnames(df)[1:3] = c('SOMAmer', 'Protein Name', 'Gene Symbol')
-         return(df)
-      }
      
       # prepare the results table 
       respID <- lookupID(input$statMultiResp, 'SOMAmer ID') 
-      rv$statMultiResp <- respID
-      rv$statMultiTest <- input$statTests
       vars <- SomaDataIO::getFeatures(rv$adat)
       df <- data.frame(rv$featureData[, c('AptName', 
                                           'TargetFullName', 'EntrezGeneSymbol')])
+      
+      # work on a local copy
       adat <- rv$adat
       
-      # remove rows with NA for response 
-      na_i <- which(is.na(adat[[respID]]))
-      if(length(na_i) > 0) {
-         adat <- adat[-na_i, ]
+      # order as needed
+      if(input$statMatched & input$statMatchCol != '<NONE>') {
+         
+         adat <- adat[order(adat[[input$statMultiResp]], 
+                            adat[[input$statMatchCol]]), ]
       }
       
-      # calculate max-fold change between group medians
-      df$Max.Fold.Change <- sapply(vars, function(v){
-         round(getMaxFoldChange(data.frame(data = adat[[v]],
-                                     grps = adat[[respID]])), 2)
-      })
-      updateProgressBar(session = session, id = 'statProgbar', value = 5)
+      # remove rows with NA in response or match
+      adat <- adat[-which(is.na(adat[[input$statMultiResp]]) |
+                          is.na(adat[[input$statMatchCol]])), ]
       
       # log10 SOMAmers
       adat <- log10(adat)
-  
+      
       # perform the tests 
       if(input$statTests == 'ANOVA'){
          tbl <- data.frame(t(sapply(vars, function(v){
-            z <- suppressWarnings(aov(as.formula(sprintf('%s ~ %s', v, respID)),
-                                      adat))
+            if(input$statMatched & input$statMatchCol != '<NONE') {
+               # build a fullly matched data table for repeated measures
+               rm_df <- data.frame(matching = adat[[input$statMatchCol]],
+                                  trtmnt = adat[[input$statMultiResp]],
+                                  RFU = adat[[v]])
+               rm_df_wide <- tidyr::spread(rm_df, key = trtmnt,
+                                          value = RFU)
+               rm_df_wide <- rm_df_wide[complete.cases(rm_df_wide), ]
+               rm_df_tall <- tidyr::gather(rm_df_wide, key = 'trtmnt',
+                                           value = 'RFU', unique(rm_df$trtmnt))
+               rm_df_tall$matching <- factor(rm_df_tall$matching)
+               rm_df_tall$trtmnt <- factor(rm_df_tall$trtmnt)
+               
+               z <- try(suppressWarnings(aov(RFU ~ trtmnt + Error(matching),
+                                         rm_df_tall)))
+               
+               max_fold_change <- getMaxFoldChange(
+                                       data.frame(data = rm_df_tall$RFU,
+                                                  grps = rm_df_tall$trtmnt)) 
+            } else {
+               z <- suppressWarnings(aov(as.formula(sprintf('%s ~ %s', 
+                                                            v, respID)),
+                                         adat))
+               max_fold_change <- getMaxFoldChange(
+                                       data.frame(data = adat[[v]],
+                                                  grps = adat[[respID]])) 
+            }
             
             # increment the progress bar
             p <- which(vars == v)
@@ -1346,13 +1364,51 @@ function(input, output, session) {
             }
             
             z_summary <- summary(z) 
-            c(F = round(as.numeric(z_summary[[1]][1,4]),2),
-              p.value = z_summary[[1]][1,5])
+            if(input$statMatched & input$statMatchCol != '<NONE') {
+               if(inherits(adat, 'try-error')){
+                  c(Max.Fold.Change = NA,
+                    F = NA, 
+                    p.value = NA)
+               } else {
+                  c(Max.Fold.Change = signif(max_fold_change, 2),
+                    F = round(as.numeric(z_summary[[2]][[1]][1,4]), 2),
+                    p.value = z_summary[[2]][[1]][1,5])
+               }
+            } else {
+               c(Max.Fold.Change = signif(max_fold_change, 2),
+                 F = round(as.numeric(z_summary[[1]][1,4]), 2),
+                 p.value = z_summary[[1]][1,5])
+            }
          })))
-      } else if(input$statTests == 'Kruskal-Wallis'){
+      } else if(input$statTests == 'Kruskal-Wallis' |
+                input$statTests == 'Friedman\'s Test') {
          tbl <- data.frame(t(sapply(vars, function(v){
-            z <- suppressWarnings(kruskal.test(as.formula(sprintf('%s ~ %s', v, respID)),
-                                               adat))
+            if(input$statMatched & input$statMatchCol != '<NONE') {
+               # build a fullly matched data table for repeated measures
+               rm_df <- data.frame(matching = adat[[input$statMatchCol]],
+                                   trtmnt = adat[[input$statMultiResp]],
+                                   RFU = adat[[v]])
+               rm_df_wide <- tidyr::spread(rm_df, key = trtmnt,
+                                           value = RFU)
+               rm_df_wide <- rm_df_wide[complete.cases(rm_df_wide), ]
+               rm_df_tall <- tidyr::gather(rm_df_wide, key = 'trtmnt',
+                                           value = 'RFU', unique(rm_df$trtmnt))
+               rm_df_tall$matching <- factor(rm_df_tall$matching)
+               rm_df_tall$trtmnt <- factor(rm_df_tall$trtmnt)
+               
+               z <- try(suppressWarnings(friedman.test(RFU ~ trtmnt | matching,
+                                                       rm_df_tall)))
+               
+               max_fold_change <- getMaxFoldChange(
+                  data.frame(data = rm_df_tall$RFU,
+                             grps = rm_df_tall$trtmnt)) 
+            } else {
+               z <- suppressWarnings(
+                  kruskal.test(as.formula(sprintf('%s ~ %s', v, respID)),
+                               adat))
+               max_fold_change <- getMaxFoldChange(data.frame(data = adat[[v]],
+                                                           grps = adat[[respID]])) 
+            }
             
             # increment the progress bar
             p <- which(vars == v)
@@ -1361,8 +1417,15 @@ function(input, output, session) {
                                  value = p / length(vars) * 100)
             }
             
-            c(chi.squared = round(as.numeric(z$statistic, 2)),
-              p.value = z$p.value)
+            if(inherits(adat, 'try-error')){
+               c(Max.Fold.Change = NA,
+                 F = NA, 
+                 p.value = NA)
+            } else {
+               c(Max.Fold.Change = signif(max_fold_change, 2),
+                 chi.squared = round(as.numeric(z$statistic, 2)),
+                 p.value = z$p.value)
+            }
          })))
       }
       
@@ -1382,53 +1445,62 @@ function(input, output, session) {
    
    stat2GrpTests <- function() {
       # perform 2-group tests
-      if(is.null(rv$adat) | input$stat2GrpResp == '<NONE>'){
+      if(is.null(rv$adat) | input$stat2GrpResp == '<NONE>' |
+         (input$statMatched & input$statMatchCol == '<NONE>')) {
          return(NULL)
       }
       
-      # if the selection didn't change
-      if(input$stat2GrpResp == rv$stat2GrpResp &
-         input$statTests == rv$stat2GrpTest) {
-         df <- rv$stat2GrpTable
-         # user-friendly column names
-         colnames(df)[1:3] = c('SOMAmer', 'Protein Name', 'Gene Symbol')
-         return(df)
-      }
-     
       # prepare the results table 
-      respID <- lookupID(input$stat2GrpResp, 'SOMAmer ID')
-      rv$stat2GrpResp <- respID
-      rv$stat2GrpTest <- input$statTests
+      respID <- input$stat2GrpResp
       vars <- SomaDataIO::getFeatures(rv$adat)
       df <- data.frame(rv$featureData[, c('AptName', 
                                           'TargetFullName', 'EntrezGeneSymbol')])
+      
+      # work on a local copy
       adat <- rv$adat
       
-      # remove rows with NA for response 
-      na_i <- which(is.na(adat[[respID]]))
-      if(length(na_i) > 0) {
-         adat <- adat[-na_i, ]
+      # order as needed
+      if((input$statTests == 't-test' |
+          input$statTests == 'U-test') &
+         input$statMatched & input$statMatchCol != '<NONE>') {
+         
+         adat <- adat[order(adat[[input$stat2GrpResp]], 
+                            adat[[input$statMatchCol]]), ]
+         
+         # remove rows with NA for response 
+         adat <- adat[-which(is.na(adat[[respID]])), ]
       }
-
-      # find the groups
-      grps <- unique(adat[[respID]])
-      grp1_idx <- which(adat[[respID]] == grps[1])
-      grp2_idx <- which(adat[[respID]] == grps[2])
       
-      # calculate fold change between group medians
-      df$Fold.Change <- sapply(vars, function(v){
-         signif(log2(median(adat[grp1_idx, v]) / 
-                     median(adat[grp2_idx, v])), 2)
-      })
-    
+      # find the groups
+      grps <- sort(unique(adat[[respID]]))
+      grp1_idx <- which(adat[[respID]] == grps[1])
+      
+      if((input$statTests == 't-test' |
+          input$statTests == 'U-test') &
+         input$statMatched & input$statMatchCol != '<NONE>') {
+         
+         # calculate mean delta between pairs
+         df$Median.Fold.Change <- sapply(vars, function(v) {
+            (adat[-grp1_idx, v] / adat[grp1_idx, v]) %>% 
+               log2() %>% median() %>% signif(2)
+         })
+      } else {
+         # calculate fold change between group medians
+         df$Fold.Change <- sapply(vars, function(v) {
+            (median(adat[-grp1_idx, v]) / 
+             median(adat[grp1_idx, v])) %>% 
+               log2() %>%  signif(2)
+         })
+      }
+      
       # log10 SOMAmers
       adat <- log10(adat)
-   
+      
       # perform the tests 
       if(input$statTests == 'KS-test'){
          tbl <- data.frame(t(sapply(vars, function(v){
             z <- suppressWarnings(ks.test(adat[grp1_idx, v], 
-                                          adat[grp2_idx,v]))
+                                          adat[-grp1_idx,v]))
             j <- which(df$AptName == v)
             if(df$Fold.Change[j] < 0){
                z$signedKS <- -z$statistic
@@ -1450,7 +1522,9 @@ function(input, output, session) {
       } else if(input$statTests == 't-test'){
          tbl <- data.frame(t(sapply(vars, function(v){
             z <- suppressWarnings(t.test(adat[grp1_idx, v], 
-                                         adat[grp2_idx, v], var.equal = FALSE))
+                                         adat[-grp1_idx, v], 
+                                         paired = input$statMatched,
+                                         var.equal = FALSE))
             
             # increment the progress bar
             p <- which(vars == v)
@@ -1465,7 +1539,8 @@ function(input, output, session) {
       } else if(input$statTests == 'U-test'){
          tbl <- data.frame(t(sapply(vars, function(v){
             z <- suppressWarnings(wilcox.test(adat[grp1_idx, v], 
-                                              adat[grp2_idx, v]))
+                                              adat[-grp1_idx, v],
+                                              paired = input$statMatched))
             
             # increment the progress bar
             p <- which(vars == v)
@@ -1499,6 +1574,7 @@ function(input, output, session) {
          return(NULL)
       }
       
+      # get the right results table
       if(input$statTests == 'Correlation') {
          if(input$statCorrResp == '<NONE>') {
             return(NULL)
@@ -1507,21 +1583,36 @@ function(input, output, session) {
          ifelse(input$statCorrMethod == 'Pearson',
                 xAxis <- 'r',
                 xAxis <- 'rho')
-      } else if(input$statTests == 't-test' |
-                input$statTests == 'U-test' |
-                input$statTests == 'KS-test') {
+      } else if(input$statTests == 'KS-test') {
          if(input$stat2GrpResp == '<NONE>') {
             return(NULL)
          }
          df <- rv$stat2GrpTable
          xAxis <- 'Fold.Change'
+      } else if(input$statTests == 'U-test' |
+                input$statTests == 't-test') {
+         if(input$stat2GrpResp == '<NONE>') {
+            return(NULL)
+         }
+         df <- rv$stat2GrpTable
+         if(input$statMatched & input$statMatchCol != '<NONE>') {
+            xAxis <- 'Median.Fold.Change'
+         } else {
+            xAxis <- 'Fold.Change'
+         }
       } else if(input$statTests == 'ANOVA' |
-                input$statTests == 'Kruskal-Wallis') {
+                input$statTests == 'Kruskal-Wallis' |
+                input$statTests == 'Friedman\'s Test') {
          if(input$statMultiResp == '<NONE>') {
             return(NULL)
          }
          df <- rv$statMultiTable
          xAxis <- 'Max.Fold.Change'
+      }
+
+      # if the table is NULL, stats haven't been calculated yet      
+      if(is.null(df)) {
+         return(NULL)
       }
       
       # set the p-value column name
@@ -1557,10 +1648,15 @@ function(input, output, session) {
                                                 paste0('Spearman rho: ', rho, '\n')
                                              }
                                           } else if(input$statTests == 'ANOVA' |
-                                                    input$statTests == 'Kruskal-Wallis') {
+                                                    input$statTests == 'Kruskal-Wallis' |
+                                                    input$statTests == 'Friedman\'s Test') {
                                              paste0('Maximum Fold Change: ', Max.Fold.Change, '\n')
                                           } else {
-                                             paste0('Fold Change: ', Fold.Change, '\n')
+                                             if(xAxis == 'Fold.Change') {
+                                                paste0('Fold Change: ', Fold.Change, '\n')
+                                             } else {
+                                                paste('Median Fold Change (log2): ', Median.Fold.Change, '\n')
+                                             }
                                           },
                                           input$stat2GrpCorrection, ': ', 
                                                signif(!!sym(pcolumn), 3))
@@ -1574,10 +1670,15 @@ function(input, output, session) {
                  ifelse(input$statCorrMethod == 'Pearson',
                         'Pearson r', 'Spearman rho')
               } else if(input$statTests == 'ANOVA' |
-                        input$statTests == 'Kruskal-Wallis') {
+                        input$statTests == 'Kruskal-Wallis' |
+                        input$statTests == 'Friedman\'s Test') {
                  'Maximum Fold Change'
               } else {
-                 'Fold Change (log2)'
+                 if(xAxis == 'Fold.Change'){
+                  'Fold Change (log2)'
+                 } else {
+                  'Median Fold Change (log2)'
+                 }
               }) +
          ylab(paste0('-log10(', input$stat2GrpCorrection, ')')) +
          geom_vline(xintercept = c(input$stat2GrpFold, -input$stat2GrpFold),
@@ -1595,7 +1696,7 @@ function(input, output, session) {
       return(pltly)
    })
    
-   output$stat2GrpDistPlot <- renderPlotly({
+   output$statDistPlot <- renderPlotly({
       # generate boxplots or CDFs of grouped data
       # from the selected SOMAmer
       if(input$statTests == 'Correlation') {
@@ -1703,7 +1804,7 @@ function(input, output, session) {
    
    statDistributionPlot <- function() {
       # generate boxplot or cdf of the selected SOMAmer
-      # from the Volcano plot
+      # from the Volcano plot or table
       resTable <- getStatResultsTable()
       
       if(!is.null(rv$statTableRowSelect)) {
@@ -1738,8 +1839,17 @@ function(input, output, session) {
          input$statTests == 'KS-test') {
             df$X <- rv$adat[[input$stat2GrpResp]]
       } else if (input$statTests == 'ANOVA' |
-                 input$statTests == 'Kruskal-Wallis') {
+                 input$statTests == 'Kruskal-Wallis' |
+                 input$statTests == 'Friedman\'s Test') {
             df$X <- rv$adat[[input$statMultiResp]]
+      }
+      if( (input$statTests == 't-test' |
+           input$statTests == 'U-test' |
+           input$statTests == 'ANOVA' |
+           input$statTests == 'Friedman\'s Test') &
+          (input$statMatched & 
+           input$statMatchCol != '<NONE>') ) {
+         df$Matching <- rv$adat[[input$statMatchCol]]
       }
       df <- df[complete.cases(df), ]
       
@@ -1751,33 +1861,47 @@ function(input, output, session) {
                                                 input$statTests == 'KS-test') {
                                                 input$stat2GrpResp
                                              } else if(input$statTests == 'ANOVA' | 
-                                                       input$statTests == 'Kruskal-Wallis') {
+                                                       input$statTests == 'Kruskal-Wallis' |
+                                                       input$statTests == 'Friedman\'s Test') {
                                                 input$statMultiResp
                                              }, ': ', X, '\n',
                                              ifelse(input$stat2GrpPlotLog10, 
                                                     'log10(', ''), lab_name,
                                              ifelse(input$stat2GrpPlotLog10, 
                                                     ')', ''), ': ', round(Y, 2)
-                               ))) +  
-            geom_boxplot(aes(fill = X), color = 'black') +
-            xlab(if(input$statTests == 't-test' |
-                    input$statTests == 'U-test' |
-                    input$statTests == 'KS-test') {
-                        input$stat2GrpResp
-                 } else if(input$statTests == 'ANOVA' | 
-                           input$statTests == 'Kruskal-Wallis') {
-                    input$statMultiResp
-                 }) +
-            ylab(paste0(ifelse(input$stat2GrpPlotLog10, 'log10(', ''), lab_name,
-                        ifelse(input$stat2GrpPlotLog10, ')', ''))) +
-            theme_minimal() +
-            theme(plot.margin = margin(1, 1, 1, 1, 'lines'))
+                               )))
             
-            if(input$stat2GrpPlotBeeswarm){
-               plt <- plt + 
-                  geom_beeswarm(shape = 21, color = 'black', 
-                                size = 1.0, fill = 'grey', alpha = 0.8)
-            }
+         plt <- plt + geom_boxplot(aes(fill = X), color = 'black') +
+         xlab(if(input$statTests == 't-test' |
+                 input$statTests == 'U-test' |
+                 input$statTests == 'KS-test') {
+                     input$stat2GrpResp
+              } else if(input$statTests == 'ANOVA' | 
+                        input$statTests == 'Kruskal-Wallis' |
+                        input$statTests == 'Friedman\'s Test') {
+                 input$statMultiResp
+              }) 
+         
+         if( (input$statTests == 't-test' |
+              input$statTests == 'U-test' |
+              input$statTests == 'ANOVA' |
+              input$statTests == 'Friedman\'s Test') &
+             (input$statMatched & 
+              input$statMatchCol != '<NONE') &
+              input$statPlotMatched) {
+            plt <- plt + geom_line(aes(group = Matching))
+         }
+         
+         plt <- plt + ylab(paste0(ifelse(input$stat2GrpPlotLog10, 'log10(', ''), lab_name,
+                     ifelse(input$stat2GrpPlotLog10, ')', ''))) +
+         theme_minimal() +
+         theme(plot.margin = margin(1, 1, 1, 1, 'lines'))
+         
+         if(input$stat2GrpPlotBeeswarm){
+            plt <- plt + 
+               geom_beeswarm(shape = 21, color = 'black', 
+                             size = 2, fill = 'grey', alpha = 0.8)
+         }
         
          # turn off legend
          # this has to be done independently to the ggplot build (above) ??
@@ -1785,16 +1909,16 @@ function(input, output, session) {
             theme(legend.position = 'none') 
          
          pltly <- ggplotly(plt, tooltip = 'text')
-         
+
          # take out outliers if beeswarm is selected
-         pltly$x$data[[1]]$marker$opacity <- 
+         pltly$x$data[[1]]$marker$opacity <-
             ifelse(input$stat2GrpPlotBeeswarm, 0, 1)
       } else {
          # rename columns to fit with CDF
          colnames(df) <- c('SampleId', 'X', 'grp')
          
-         # generate CDF data
-         ggdf <- ecdf_prep(df, data_col =  'X', group_col = 'grp',
+         # generate CDF data - only need the first 3 columns
+         ggdf <- ecdf_prep(df[, 1:3], data_col =  'X', group_col = 'grp',
                            label_col = 'SampleId')
          
          plt <- ggplot(ggdf, aes(x = X, y = Y, group = grp,
@@ -1832,7 +1956,7 @@ function(input, output, session) {
       server = TRUE, rownames = FALSE, colnames = '',
       selection = 'none', options = list(dom = 't'), 
       {
-         if(is.null(rv$statTableRowSelect)){
+         if(is.null(rv$statTableRowSelect)) {
             return(NULL)
          } else {
             res_table <- getStatResultsTable()
@@ -1853,19 +1977,74 @@ function(input, output, session) {
    output$statResTable <- DT::renderDataTable(
       server = TRUE, rownames = FALSE,
       selection = 'single',
-      options = list(scrollX = TRUE, deferRender = TRUE),
-      {
+      options = list(scrollX = TRUE, deferRender = TRUE), {
+         
          if(input$statTests == 'Correlation'){
-            return(statCorrTests())
+            return(rv$statCorrTable)
          } else if(input$statTests == 't-test' |
                    input$statTests == 'U-test' |
                    input$statTests == 'KS-test'){
-            return(stat2GrpTests())
+            return(rv$stat2GrpTable)
          } else if(input$statTests == 'ANOVA' |
-                   input$statTests == 'Kruskal-Wallis'){
-            return(statMultiGrpTests())
+                   input$statTests == 'Kruskal-Wallis' |
+                   input$statTests == 'Friedman\'s Test') {
+            return(rv$statMultiTable)
          }
-      })
+   })
+   
+   observeEvent(input$statMatched, {
+      selected <- input$statTests
+      if(selected == 'Kruskal-Wallis' | selected == "Friedman's Test") {
+         selected = ifelse(input$statMatched, "Friedman's Test", 'Kruskal-Wallis')
+      }
+      
+      updateRadioButtons(session, inputId = 'statTests',
+                         choices = c('Correlation', 
+                                     't-test', 'U-test', 'KS-test',
+                                     'ANOVA', ifelse(input$statMatched,
+                                                     "Friedman's Test",
+                                                     'Kruskal-Wallis')),
+                         selected = selected)
+   })
+   
+   observeEvent({input$statTests
+                 input$statMatched
+                 input$statMatchCol
+                 input$stat2GrpResp
+                 input$statCorrResp
+                 input$statCorrMethod
+                 input$statMultiResp}, {
+         
+         # statistical method settings changed - reset all tables
+         rv$statCorrTable = NULL
+         rv$stat2GrpTable = NULL
+         rv$statMultiTable = NULL
+         
+         # turn off selection
+         rv$statTableRowSelect <- NULL
+         
+         # reset the progress bar
+         updateProgressBar(session = session, id = 'statProgbar', value = 0)
+   })
+   
+   observeEvent(input$statStartTests, {
+         updateProgressBar(session = session, id = 'statProgbar', 
+                           value = 0, title = 'Running tests...')
+         if(input$statTests == 'Correlation'){
+            statCorrTests()
+         } else if(input$statTests == 't-test' |
+                   input$statTests == 'U-test' |
+                   input$statTests == 'KS-test'){
+            stat2GrpTests()
+         } else if(input$statTests == 'ANOVA' |
+                   input$statTests == 'Kruskal-Wallis' |
+                   input$statTests == 'Friedman\'s Test') {
+            statMultiGrpTests()
+         }
+         updateProgressBar(session = session, id = 'statProgbar', 
+                           value = 100, title = '')
+   })
+   
    observeEvent(input$stat2GrpCorrection, {
       updateSliderInput(session, inputId = 'stat2GrpPvalue',
                         label = input$stat2GrpCorrection)
