@@ -169,14 +169,15 @@
 </div>
 <div id="statistical-tests-1" class="section level2" number="6.1">
 <h2><span class="header-section-number">6.1</span> Statistical Tests</h2>
-<p>Different statistical tests for comparing two-group data, multi-group data, or continuous data can be performed on the Statistical Tests panel. The tests available are:</p>
+<p>Different statistical tests for comparing continuous, two-group data, or multi-group data can be performed on the Statistical Tests panel. The tests available are:</p>
 <ul>
 <li><p>correlation - compares two continuous variables using either Pearson’s or Spearman’s rank-based methods</p></li>
-<li><p>t-test - compares the means of two groups</p></li>
-<li><p>U-test - compares the medians of two groups; this is a non-parametric alternative to the t-test</p></li>
+<li><p>t-test - compares the means of two groups; a paired t-test is also available</p></li>
+<li><p>U-test - compares the medians of two groups; this is a non-parametric alternative to the t-test; a paired U-test is also available</p></li>
 <li><p>KS-test - compares the distributions of data between two groups</p></li>
-<li><p>ANOVA - Analysis of Variance test of the means of multiple groups.</p></li>
+<li><p>ANOVA - Analysis of Variance test of the means of multiple groups; repeated measures ANOVA is also available</p></li>
 <li><p>Kruskal-Wallis - compares the medians of multiple groups; this is a non-parametric alternative to ANOVA</p></li>
+<li><p>Friedman’s Test - a non-parametric alternative to repeated measures ANOVA</p></li>
 </ul>
 <div id="selecting-a-response" class="section level3" number="6.1.1">
 <h3><span class="header-section-number">6.1.1</span> Selecting a Response</h3>
@@ -186,6 +187,7 @@
 </div>
 <p>The type of test can be selected from <strong>Test Type</strong>.</p>
 <p>The variable containing the response or the grouping labels can be selected from the select box titled <strong>Continuous Response</strong>, <strong>Two-group Response</strong>, or <strong>Multi-group Response</strong>. The label of the select box will change as different test types are selected. Also, the contents of the select box will be updated with varaibles consistent with the selected test. After selecting a new response variable, tests will be performed for all SOMAmers in the ADAT, which could take a minute or two.</p>
+<p>If a paired t-test, paired U-test, repeated measures ANOVA, or Friedman’s test are required, check the Matched Samples box and select the variable which defines how samples are matched across groups. <strong>All matched tests require a complete dataset in which each treatment group consists of the same number of matched subjects, and all subjects have measurements in each group. If your dataset is incomplete and does not have all measurements for all subjects across all groups, ProViz will attempt to adjust the data as necessary. This may, however result in errors.</strong></p>
 <p>Once a test has been conducted, the <em>Statistical Results Table</em> will contain all test results and can be downloaded as a comma-separated file (.csv) by clicking the <strong>Download Results</strong> button.</p>
 </div>
 <div id="plots-1" class="section level3" number="6.1.2">
@@ -196,6 +198,7 @@
 </div>
 <p>After the statistical test is complete and the results table has been loaded, a volcano plot is displayed. For the t-test and U-test, this plot illustrates each SOMAmer as a point with the X-axis being the log2(fold change) and the Y-axis being -log10(p-value). For a correlation test, the X-axis will illustrate the Pearson’s Correlation Coefficient. For ANOVA and Kruskal-Wallis, the X-axis will illustrate the maximum fold-change between groups. The left slider (<strong>Fold Change (log2)</strong> for all tests except correlation, and <strong>Correlation</strong> for the correlation test) and the <strong>p-value</strong> slider can be used to adjust the vertical and horizontal red lines in the plot, which represent cutoff values for identifying biomarkers of interest. Selecting <em>p-value</em>, <em>FDR</em>, or <em>Bonferroni</em> will determine which type of p-value correction is used for plotting.</p>
 <p>Hovering over points on the volcano plot will provide a pop-out detailing information of the SOMAmer associated with that point. Additionally, selecting a point by clicking on it will result in a plot illustrating the selected point’s details. For correlation tests, a scatter plot of the SOMAmer data versus the response will be displayed. For all other tests, boxplots or CDF plots for that SOMAmer are shown - the plot can be changed between boxplot and CDF by selecting under <strong>Plot Options</strong>. Data can be log10 transformed by selecting <strong>Log10</strong> and individual points can be displayed by selecting <strong>Beeswarm</strong>. Hovering over points on this plot will provide additional information about the specific sample associated with that point, and hovering over the boxplot will provide summary statistics. The Y-axis of the plot can be labeled with the SOMAmer Id, Protein Name, or Gene Symbol by selecting the appropriate item under <strong>Data Label</strong>.</p>
+<p>For matched tests, matched observations across groups can be connected with lines by selecting the <strong>Plot Matched</strong> checkbox on the Distribution Plot.</p>
 </div>
 <div id="statistical-results-table" class="section level3" number="6.1.3">
 <h3><span class="header-section-number">6.1.3</span> Statistical Results Table</h3>

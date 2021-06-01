@@ -159,6 +159,8 @@ Some additional packages are required for ProViz. Following is a list of the req
   plotly (4.9.3)
 \item
   readr (1.4.0)
+\item
+  tidyr (1.0.2)
 \end{itemize}
 
 Additionally, ProViz uses the SomaDataIO v5.0.0 available from \href{https://github.com/SomaLogic/SomaDataIO}{SomaLogic's SomaDataIO GitHub repository}.
@@ -420,7 +422,7 @@ At any point during plotting, the plots provide dynamic interaction capabilities
 
 \begin{figure}
 \centering
-\includegraphics{images/Boxplot_Panel.png}
+\includegraphics{images/BoxPlot_Panel.png}
 \caption{The Boxplot panel with a customized plot.}
 \end{figure}
 
@@ -581,21 +583,23 @@ A title and subtitle can be added to the plot by entering text into the \textbf{
 \hypertarget{statistical-tests-1}{%
 \section{Statistical Tests}\label{statistical-tests-1}}
 
-Different statistical tests for comparing two-group data, multi-group data, or continuous data can be performed on the Statistical Tests panel. The tests available are:
+Different statistical tests for comparing continuous, two-group data, or multi-group data can be performed on the Statistical Tests panel. The tests available are:
 
 \begin{itemize}
 \item
   correlation - compares two continuous variables using either Pearson's or Spearman's rank-based methods
 \item
-  t-test - compares the means of two groups
+  t-test - compares the means of two groups; a paired t-test is also available
 \item
-  U-test - compares the medians of two groups; this is a non-parametric alternative to the t-test
+  U-test - compares the medians of two groups; this is a non-parametric alternative to the t-test; a paired U-test is also available
 \item
   KS-test - compares the distributions of data between two groups
 \item
-  ANOVA - Analysis of Variance test of the means of multiple groups.
+  ANOVA - Analysis of Variance test of the means of multiple groups; repeated measures ANOVA is also available
 \item
   Kruskal-Wallis - compares the medians of multiple groups; this is a non-parametric alternative to ANOVA
+\item
+  Friedman's Test - a non-parametric alternative to repeated measures ANOVA
 \end{itemize}
 
 \hypertarget{selecting-a-response}{%
@@ -611,6 +615,8 @@ The type of test can be selected from \textbf{Test Type}.
 
 The variable containing the response or the grouping labels can be selected from the select box titled \textbf{Continuous Response}, \textbf{Two-group Response}, or \textbf{Multi-group Response}. The label of the select box will change as different test types are selected. Also, the contents of the select box will be updated with varaibles consistent with the selected test. After selecting a new response variable, tests will be performed for all SOMAmers in the ADAT, which could take a minute or two.
 
+If a paired t-test, paired U-test, repeated measures ANOVA, or Friedman's test are required, check the Matched Samples box and select the variable which defines how samples are matched across groups. \textbf{All matched tests require a complete dataset in which each treatment group consists of the same number of matched subjects, and all subjects have measurements in each group. If your dataset is incomplete and does not have all measurements for all subjects across all groups, ProViz will attempt to adjust the data as necessary. This may, however result in errors.}
+
 Once a test has been conducted, the \emph{Statistical Results Table} will contain all test results and can be downloaded as a comma-separated file (.csv) by clicking the \textbf{Download Results} button.
 
 \hypertarget{plots-1}{%
@@ -625,6 +631,8 @@ Once a test has been conducted, the \emph{Statistical Results Table} will contai
 After the statistical test is complete and the results table has been loaded, a volcano plot is displayed. For the t-test and U-test, this plot illustrates each SOMAmer as a point with the X-axis being the log2(fold change) and the Y-axis being -log10(p-value). For a correlation test, the X-axis will illustrate the Pearson's Correlation Coefficient. For ANOVA and Kruskal-Wallis, the X-axis will illustrate the maximum fold-change between groups. The left slider (\textbf{Fold Change (log2)} for all tests except correlation, and \textbf{Correlation} for the correlation test) and the \textbf{p-value} slider can be used to adjust the vertical and horizontal red lines in the plot, which represent cutoff values for identifying biomarkers of interest. Selecting \emph{p-value}, \emph{FDR}, or \emph{Bonferroni} will determine which type of p-value correction is used for plotting.
 
 Hovering over points on the volcano plot will provide a pop-out detailing information of the SOMAmer associated with that point. Additionally, selecting a point by clicking on it will result in a plot illustrating the selected point's details. For correlation tests, a scatter plot of the SOMAmer data versus the response will be displayed. For all other tests, boxplots or CDF plots for that SOMAmer are shown - the plot can be changed between boxplot and CDF by selecting under \textbf{Plot Options}. Data can be log10 transformed by selecting \textbf{Log10} and individual points can be displayed by selecting \textbf{Beeswarm}. Hovering over points on this plot will provide additional information about the specific sample associated with that point, and hovering over the boxplot will provide summary statistics. The Y-axis of the plot can be labeled with the SOMAmer Id, Protein Name, or Gene Symbol by selecting the appropriate item under \textbf{Data Label}.
+
+For matched tests, matched observations across groups can be connected with lines by selecting the \textbf{Plot Matched} checkbox on the Distribution Plot.
 
 \hypertarget{statistical-results-table}{%
 \subsection{Statistical Results Table}\label{statistical-results-table}}
