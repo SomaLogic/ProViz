@@ -104,7 +104,7 @@ function(input, output, session) {
    ########################################
    
    UpdateUI <- function() {
-      if(is.null(rv$adat)){
+      if(is.null(rv$adat)) {
          return(NULL)
       }
       
@@ -117,7 +117,7 @@ function(input, output, session) {
       varName <- lookupID(input$fltrConSelect, 'SOMAmer ID')
       rng <- range(rv$adat[[varName]], na.rm = TRUE)
       rng <- c(floor(rng[1]), ceiling(rng[2]))
-      if(length(unique(rv$adat[[varName]]) == 1)){
+      if(length(unique(rv$adat[[varName]]) == 1)) {
          st <- 0
       } else {
          st <- 1
@@ -176,7 +176,7 @@ function(input, output, session) {
       metaColumns <- SomaDataIO::getMeta(rv$adat)
       
       # get variables with only two groups
-      twoGrp <- which(sapply(metaColumns, function(c){
+      twoGrp <- which(sapply(metaColumns, function(c) {
          length(unique(na.omit(rv$adat[[c]]))) == 2
       }))
       twoGrpCols <- metaColumns[twoGrp]
@@ -190,7 +190,7 @@ function(input, output, session) {
       )
       
       # get variables with more than two but less then or equal to 10 groups
-      multiGrp <- which(sapply(metaColumns, function(c){
+      multiGrp <- which(sapply(metaColumns, function(c) {
          length(unique(na.omit(rv$adat[[c]]))) > 2 &
          length(unique(na.omit(rv$adat[[c]]))) <= 10 
       }))
@@ -211,7 +211,7 @@ function(input, output, session) {
                         choices = c('<NONE>', pairCols))
       
       #update the scatter plot color by variable selection
-      if(input$pltSctrColorBy == 'Continuous'){
+      if(input$pltSctrColorBy == 'Continuous') {
          updateSelectInput(session, 'pltSctrColorByVar',
                            choices = c('<NONE>', rv$conColumns))
       } else {
@@ -220,11 +220,11 @@ function(input, output, session) {
       }
 
       # update the group creation tab
-      if(input$grpCreateFrom == 'Continuous' ){
+      if(input$grpCreateFrom == 'Continuous' ) {
          updateSelectInput(session, 'grpSourceColName',
                            choices = rv$conColumns, 
                            selected = rv$grpSelectedCol)
-         if(!is.null(rv$grpSplitSetting)){
+         if(!is.null(rv$grpSplitSetting)) {
             updateSliderInput(session, 'grpConSplit',
                               value = rv$grpSplitSetting)
          }
@@ -263,7 +263,7 @@ function(input, output, session) {
       
       # capture state of plot selections that will get changes when 
       # changes are made to the ID selection
-      if(is.null(rv$adat)){
+      if(is.null(rv$adat)) {
          return(NULL)
       }
       
@@ -291,7 +291,7 @@ function(input, output, session) {
       # complement to PreservePlotStates
       # reset plot selections that would have changed with 
       # changes to ID selection
-      if(is.null(rv$adat)){
+      if(is.null(rv$adat)) {
          return(NULL)
       }
       
@@ -368,7 +368,7 @@ function(input, output, session) {
                    
                    adat <- try(SomaDataIO::read_adat(input$adat_file$datapath))
                    
-                   if(inherits(adat, 'try-error')){
+                   if(inherits(adat, 'try-error')) {
                       rv$adat <- NULL
                       rv$adatOrig <- NULL
                       rv$featureData <- NULL
@@ -410,7 +410,7 @@ function(input, output, session) {
       server = TRUE, rownames = FALSE,
       options = list(scrollX = TRUE,
                      deferRender = TRUE), {
-         if(is.null(input$adat_file)){
+         if(is.null(input$adat_file)) {
             return(NULL)
          } else {
            # limit ADAT to only row metadata columns 
@@ -441,15 +441,15 @@ function(input, output, session) {
       i <- integer()
       varName <- lookupID(input$fltrCatSelect, 'SOMAmer ID')
       
-      if(!is.null(input$fltrCatCrit) ){
+      if(!is.null(input$fltrCatCrit) ) {
          i <- which(rv$adat[[varName]] %in% input$fltrCatCrit )
       }
 
-      if(input$fltrCatExcludeNA ){
+      if(input$fltrCatExcludeNA ) {
          i <- union(i, which(rv$adat[[varName]] == '') )
       }
 
-      if(length(i) > 0 ){
+      if(length(i) > 0 ) {
          rv$adat <- rv$adat[-i,]
          UpdateUI()
       }
@@ -460,7 +460,7 @@ function(input, output, session) {
       
       rng <- range(rv$adat[[varName]], na.rm = TRUE)
       rng <- c(floor(rng[1]), ceiling(rng[2]))
-      if(length(unique(rv$adat[[varName]]) == 1)){
+      if(length(unique(rv$adat[[varName]]) == 1)) {
          st <- 0
      } else {
          st <- 1
@@ -475,11 +475,11 @@ function(input, output, session) {
       i <- which(rv$adat[[varName]] < input$fltrConCrit[1] |
                  rv$adat[[varName]] > input$fltrConCrit[2])
 
-      if(input$fltrConExcludeNA ){
+      if(input$fltrConExcludeNA ) {
          i <- union(i, which(is.na(rv$adat[[varName]])) )
       }
 
-      if(length(i) > 0){
+      if(length(i) > 0) {
          rv$adat <- rv$adat[-i,]
          UpdateUI()
       }
@@ -490,7 +490,7 @@ function(input, output, session) {
    ########################################
    
    observeEvent(rv$mergedData, {
-      if(is.null(rv$mergedData)){
+      if(is.null(rv$mergedData)) {
          updateSelectInput(session, 'mergeDataCol', 
                            choices = '<BLAH>')
       }
@@ -501,7 +501,7 @@ function(input, output, session) {
    
    # messages for the merge screen
    output$mergeMessage <- renderUI(
-      if(is.null(rv$mergeMessage)){
+      if(is.null(rv$mergeMessage)) {
          rv$mergeMessageDefault
       } else {
          rv$mergeMessage
@@ -513,7 +513,7 @@ function(input, output, session) {
          rv$mergeData <- NULL
       } else {
          fn <- input$merge_file$name
-         if(endsWith(fn, '.csv')){
+         if(endsWith(fn, '.csv')) {
             data <- try(readr::read_csv(input$merge_file$datapath,
                                         col_types = cols()))
          } else if(endsWith(fn, '.txt')) {
@@ -524,7 +524,7 @@ function(input, output, session) {
             rv_mergedData <- NULL
          }
          
-         if(inherits(data, 'try-error')){
+         if(inherits(data, 'try-error')) {
             rv$mergedData <- NULL
             rv$loadMessage <- helpText('Error loading data: ', 
                                        br(), data[1])
@@ -538,7 +538,7 @@ function(input, output, session) {
       server = TRUE,
       options = list(scrollX = TRUE, pageLength = 5,
                      deferRender = TRUE), {
-         if(is.null(rv$adat)){
+         if(is.null(rv$adat)) {
             return(NULL)
          } else {
            # limit ADAT to only row metadata columns 
@@ -550,7 +550,7 @@ function(input, output, session) {
    output$mergeDataPreview <- DT::renderDataTable(
       server = TRUE,
       options = list(scrollX = TRUE, pageLength = 5), {
-         if(is.null(rv$mergedData)){
+         if(is.null(rv$mergedData)) {
             return(NULL)
          } else {
             rv$mergedData
@@ -560,19 +560,19 @@ function(input, output, session) {
    
    observeEvent(input$mergeApply, {
       if(is.null(rv$adat) | is.null(rv$mergedData) |
-         input$mergeADATCol == '' | input$mergeDataCol == ''){
+         input$mergeADATCol == '' | input$mergeDataCol == '') {
          return(NULL)
       }
       
       by_vec = c(input$mergeDataCol)
       names(by_vec) = input$mergeADATCol
       
-      if(input$mergeType == 'Keep All ADAT Rows'){
+      if(input$mergeType == 'Keep All ADAT Rows') {
          merged_adat <- try(dplyr::left_join(rv$adat, rv$mergedData, 
                                              by = by_vec,
                                              suffix = c('_orig', '_merged')))
          
-         if(inherits(merged_adat, 'try-error')){
+         if(inherits(merged_adat, 'try-error')) {
             rv$mergeMessage <- helpText('Error merging data: ', 
                                          br(), merged_adat[1])
          } else {
@@ -582,12 +582,12 @@ function(input, output, session) {
          }
       }
       
-      if(input$mergeType == 'Keep Only Intersection'){
+      if(input$mergeType == 'Keep Only Intersection') {
          merged_adat <- try(dplyr::inner_join(rv$adat, rv$mergedData, 
                                               by = by_vec,
                                               suffix = c('_orig', '_merged')))
          
-         if(inherits(merged_adat, 'try-error')){
+         if(inherits(merged_adat, 'try-error')) {
             rv$mergeMessage <- helpText('Error merging data: ', 
                                          br(), merged_adat[1])
          } else {
@@ -609,7 +609,7 @@ function(input, output, session) {
    ####################################
    
    observeEvent(input$grpCreateFrom, {
-      if(input$grpCreateFrom == 'Continuous'){
+      if(input$grpCreateFrom == 'Continuous') {
          updateSelectInput(session, 'grpSourceColName',
                            choices = rv$conColumns)
      } else {
@@ -619,22 +619,22 @@ function(input, output, session) {
    })
 
    observeEvent(input$grpSourceColName, {
-      if(input$grpSourceColName == '<NONE>'){
+      if(input$grpSourceColName == '<NONE>') {
          return(NULL)
       }
       varName <- lookupID(input$grpSourceColName, 'SOMAmer ID')
       
-      if(input$grpCreateFrom == 'Continuous'){
+      if(input$grpCreateFrom == 'Continuous') {
          rng <- range(rv$adat[[varName]], na.rm = TRUE)
-         if( input$grpLog10 ){
+         if( input$grpLog10 ) {
             rng <- round(log10(rng),2)
         } else {
             rng <- c(floor(rng[1]), ceiling(rng[2]))
          }
-         if(length(unique(rv$adat[[varName]])) == 1){
+         if(length(unique(rv$adat[[varName]])) == 1) {
             st <- 0
         } else {
-            if( input$grpLog10 ){
+            if( input$grpLog10 ) {
                st <- 0.1
            } else {
                st <- 1
@@ -671,16 +671,16 @@ function(input, output, session) {
             'Group selections overlap.\nGroup B selection will overwrite common Group A selection.')
       }
 
-      if(length(vals) > length(c(valsA, valsB))){
+      if(length(vals) > length(c(valsA, valsB))) {
          msgs <- append(msgs,
             'Not all groups are represented in selections. Missing selections will recieve NA.')
       }
 
-      if(length(valsA) == 0){
+      if(length(valsA) == 0) {
          msgs <- append(msgs, 'Group A has no content.')
       }
 
-      if(length(valsB) == 0){
+      if(length(valsB) == 0) {
          msgs <- append(msgs, 'Group B has no content.')
       }
 
@@ -692,15 +692,15 @@ function(input, output, session) {
    observeEvent(input$grpLog10, {
       varName <- lookupID(input$grpSourceColName, 'SOMAmer ID')
       rng <- range(rv$adat[[varName]], na.rm = TRUE)
-      if(input$grpLog10){
+      if(input$grpLog10) {
          rng <- round(log10(rng),2)
      } else {
          rng <- c(floor(rng[1]), ceiling(rng[2]))
       }
-      if( length(unique(rv$adat[[varName]])) == 1){
+      if( length(unique(rv$adat[[varName]])) == 1) {
          st <- 0
      } else {
-         if(input$grpLog10){
+         if(input$grpLog10) {
             st <- 0.1
         } else {
             st <- 1
@@ -712,19 +712,19 @@ function(input, output, session) {
    })
 
    observeEvent(input$grpNewColName, {
-      if(input$grpNewColName == ''){
+      if(input$grpNewColName == '') {
          updateTextInput(session, 'grpNewColName', value = 'New Group')
       }
    })
 
    observeEvent(input$grpGrpALabel, {
-      if(input$grpGrpALabel == ''){
+      if(input$grpGrpALabel == '') {
          updateTextInput( session, 'grpGrpALabel', value = 'A')
       }
    })
 
    observeEvent(input$grpGrpBLabel, {
-      if(input$grpGrpBLabel == ''){
+      if(input$grpGrpBLabel == '') {
          updateTextInput(session, 'grpGrpBLabel', value = 'B')
       }
    })
@@ -732,18 +732,18 @@ function(input, output, session) {
    output$grpPreviewTable = DT::renderDataTable(
       server = TRUE, 
       options = list(deferRender = TRUE), {
-      if(input$grpSourceColName == '<NONE>'){
+      if(input$grpSourceColName == '<NONE>') {
          rv$grpNewGroupData <- NULL
          return(NULL)
       }
       varName <- lookupID(input$grpSourceColName, 'SOMAmer ID')
       
-      if(input$grpCreateFrom == 'Continuous'){
+      if(input$grpCreateFrom == 'Continuous') {
          df <- data.frame(rv$adat[[varName]],
                           rep(input$grpGrpALabel, length(rv$adat[[varName]]))
          )
          colnames(df) <- c(input$grpSourceColName, input$grpNewColName)
-         if(input$grpLog10){
+         if(input$grpLog10) {
             df[,1] <- log10(df[,1])
          }
          
@@ -759,12 +759,12 @@ function(input, output, session) {
          colnames(df) <- c(input$grpSourceColName, input$grpNewColName)
 
          grpA_i <- which(rv$adat[[varName]] %in% input$grpCatGrpA)
-         if( length(grpA_i) > 0){
+         if( length(grpA_i) > 0) {
             df[grpA_i, 2] <- input$grpGrpALabel
          }
 
          grpB_i <- which(rv$adat[[varName]] %in% input$grpCatGrpB)
-         if(length(grpB_i) > 0){
+         if(length(grpB_i) > 0) {
             df[grpB_i, 2] = input$grpGrpBLabel
          }
       }
@@ -773,13 +773,13 @@ function(input, output, session) {
    })
 
    observeEvent(input$grpApply, {
-      if(is.null(rv$grpNewGroupData) ){
+      if(is.null(rv$grpNewGroupData) ) {
          return(NULL)
       }
       
       # preserve selections
       rv$grpSelectedCol <- input$grpSourceColName
-      if(input$grpCreateFrom == 'Continuous'){
+      if(input$grpCreateFrom == 'Continuous') {
          rv$grpSplitSetting <- input$grpConSplit
       } else {
          rv$grpCatGrpA <- input$grpCatGrpA
@@ -807,14 +807,14 @@ function(input, output, session) {
    })
 
    output$boxPlot <- renderPlotly({
-         if(is.null(rv$adat)){
+         if(is.null(rv$adat)) {
             return(NULL)
          }
 
          df <- data.frame(SampleId = rv$adat$SampleId,
                           X = rv$adat[[lookupID(input$pltBxXaxis, 
                                                 'SOMAmer ID')]])
-         if(input$pltBxYaxisLog10){
+         if(input$pltBxYaxisLog10) {
             df$Y <- round(log10(as.numeric(rv$adat[[lookupID(input$pltBxYaxis, 
                                                              'SOMAmer ID')]])), 2)
          } else {
@@ -823,9 +823,9 @@ function(input, output, session) {
          }
          
          # drop NAs
-         if(input$pltBxRemoveNA){
+         if(input$pltBxRemoveNA) {
             df <- na.omit(df)
-            if(nrow(df) == 0){
+            if(nrow(df) == 0) {
                return(NULL)
             }
          }
@@ -847,7 +847,7 @@ function(input, output, session) {
             theme_minimal() +
             theme(plot.margin = margin(2, 1, 1, 1, 'lines'))
          
-         if(input$pltBxBeeswarm){
+         if(input$pltBxBeeswarm) {
             plt <- plt + 
                geom_beeswarm(shape = 21, color = 'black', 
                              size = input$pltBxBeeSize,
@@ -867,7 +867,7 @@ function(input, output, session) {
          pltly$x$data[[1]]$marker$opacity <- ifelse(input$pltBxBeeswarm, 0, 1)
          
          # add NA label if NAs present (plotly drops the label)
-         if(any(is.na(df$X))){
+         if(any(is.na(df$X))) {
             pltly$x$layout$xaxis$tickvals <- 
                c(pltly$x$layout$xaxis$tickvals,
                  length(pltly$x$layout$xaxis$tickvals) + 1)
@@ -889,13 +889,13 @@ function(input, output, session) {
    })
 
    output$cdfPlot <- renderPlotly({
-      if(is.null(rv$adat)){
+      if(is.null(rv$adat)) {
          return(NULL)
       }
 
       df <- data.frame(SampleId = rv$adat$SampleId,
                        X = rv$adat[[lookupID(input$pltCDFXaxis, 'SOMAmer ID')]])
-      if(input$pltCDFLog10){
+      if(input$pltCDFLog10) {
          df$X <- round(log10(as.numeric(rv$adat[[lookupID(input$pltCDFXaxis, 
                                                           'SOMAmer ID')]])), 2)
       } else {
@@ -903,7 +903,7 @@ function(input, output, session) {
                                               'SOMAmer ID')]])
       }
 
-      if(input$pltCDFColorBy == '<NONE>'){
+      if(input$pltCDFColorBy == '<NONE>') {
          df$grp <- ''
       } else {
          df$grp <- rv$adat[[lookupID(input$pltCDFColorBy, 'SOMAmer ID')]]
@@ -912,16 +912,16 @@ function(input, output, session) {
       # drop NAs
       # cannot have NAs in the x-axis
       i <- which(is.na(df$X))
-      if(length(i) > 0){
+      if(length(i) > 0) {
          df <- df[-i, ]
       }
       
       # option to remove NAs in color by column
-      if(input$pltCDFRemoveNA){
+      if(input$pltCDFRemoveNA) {
          df <- na.omit(df)
       }
       
-      if(nrow(df) == 0){
+      if(nrow(df) == 0) {
          return(NULL)
       }
       
@@ -949,7 +949,7 @@ function(input, output, session) {
          theme(plot.margin = margin(2, 1, 1, 1, 'lines'))
          
       # points on/off
-      if(input$pltCDFPointSize != 0.0){
+      if(input$pltCDFPointSize != 0.0) {
          plt <- plt + geom_point(aes(fill = grp), size = input$pltCDFPointSize,
                                  color = 'black', shape = 21)
       }
@@ -959,7 +959,7 @@ function(input, output, session) {
                 fill = guide_legend(title = input$pltCDFColorBy))
          
       # legend adjustments
-      if(input$pltCDFColorBy == '<NONE>'){
+      if(input$pltCDFColorBy == '<NONE>') {
          plt <- plt + 
             theme(legend.position = 'none') 
       }
@@ -974,10 +974,10 @@ function(input, output, session) {
       
       # plotly specific legend adjustments
       unq_grps <- levels(factor(ggdf$grp))
-      if(any(is.na(ggdf$grp))){
+      if(any(is.na(ggdf$grp))) {
          unq_grps <- c(unq_grps, 'NA')
       }
-      for(i in 1:length(unq_grps)){
+      for(i in 1:length(unq_grps)) {
          pltly$x$data[[i]]$legendgroup <- unq_grps[i]
          pltly$x$data[[i]]$name <- unq_grps[i]
       }
@@ -990,12 +990,12 @@ function(input, output, session) {
    ####################################
    
    observeEvent(input$pltSctrColorBy, {
-      if(is.null(rv$adat)){
+      if(is.null(rv$adat)) {
          return(NULL)
       }
 
       # update the scatter plot color by variable selection
-      if(input$pltSctrColorBy == 'Continuous'){
+      if(input$pltSctrColorBy == 'Continuous') {
          updateSelectInput(session, 'pltSctrColorByVar',
                            choices = c('<NONE>', rv$conColumns))
      } else {
@@ -1011,7 +1011,7 @@ function(input, output, session) {
    })
 
    output$scatterPlot <- renderPlotly({
-      if(is.null(rv$adat)){
+      if(is.null(rv$adat)) {
          return(NULL)
       }
 
@@ -1021,20 +1021,20 @@ function(input, output, session) {
                        Y = as.numeric(rv$adat[[lookupID(input$pltSctrYaxis,
                                                         'SOMAmer ID')]]))
 
-      if(input$pltSctrXaxisLog10){
+      if(input$pltSctrXaxisLog10) {
          df$X <- round(log10(df$X), 2)
       }
-      if(input$pltSctrYaxisLog10){
+      if(input$pltSctrYaxisLog10) {
          df$Y <- round(log10(df$Y), 2)
       }
       
       if(input$pltSctrColorBy == 'Static' |
-         input$pltSctrColorByVar == '<NONE>'){
+         input$pltSctrColorByVar == '<NONE>') {
          df$grp <- ''
       } else if(input$pltSctrColorBy == 'Continuous') {
          df$grp <- as.numeric(rv$adat[[lookupID(input$pltSctrColorByVar, 
                                                 'SOMAmer ID')]])
-         if(input$pltSctrColorByLog){
+         if(input$pltSctrColorByLog) {
             df$grp <- round(log10(df$grp), 2)
          }
       } else if(input$pltSctrColorBy == 'Category') {
@@ -1043,9 +1043,9 @@ function(input, output, session) {
       }
       
       # drop NAs
-      if(input$pltSctrRemoveNA){
+      if(input$pltSctrRemoveNA) {
          df <- na.omit(df)
-         if(nrow(df) == 0){
+         if(nrow(df) == 0) {
             return(NULL)
          }
       }
@@ -1107,7 +1107,7 @@ function(input, output, session) {
          theme(plot.margin = margin(2, 1, 1, 1, 'lines'))
       
       # regression options
-      if(input$pltSctrRegrLine){
+      if(input$pltSctrRegrLine) {
          reg <- lm(Y ~ X, df)
          plt <- plt +
             geom_abline(intercept = coef(reg)[1], slope = coef(reg)[2],
@@ -1116,9 +1116,9 @@ function(input, output, session) {
                                                  input$pltSctrRegrLineCol)],
                         linetype = which(lineStyleNames == 
                                          input$pltSctrRegrLineStyle)) 
-         if(input$pltSctrRegrAddStats != '<NONE>'){
+         if(input$pltSctrRegrAddStats != '<NONE>') {
             if(input$pltSctrRegrAddStats == 'Top-left' |
-               input$pltSctrRegrAddStats == 'Bottom-left'){
+               input$pltSctrRegrAddStats == 'Bottom-left') {
                reg_x <- min(df$X)
                hj <- 'right' 
                #note ggplot's interpretation of hj is opposite to plotly's
@@ -1127,7 +1127,7 @@ function(input, output, session) {
                hj <- 'left'
             }
             if(input$pltSctrRegrAddStats == 'Top-left' |
-               input$pltSctrRegrAddStats == 'Top-right'){
+               input$pltSctrRegrAddStats == 'Top-right') {
                reg_y <- max(df$Y)
                vj <- 'bottom'
             } else {
@@ -1145,7 +1145,7 @@ function(input, output, session) {
       }
       
       # identity line options
-      if(input$pltSctrIdLine){
+      if(input$pltSctrIdLine) {
          plt <- plt +
             geom_abline(intercept = 0, slope = 1,
                         size = input$pltSctrIdLineWidth,
@@ -1156,7 +1156,7 @@ function(input, output, session) {
       }
       
       # fixed axes
-      if(input$pltSctrSquare){
+      if(input$pltSctrSquare) {
          plt <- plt +
             xlim(range(c(df$X, df$Y))) +
             ylim(range(c(df$X, df$Y)))
@@ -1164,7 +1164,7 @@ function(input, output, session) {
       
       # legend adjustments
       if(input$pltSctrColorByVar == '<NONE>' |
-         input$pltSctrColorBy == 'Static'){
+         input$pltSctrColorBy == 'Static') {
          plt <- plt + 
             theme(legend.position = 'none') 
       } else if(input$pltSctrColorBy == 'Category') {
@@ -1186,7 +1186,7 @@ function(input, output, session) {
                                     '<sup>', input$pltSctrSubtitle, '</sup>')))  
       
       if(input$pltSctrRegrLine &
-         input$pltSctrRegrAddStats != '<NONE>'){
+         input$pltSctrRegrAddStats != '<NONE>') {
          pltly <- pltly %>% 
             style(textposition = hj)
             #note ggplot's interpretation of hj is opposite to plotly's
@@ -1203,7 +1203,7 @@ function(input, output, session) {
    
    getStatResultsTable <- function() {
       # return the appropriate statistical test results table
-      if(input$statTests == 'Correlation'){
+      if(input$statTests == 'Correlation') {
          resTable <- rv$statCorrTable
       } else if(input$statTests == 't-test' |
                 input$statTests == 'U-test' |
@@ -1245,7 +1245,7 @@ function(input, output, session) {
    
    statCorrTests <- function() {
       # perform correlation tests
-      if(is.null(rv$adat) | input$statCorrResp == '<NONE>'){
+      if(is.null(rv$adat) | input$statCorrResp == '<NONE>') {
          return(NULL)
       }
       
@@ -1259,19 +1259,19 @@ function(input, output, session) {
       adat <- log10(rv$adat)
    
       # perform the tests 
-      tbl <- data.frame(t(sapply(vars, function(v){
+      tbl <- data.frame(t(sapply(vars, function(v) {
          z <- suppressWarnings(cor.test(adat[[respID]], adat[[v]],
                         method = ifelse(input$statCorrMethod == 'Pearson',
                                         'pearson', 'spearman')))
          
          # increment the progress bar
          p <- which(vars == v)
-         if((p / length(vars) * 100) %% 5 == 0){
+         if((p / length(vars) * 100) %% 5 == 0) {
             updateProgressBar(session = session, id = 'statProgbar',
                               value = p / length(vars) * 100)
          }
          
-         if(input$statCorrMethod == 'Pearson'){
+         if(input$statCorrMethod == 'Pearson') {
             c(t.statistic = round(as.numeric(z$statistic), 2),
               r = round(as.numeric(z$estimate), 2),
               p.value = z$p.value)
@@ -1298,7 +1298,7 @@ function(input, output, session) {
    
    statMultiGrpTests <- function() {
       # perform multi-group tests
-      if(is.null(rv$adat) | input$statMultiResp== '<NONE>'){
+      if(is.null(rv$adat) | input$statMultiResp== '<NONE>') {
          return(NULL)
       }
      
@@ -1326,8 +1326,8 @@ function(input, output, session) {
       adat <- log10(adat)
       
       # perform the tests 
-      if(input$statTests == 'ANOVA'){
-         tbl <- data.frame(t(sapply(vars, function(v){
+      if(input$statTests == 'ANOVA') {
+         tbl <- data.frame(t(sapply(vars, function(v) {
             if(input$statMatched & input$statMatchCol != '<NONE') {
                # build a fullly matched data table for repeated measures
                rm_df <- data.frame(matching = adat[[input$statMatchCol]],
@@ -1358,14 +1358,14 @@ function(input, output, session) {
             
             # increment the progress bar
             p <- which(vars == v)
-            if((p / length(vars) * 100) %% 5 == 0){
+            if((p / length(vars) * 100) %% 5 == 0) {
                updateProgressBar(session = session, id = 'statProgbar',
                                  value = p / length(vars) * 100)
             }
             
             z_summary <- summary(z) 
             if(input$statMatched & input$statMatchCol != '<NONE') {
-               if(inherits(adat, 'try-error')){
+               if(inherits(adat, 'try-error')) {
                   c(Max.Fold.Change = NA,
                     F = NA, 
                     p.value = NA)
@@ -1382,7 +1382,7 @@ function(input, output, session) {
          })))
       } else if(input$statTests == 'Kruskal-Wallis' |
                 input$statTests == 'Friedman\'s Test') {
-         tbl <- data.frame(t(sapply(vars, function(v){
+         tbl <- data.frame(t(sapply(vars, function(v) {
             if(input$statMatched & input$statMatchCol != '<NONE') {
                # build a fullly matched data table for repeated measures
                rm_df <- data.frame(matching = adat[[input$statMatchCol]],
@@ -1412,12 +1412,12 @@ function(input, output, session) {
             
             # increment the progress bar
             p <- which(vars == v)
-            if((p / length(vars) * 100) %% 5 == 0){
+            if((p / length(vars) * 100) %% 5 == 0) {
                updateProgressBar(session = session, id = 'statProgbar',
                                  value = p / length(vars) * 100)
             }
             
-            if(inherits(adat, 'try-error')){
+            if(inherits(adat, 'try-error')) {
                c(Max.Fold.Change = NA,
                  F = NA, 
                  p.value = NA)
@@ -1497,12 +1497,12 @@ function(input, output, session) {
       adat <- log10(adat)
       
       # perform the tests 
-      if(input$statTests == 'KS-test'){
-         tbl <- data.frame(t(sapply(vars, function(v){
+      if(input$statTests == 'KS-test') {
+         tbl <- data.frame(t(sapply(vars, function(v) {
             z <- suppressWarnings(ks.test(adat[grp1_idx, v], 
                                           adat[-grp1_idx,v]))
             j <- which(df$AptName == v)
-            if(df$Fold.Change[j] < 0){
+            if(df$Fold.Change[j] < 0) {
                z$signedKS <- -z$statistic
             } else {
                z$signedKS <- z$statistic
@@ -1510,7 +1510,7 @@ function(input, output, session) {
             
             # increment the progress bar
             p <- which(vars == v)
-            if((p / length(vars) * 100) %% 5 == 0){
+            if((p / length(vars) * 100) %% 5 == 0) {
                updateProgressBar(session = session, id = 'statProgbar',
                                  value = p / length(vars) * 100)
             }
@@ -1519,8 +1519,8 @@ function(input, output, session) {
               Signed.KS.Dist = round(as.numeric(z$signedKS),2),
               p.value = z$p.value)
          })))
-      } else if(input$statTests == 't-test'){
-         tbl <- data.frame(t(sapply(vars, function(v){
+      } else if(input$statTests == 't-test') {
+         tbl <- data.frame(t(sapply(vars, function(v) {
             z <- suppressWarnings(t.test(adat[grp1_idx, v], 
                                          adat[-grp1_idx, v], 
                                          paired = input$statMatched,
@@ -1528,7 +1528,7 @@ function(input, output, session) {
             
             # increment the progress bar
             p <- which(vars == v)
-            if((p / length(vars) * 100) %% 5 == 0){
+            if((p / length(vars) * 100) %% 5 == 0) {
                updateProgressBar(session = session, id = 'statProgbar',
                                  value = p / length(vars) * 100)
             }
@@ -1536,15 +1536,15 @@ function(input, output, session) {
             c(t.statistic = round(as.numeric(z$statistic),2),
               p.value = z$p.value)
          })))
-      } else if(input$statTests == 'U-test'){
-         tbl <- data.frame(t(sapply(vars, function(v){
+      } else if(input$statTests == 'U-test') {
+         tbl <- data.frame(t(sapply(vars, function(v) {
             z <- suppressWarnings(wilcox.test(adat[grp1_idx, v], 
                                               adat[-grp1_idx, v],
                                               paired = input$statMatched))
             
             # increment the progress bar
             p <- which(vars == v)
-            if((p / length(vars) * 100) %% 5 == 0){
+            if((p / length(vars) * 100) %% 5 == 0) {
                updateProgressBar(session = session, id = 'statProgbar',
                                  value = p / length(vars) * 100)
             }
@@ -1674,7 +1674,7 @@ function(input, output, session) {
                         input$statTests == 'Friedman\'s Test') {
                  'Maximum Fold Change'
               } else {
-                 if(xAxis == 'Fold.Change'){
+                 if(xAxis == 'Fold.Change') {
                   'Fold Change (log2)'
                  } else {
                   'Median Fold Change (log2)'
@@ -1730,7 +1730,7 @@ function(input, output, session) {
       }
  
       i <- which(colnames(rv$adat) == var_name)
-      if(input$stat2GrpPlotLog10){
+      if(input$stat2GrpPlotLog10) {
          df <- data.frame(SampleId = rv$adat$SampleId,
                           Y = log10(rv$adat[,i]))
       } else {
@@ -1751,14 +1751,14 @@ function(input, output, session) {
                      ifelse(input$stat2GrpPlotLog10, ')', ''))) 
          
          # regression options
-         if(input$statSelPlotRegLine){
+         if(input$statSelPlotRegLine) {
             reg <- lm(Y ~ X, df)
             plt <- plt +
                geom_abline(intercept = coef(reg)[1], slope = coef(reg)[2],
                            size = .75, color = 'black', linetype = 2)
-            if(input$statSelPlotAddCorr != '<NONE>'){
+            if(input$statSelPlotAddCorr != '<NONE>') {
                if(input$statSelPlotAddCorr == 'Top-left' |
-                  input$statSelPlotAddCorr == 'Bottom-left'){
+                  input$statSelPlotAddCorr == 'Bottom-left') {
                   reg_x <- min(df$X)
                   hj <- 'right' 
                   #note ggplot's interpretation of hj is opposite to plotly's
@@ -1767,7 +1767,7 @@ function(input, output, session) {
                   hj <- 'left'
                }
                if(input$statSelPlotAddCorr == 'Top-left' |
-                  input$statSelPlotAddCorr == 'Top-right'){
+                  input$statSelPlotAddCorr == 'Top-right') {
                   reg_y <- max(df$Y)
                   vj <- 'bottom'
                } else {
@@ -1793,7 +1793,7 @@ function(input, output, session) {
       pltly <- ggplotly(plt, tooltip = 'text')
       
       if(input$statSelPlotRegLine &
-         input$statSelPlotAddCorr != '<NONE>'){
+         input$statSelPlotAddCorr != '<NONE>') {
          pltly <- pltly %>% 
             style(textposition = hj)
             #note ggplot's interpretation of hj is opposite to plotly's
@@ -1826,7 +1826,7 @@ function(input, output, session) {
       }
  
       i <- which(colnames(rv$adat) == var_name)
-      if(input$stat2GrpPlotLog10){
+      if(input$stat2GrpPlotLog10) {
          df <- data.frame(SampleId = rv$adat$SampleId,
                           Y = log10(rv$adat[,i]))
       } else {
@@ -1853,7 +1853,7 @@ function(input, output, session) {
       }
       df <- df[complete.cases(df), ]
       
-      if(input$stat2GrpBoxCDF == 'Boxplot'){
+      if(input$stat2GrpBoxCDF == 'Boxplot') {
          plt <- ggplot(df, aes(x = X, y = Y, 
                                text = paste0('SampleId: ', SampleId, '\n',
                                              if(input$statTests == 't-test' |
@@ -1897,7 +1897,7 @@ function(input, output, session) {
          theme_minimal() +
          theme(plot.margin = margin(1, 1, 1, 1, 'lines'))
          
-         if(input$stat2GrpPlotBeeswarm){
+         if(input$stat2GrpPlotBeeswarm) {
             plt <- plt + 
                geom_beeswarm(shape = 21, color = 'black', 
                              size = 2, fill = 'grey', alpha = 0.8)
@@ -1979,11 +1979,11 @@ function(input, output, session) {
       selection = 'single',
       options = list(scrollX = TRUE, deferRender = TRUE), {
          
-         if(input$statTests == 'Correlation'){
+         if(input$statTests == 'Correlation') {
             return(rv$statCorrTable)
          } else if(input$statTests == 't-test' |
                    input$statTests == 'U-test' |
-                   input$statTests == 'KS-test'){
+                   input$statTests == 'KS-test') {
             return(rv$stat2GrpTable)
          } else if(input$statTests == 'ANOVA' |
                    input$statTests == 'Kruskal-Wallis' |
@@ -2030,11 +2030,11 @@ function(input, output, session) {
    observeEvent(input$statStartTests, {
          updateProgressBar(session = session, id = 'statProgbar', 
                            value = 0, title = 'Running tests...')
-         if(input$statTests == 'Correlation'){
+         if(input$statTests == 'Correlation') {
             statCorrTests()
          } else if(input$statTests == 't-test' |
                    input$statTests == 'U-test' |
-                   input$statTests == 'KS-test'){
+                   input$statTests == 'KS-test') {
             stat2GrpTests()
          } else if(input$statTests == 'ANOVA' |
                    input$statTests == 'Kruskal-Wallis' |
@@ -2065,7 +2065,7 @@ function(input, output, session) {
    observeEvent(input$statResTable_cell_clicked, {
       row_sel <- input$statResTable_rows_selected
       
-      if(is.null(row_sel)){
+      if(is.null(row_sel)) {
          rv$statTableRowSelect <- NULL
       } else {
          rv$statTableRowSelect <- row_sel
@@ -2076,7 +2076,7 @@ function(input, output, session) {
       # unset the plot selection
       rv$statTableRowSelect <- NULL
       
-      if(input$statTests == 'Correlation'){
+      if(input$statTests == 'Correlation') {
          updateSliderInput(session, inputId = 'stat2GrpFold',
                            label = 'Correlation',
                            min = 0.0, max = 1.0, step = 0.01, value = 0.75)
