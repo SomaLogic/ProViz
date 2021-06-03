@@ -1,6 +1,6 @@
 FROM rocker/shiny:4.0.3
 
-RUN apt-get update && apt-get install libcurl4-openssl-dev -y
+RUN apt-get update && apt-get install libcurl4-openssl-dev libssl-dev -y
 
 RUN R -e "install.packages('devtools')"
 RUN R -e "devtools::install_version('DT', version = '0.17', repos = 'http://cran.us.r-project.org')"
