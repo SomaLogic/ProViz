@@ -419,6 +419,7 @@ function(input, output, session) {
                    adat <- try(SomaDataIO::read_adat(input$adat_file$datapath))
                    
                    if(inherits(adat, 'try-error')) {
+<<<<<<< HEAD
                       # rv$adat <- NULL
                       # rv$adatOrig <- NULL
                       # rv$featureData <- NULL
@@ -426,6 +427,15 @@ function(input, output, session) {
                       # rv$idLookup <- NULL
                       # rv$loadMessage <- helpText('Error loading ADAT: ', 
                       #                           br(), adat[1])
+=======
+                      rv$adat <- NULL
+                      rv$adatOrig <- NULL
+                      rv$featureData <- NULL
+                      rv$metaColumns <- NULL
+                      rv$idLookup <- NULL
+                      rv$loadMessage <- helpText('Error loading ADAT: ', 
+                                                 br(), adat[1])
+>>>>>>> release
                    } else {
                       # update progress
                       updateProgressBar(session = session, id = 'loadProgbar',
