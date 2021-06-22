@@ -352,15 +352,65 @@ function(input, output, session) {
    # Handlers for loading an ADAT
    ########################################
    
+   resetGlobals <- function() {
+      rv$adat <- NULL
+      rv$adatOrig <- NULL
+      rv$conColumns <- NULL
+      rv$catColumns <- NULL
+      rv$metaColumns <- NULL
+      rv$featureData <- NULL
+      rv$idLookup <- NULL
+      
+      rv$loadMessage <- 'No ADAT open'
+      
+      # merged daa
+      rv$mergedData <- NULL
+      rv$mergeMessage <- NULL
+      
+      # grouping variables
+      rv$grpWarning <- ''
+      rv$grpNewGroupData <- NULL
+      
+      # stats variables/tables
+      rv$stat2GrpTable <- NULL
+      rv$statCorrTable <- NULL
+      rv$statMultiTable <- NULL
+      
+      rv$statTableRowSelect <- NULL
+      
+      # Group panel
+      rv$grpSelectedCol <- NULL
+      rv$grpSplitSetting <- NULL
+      rv$grpCatGrpA <- NULL
+      rv$grpCatGrpB <- NULL
+      
+      # boxplots
+      rv$pltBxXaxis <- NULL
+      rv$pltBxYaxis <- NULL
+      
+      # cdf
+      rv$pltCDFXaxis <- NULL
+      rv$pltCDFColorBy <- NULL
+      
+      #scatter plot
+      rv$pltSctrXaxis <- NULL
+      rv$pltSctrYaxis <- NULL
+      rv$pltSctrColorByVar <- NULL
+   }
+   
    # code to handle opening the ADAT, parsing the contents as needed
    observeEvent(input$adat_file, {
+      
+                # clear the deck for new ADATA
+                resetGlobals()
+                      
                 if(is.null(input$adat_file)) {
-                   rv$adat <- NULL
-                   rv$adatOrig <- NULL
-                   rv$featureData <- NULL
-                   rv$metaColumns <- NULL
-                   rv$idLookup <- NULL
-                   rv$loadMessage <- 'No ADAT open'
+                   # rv$adat <- NULL
+                   # rv$adatOrig <- NULL
+                   # rv$featureData <- NULL
+                   # rv$metaColumns <- NULL
+                   # rv$idLookup <- NULL
+                   # rv$loadMessage <- 'No ADAT open'
                 } else {
                    # update progress
                    updateProgressBar(session = session, id = 'loadProgbar',
@@ -369,6 +419,15 @@ function(input, output, session) {
                    adat <- try(SomaDataIO::read_adat(input$adat_file$datapath))
                    
                    if(inherits(adat, 'try-error')) {
+<<<<<<< HEAD
+                      # rv$adat <- NULL
+                      # rv$adatOrig <- NULL
+                      # rv$featureData <- NULL
+                      # rv$metaColumns <- NULL
+                      # rv$idLookup <- NULL
+                      # rv$loadMessage <- helpText('Error loading ADAT: ', 
+                      #                           br(), adat[1])
+=======
                       rv$adat <- NULL
                       rv$adatOrig <- NULL
                       rv$featureData <- NULL
@@ -376,11 +435,13 @@ function(input, output, session) {
                       rv$idLookup <- NULL
                       rv$loadMessage <- helpText('Error loading ADAT: ', 
                                                  br(), adat[1])
+>>>>>>> release
                    } else {
                       # update progress
                       updateProgressBar(session = session, id = 'loadProgbar',
                                         value = 50)
                       
+                      # set the variables
                       rv$adat <- adat
                       rv$adatOrig <- rv$adat
                       rv$featureData <- SomaDataIO::getFeatureData(adat)
@@ -529,6 +590,7 @@ function(input, output, session) {
             rv$loadMessage <- helpText('Error loading data: ', 
                                        br(), data[1])
          } else {
+            colnames(data) = gsub(' ', '.', colnames(data))
             rv$mergedData <- data 
          }
       }
@@ -1313,15 +1375,23 @@ function(input, output, session) {
       
       # order as needed
       if(input$statMatched & input$statMatchCol != '<NONE>') {
-         
          adat <- adat[order(adat[[input$statMultiResp]], 
                             adat[[input$statMatchCol]]), ]
+         
+         na_idx <- which(is.na(adat[[input$statMultiResp]]) |
+                         is.na(adat[[input$statMatchCol]]))
+         if(length(na_idx) > 0) {
+            # remove rows with NA in response or match
+            adat <- adat[-na_idx, ]
+         }
+      } else {
+         # remove rows with NA in response 
+         na_idx <- which(is.na(adat[[input$statMultiResp]]))
+         if(length(na_idx > 0)) {
+            adat <- adat[-na_idx, ]
+         }
       }
-      
-      # remove rows with NA in response or match
-      adat <- adat[-which(is.na(adat[[input$statMultiResp]]) |
-                          is.na(adat[[input$statMatchCol]])), ]
-      
+         
       # log10 SOMAmers
       adat <- log10(adat)
       
@@ -1464,11 +1534,23 @@ function(input, output, session) {
           input$statTests == 'U-test') &
          input$statMatched & input$statMatchCol != '<NONE>') {
          
-         adat <- adat[order(adat[[input$stat2GrpResp]], 
-                            adat[[input$statMatchCol]]), ]
-         
-         # remove rows with NA for response 
-         adat <- adat[-which(is.na(adat[[respID]])), ]
+         if(input$statMatched & input$statMatchCol != '<NONE>') {
+            adat <- adat[order(adat[[input$stat2GrpResp]], 
+                               adat[[input$statMatchCol]]), ]
+            
+            na_idx <- which(is.na(adat[[input$stat2GrpResp]]) |
+                               is.na(adat[[input$statMatchCol]]))
+            if(length(na_idx) > 0) {
+               # remove rows with NA in response or match
+               adat <- adat[-na_idx, ]
+            }
+         } else {
+            # remove rows with NA in response 
+            na_idx <- which(is.na(adat[[input$stat2GrpResp]]))
+            if(length(na_idx > 0)) {
+               adat <- adat[-na_idx, ]
+            }
+         }
       }
       
       # find the groups
