@@ -4,14 +4,13 @@
 %
 \documentclass[
 ]{book}
+\usepackage{amsmath,amssymb}
 \usepackage{lmodern}
-\usepackage{amsmath}
 \usepackage{ifxetex,ifluatex}
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
-  \usepackage{amssymb}
 \else % if luatex or xetex
   \usepackage{unicode-math}
   \defaultfontfeatures{Scale=MatchLowercase}
@@ -41,7 +40,7 @@
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 \urlstyle{same} % disable monospaced font for URLs
-\usepackage{longtable,booktabs}
+\usepackage{longtable,booktabs,array}
 \usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
@@ -163,7 +162,26 @@ Some additional packages are required for ProViz. Following is a list of the req
   tidyr (1.0.2)
 \end{itemize}
 
-Additionally, ProViz uses the SomaDataIO v5.0.0 available from \href{https://github.com/SomaLogic/SomaDataIO}{SomaLogic's SomaDataIO GitHub repository}.
+Additionally, ProViz uses the SomaDataIO v5.0.0 package available from \href{https://github.com/SomaLogic/SomaDataIO}{SomaLogic's SomaDataIO GitHub repository}.
+
+Installing these dependencies can be accomplished using the \texttt{remotes} package and the following series of R commands.
+
+\begin{verbatim}
+install.packages('remotes')
+remotes::install_version('DT', version = '0.17', repos = 'http://cran.us.r-project.org')
+remotes::install_version('dplyr', version = '1.0.5', repos = 'http://cran.us.r-project.org')
+remotes::install_version('ggbeeswarm', version = '0.6.0', repos = 'http://cran.us.r-project.org')
+remotes::install_version('ggplot2', version = '3.3.3', repos = 'http://cran.us.r-project.org')
+remotes::install_version('magrittr', version = '2.0.1', repos = 'http://cran.us.r-project.org')
+remotes::install_version('plotly', version = '4.9.3', repos = 'http://cran.us.r-project.org')
+remotes::install_version('readr', version = '1.4.0', repos = 'http://cran.us.r-project.org')
+remotes::install_version('shiny', version = '1.6.0', repos = 'http://cran.us.r-project.org')
+remotes::install_version('shinydashboard', version = '0.7.1', repos = 'http://cran.us.r-project.org')
+remotes::install_version('shinyWidgets', version = '0.6.0', repos = 'http://cran.us.r-project.org')
+remotes::install_version('tidyr', version = '1.0.2', repos = 'http://cran.us.r-project.org')
+remotes::install_version('usethis', version = '1.6.0', repos = 'http://cran.us.r-project.org')
+remotes::install_github('Somalogic/SomaDataIO@v5.0.0')
+\end{verbatim}
 
 \hypertarget{dockerhub}{%
 \subsection{DockerHub}\label{dockerhub}}

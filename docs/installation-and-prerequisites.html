@@ -183,7 +183,22 @@
 <li>readr (1.4.0)</li>
 <li>tidyr (1.0.2)</li>
 </ul>
-<p>Additionally, ProViz uses the SomaDataIO v5.0.0 available from <a href="https://github.com/SomaLogic/SomaDataIO">SomaLogic’s SomaDataIO GitHub repository</a>.</p>
+<p>Additionally, ProViz uses the SomaDataIO v5.0.0 package available from <a href="https://github.com/SomaLogic/SomaDataIO">SomaLogic’s SomaDataIO GitHub repository</a>.</p>
+<p>Installing these dependencies can be accomplished using the <code>remotes</code> package and the following series of R commands.</p>
+<pre><code>install.packages(&#39;remotes&#39;)
+remotes::install_version(&#39;DT&#39;, version = &#39;0.17&#39;, repos = &#39;http://cran.us.r-project.org&#39;)
+remotes::install_version(&#39;dplyr&#39;, version = &#39;1.0.5&#39;, repos = &#39;http://cran.us.r-project.org&#39;)
+remotes::install_version(&#39;ggbeeswarm&#39;, version = &#39;0.6.0&#39;, repos = &#39;http://cran.us.r-project.org&#39;)
+remotes::install_version(&#39;ggplot2&#39;, version = &#39;3.3.3&#39;, repos = &#39;http://cran.us.r-project.org&#39;)
+remotes::install_version(&#39;magrittr&#39;, version = &#39;2.0.1&#39;, repos = &#39;http://cran.us.r-project.org&#39;)
+remotes::install_version(&#39;plotly&#39;, version = &#39;4.9.3&#39;, repos = &#39;http://cran.us.r-project.org&#39;)
+remotes::install_version(&#39;readr&#39;, version = &#39;1.4.0&#39;, repos = &#39;http://cran.us.r-project.org&#39;)
+remotes::install_version(&#39;shiny&#39;, version = &#39;1.6.0&#39;, repos = &#39;http://cran.us.r-project.org&#39;)
+remotes::install_version(&#39;shinydashboard&#39;, version = &#39;0.7.1&#39;, repos = &#39;http://cran.us.r-project.org&#39;)
+remotes::install_version(&#39;shinyWidgets&#39;, version = &#39;0.6.0&#39;, repos = &#39;http://cran.us.r-project.org&#39;)
+remotes::install_version(&#39;tidyr&#39;, version = &#39;1.0.2&#39;, repos = &#39;http://cran.us.r-project.org&#39;)
+remotes::install_version(&#39;usethis&#39;, version = &#39;1.6.0&#39;, repos = &#39;http://cran.us.r-project.org&#39;)
+remotes::install_github(&#39;Somalogic/SomaDataIO@v5.0.0&#39;)</code></pre>
 </div>
 <div id="dockerhub" class="section level3" number="1.1.2">
 <h3><span class="header-section-number">1.1.2</span> DockerHub</h3>
