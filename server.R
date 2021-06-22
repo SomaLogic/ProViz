@@ -420,6 +420,7 @@ function(input, output, session) {
                    
                    if(inherits(adat, 'try-error')) {
 <<<<<<< HEAD
+<<<<<<< HEAD
                       # rv$adat <- NULL
                       # rv$adatOrig <- NULL
                       # rv$featureData <- NULL
@@ -428,6 +429,8 @@ function(input, output, session) {
                       # rv$loadMessage <- helpText('Error loading ADAT: ', 
                       #                           br(), adat[1])
 =======
+=======
+>>>>>>> 8cccea52eae4cfb0e062cf845b36b10163425442
                       rv$adat <- NULL
                       rv$adatOrig <- NULL
                       rv$featureData <- NULL
