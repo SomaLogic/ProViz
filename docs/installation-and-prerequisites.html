@@ -183,9 +183,16 @@
 <li>readr (1.4.0)</li>
 <li>tidyr (1.0.2)</li>
 </ul>
-<p>Additionally, ProViz uses the SomaDataIO v5.0.0 package available from <a href="https://github.com/SomaLogic/SomaDataIO">SomaLogic’s SomaDataIO GitHub repository</a>.</p>
-<p>Installing these dependencies can be accomplished using the <code>remotes</code> package and the following series of R commands.</p>
-<pre><code>install.packages(&#39;remotes&#39;)
+<p>Additionally, ProViz uses the SomaDataIO v5.0.0 package available from <a href="https://github.com/SomaLogic/SomaDataIO">SomaLogic’s SomaDataIO GitHub repository</a>. Note that SomaDataIO requires the BioBase package from <a href="https://bioconductor.org/">Bioconductor</a>, which requires a slightly different installation procedure:</p>
+<pre><code>if (!requireNamespace(&quot;BiocManager&quot;, quietly = TRUE)) {
+  install.packages(&quot;BiocManager&quot;)
+}
+BiocManager::install(&quot;Biobase&quot;)</code></pre>
+<p>Installing dependencies can be accomplished using the <code>remotes</code> package and the following series of R commands.</p>
+<pre><code># install the remotes package 
+install.packages(&#39;remotes&#39;)
+
+# install the individual dependencies
 remotes::install_version(&#39;DT&#39;, version = &#39;0.17&#39;, 
                          repos = &#39;http://cran.us.r-project.org&#39;)
 remotes::install_version(&#39;dplyr&#39;, version = &#39;1.0.5&#39;,
@@ -214,7 +221,32 @@ remotes::install_github(&#39;Somalogic/SomaDataIO@v5.0.0&#39;)</code></pre>
 </div>
 <div id="dockerhub" class="section level3" number="1.1.2">
 <h3><span class="header-section-number">1.1.2</span> DockerHub</h3>
-<p>A Docker image will be available soon.</p>
+<p>ProViz can also be run using Docker or Docker Desktop using the image available through <a href="https://hub.docker.com/r/somalogic/proviz">SomaLogic’s Dockerhub account</a>. For more information on installing and running Docker Desktop, refer to the <a href="https://www.docker.com/products/docker-desktop">Docker Desktop home page</a>.</p>
+<p>Once Docker Desktop is installed, the ProViz image can be pulled from dockerhub by executing <code>docker pull somalogic/proviz</code> from a terminal window on Mac or Linux, or from a command prompt on Windows. Once the image has been successfully pulled, the image name will be displayed in the Docker Desktop’s Dashboard application.</p>
+<div class="figure">
+<img src="images/Dashboard.png" alt="" />
+<p class="caption">Docker Dashboard showing the ProViz image available.</p>
+</div>
+<p>The image can be started by clicking run. A dialog box will be presented in which a local port number needs to be set (Local Port) in order for a web browser to communicate with the running container. Any available port can be used, and the default 3838 is most likely a good option. (You may initially see a smaller dialog box with the port setting hidden. Clicking on the triangle at the right will expand the dialog to show all options.)</p>
+<div class="figure">
+<img src="images/Dashboard_port.png" alt="" />
+<p class="caption">Setting the Local Port to 3838.</p>
+</div>
+<p>Once the Local Port is set, click Run. in the Dashboard, you will now see that the image is running. Clicking on Open in Browser will connect your web browser to the container through the Local Port set in the last step.</p>
+<div class="figure">
+<img src="images/Dashboard_runningimage.png" alt="" />
+<p class="caption">Docker Dashboard showing that the container is running.</p>
+</div>
+<p>When your browser opens, you should see the Shiny Server welcome page.</p>
+<div class="figure">
+<img src="images/ShinyWelcome.png" alt="" />
+<p class="caption">Shiny Server welcome page.</p>
+</div>
+<p>To access Proviz, just add “/ProViz” to the end of the address in the browser.</p>
+<div class="figure">
+<img src="images/ProVizURL.png" alt="" />
+<p class="caption">The full ProViz URL.</p>
+</div>
 </div>
 </div>
 <div id="example-data" class="section level2" number="1.2">
