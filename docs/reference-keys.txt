@@ -2,7 +2,6 @@ installation-and-prerequisites
 installation
 github
 dockerhub
-example-data
 proviz-navigation
 load-and-filter-adat
 the-load-and-filter-adat-panel
