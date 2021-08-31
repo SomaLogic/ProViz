@@ -170,7 +170,7 @@
 <div id="github" class="section level3" number="1.1.1">
 <h3><span class="header-section-number">1.1.1</span> GitHub</h3>
 <p>ProViz is a Shiny application written in R. The source code is available on GitHub in SomaLogic’s <a href="https://github.com/SomaLogic/ProViz">ProViz repository</a>.</p>
-<p>To use ProViz, it is recommended to install RStudio, clone the ProViz repository, and run it using the RStudio IDE. See <a href="https://shiny.rstudio.com/">RStudio’s Shiny page</a> for details of using RStudio to run a Shiny application. <a href="https://rstudio.com/products/shiny/shiny-server/">RStudio’s Shiny Server</a> can also be used to run ProViz from a server, providing access through a managed web portal.</p>
+<p>To use ProViz, it is recommended to install RStudio, clone the ProViz repository or download the code, and run it using the RStudio IDE. See <a href="https://shiny.rstudio.com/">RStudio’s Shiny page</a> for details of using RStudio to run a Shiny application. <a href="https://rstudio.com/products/shiny/shiny-server/">RStudio’s Shiny Server</a> can also be used to run ProViz from a server, providing access through a managed web portal.</p>
 <p>Some additional packages are required for ProViz. Following is a list of the required packages and the versions used during ProViz development and testing. All of the following packages are available through <a href="https://cran.r-project.org/">The Comprehensive R Network - CRAN</a>.</p>
 <ul>
 <li>shiny (1.6.0)</li>
@@ -220,6 +220,11 @@ remotes::install_version(&#39;tidyr&#39;, version = &#39;1.1.3&#39;,
 remotes::install_version(&#39;usethis&#39;, version = &#39;1.6.0&#39;,
                          repos = &#39;http://cran.us.r-project.org&#39;)
 remotes::install_github(&#39;Somalogic/SomaDataIO@v5.1.0&#39;)</code></pre>
+
+<p>Once all dependecies have been installed successfully, open RStudio and navigate to the folder containing the ProViz R code. Open any of the R code files - <code>global.R</code>, <code>ui.R</code>, or <code>server.R</code>. The code window in RStudio will have a button at the top-left that says ‘Run App’. Press this button to start ProViz. See <a href="https://shiny.rstudio.com/">RStudio’s Shiny page</a> for details of using RStudio to run a Shiny application.</p>
+<div class="figure">
+<img src="images/RunApp.png" alt="" />
+<p class="caption">The Run App button on the server.R code window in RStudio.</p>
 </div>
 <div id="dockerhub" class="section level3" number="1.1.2">
 <h3><span class="header-section-number">1.1.2</span> DockerHub</h3>
