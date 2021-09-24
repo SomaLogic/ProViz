@@ -36,6 +36,7 @@ library(ggplot2)
 library(magrittr)
 library(plotly)
 library(readr)
+library(tidyr)
 
 library(SomaDataIO)
 
@@ -57,6 +58,7 @@ rv$labelMessage = ''
 # ADAT variables
 rv$adat <- NULL
 rv$adatOrig <- NULL
+      
 rv$conColumns <- NULL
 rv$catColumns <- NULL
 rv$metaColumns <- NULL
@@ -66,8 +68,8 @@ rv$idLookup <- NULL
 # messages for the load/filter screen
 rv$loadMessage <- 'No ADAT open'
 
-# merged data
-rv$mergedData <- NULL
+# merge data
+rv$mergeData <- NULL
 
 # messages for the merge screen
 rv$mergeMessageDefault <-  paste('Only files with comma-separated values ',
@@ -88,8 +90,91 @@ rv$statMultiTable <- NULL
 
 rv$statTableRowSelect <- NULL
 
+# default statMessages
+rv$statMessageCorr <- HTML(paste(strong('Pearson correlation '),
+                             'tests linear correlations.',
+                             br(),
+                             strong('Spearman correlation '),
+                             'tests rank-correlation.', 
+                             br(),
+                             'Both require a ',
+                             strong('Continuous Response '),
+                             'variable.', sep = '')) -> rv$statMessage # start here by default
+
+rv$statMessageT <- HTML(paste(strong('t-tests '),
+                             'compare the means of two groups.',
+                             br(),
+                             'The ', 
+                             strong('Two-group Response '),
+                             'defines the membership into the two groups.  ',
+                             'If ',
+                             strong('Matched Samples '),
+                             'is selected, a ',
+                             strong('Matching Variable '),
+                             'which defines how samples are matched, or paired,',
+                             'must also be selected.  Errors in how the ',
+                             strong('Matching Variable'),
+                             'defines this matching of samples is a common source of errors.'))
+
+rv$statMessageU <- HTML(paste(strong('U-tests '),
+                             'compare the medians of two groups.',
+                             br(),
+                             'The ', 
+                             strong('Two-group Response '),
+                             'defines the membership into the two groups.  ',
+                             'If ',
+                             strong('Matched Samples '),
+                             'is selected, a ',
+                             strong('Matching Variable '),
+                             'which defines how samples are matched, or paired,',
+                             'must also be selected.  Errors in how the ',
+                             strong('Matching Variable'),
+                             'defines this matching of samples is a common source of errors.'))
+
+rv$statMessageKS <- HTML(paste(strong('KS-tests '),
+                             'compare the distributions of two groups.',
+                             br(),
+                             'The ', 
+                             strong('Two-group Response '),
+                             'defines the membership into the two groups.'))
+
+rv$statMessageANOVA <- HTML(paste(strong('ANOVA '),
+                             'compares the means of multiple groups.',
+                             br(),
+                             'The ', 
+                             strong('Multi-group Response '),
+                             'defines the membership into the groups.  ',
+                             'If ',
+                             strong('Matched Samples '),
+                             'is selected, a ',
+                             strong('Matching Variable '),
+                             'which defines how samples are matched',
+                             'must also be selected.  Errors in how the ',
+                             strong('Matching Variable'),
+                             'defines this matching of samples is a common source of errors.'))
+
+rv$statMessageKW <- HTML(paste(strong('Kruskal-Wallis '),
+                             'compares the medians of multiple groups.',
+                             br(),
+                             'The ', 
+                             strong('Multi-group Response '),
+                             'defines the membership into the groups.  '))
+
+rv$statMessageFriedman <- HTML(paste(strong('Friedman\'s Test '),
+                             'compares the medians of multiple groups when ',
+                             'samples are matched across groups.  The ',
+                             strong('Matching Variable '),
+                             'defines how samples are matched. ',
+                             'Errors in how the ',
+                             strong('Matching Variable'),
+                             'defines this matching of samples is a common source of errors.'))
+
+########################################
 # variables for preserving state of selections and settings
 # that get adjusted during UI updates
+
+# flag to indicate updates in progress - used for conditional UI effects
+rv$labelUpdates <- FALSE
 
 # Group panel
 rv$grpSelectedCol <- NULL
@@ -140,30 +225,32 @@ ecdf_prep <- function(df, data_col = 'X', group_col = 'grp',
 }
 
 # function to create a lookup table for IDs
-# allow conversion from any id (SOMAmer, Protein Name, Gene Symbol)
+# allow conversion from any id (SeqID, Protein Name, Gene Symbol)
 # to any other id
 createIdLookup <- function() {
+  # create a user-friendly version of the SeqId
+  friendly_seqid <- gsub('seq.', '', rv$featureData$AptName)
+  friendly_seqid <- gsub('\\.', '-', friendly_seqid)
+  
   #gather the individual IDs into one long vector
   lookup <- lapply(1:nrow(rv$featureData), function (i) {
-    list('SOMAmer ID' = rv$featureData$AptName[i],
+    list('Sequence ID' = friendly_seqid[i],
+         'AptName' = rv$featureData$AptName[i],
          'Protein Name' = 
-           ifelse(rv$featureData$TargetFullName[i] == '',
-                  paste0('[', rv$featureData$AptName[i], ']'),
-                  rv$featureData$TargetFullName[i]),
+           paste0(rv$featureData$TargetFullName[i],
+                  ' [', rv$featureData$AptName[i], ']'),
          'Gene Symbol' = 
            paste0(rv$featureData$EntrezGeneSymbol[i],
                   ' [', rv$featureData$AptName[i], ']')
     )
   })
   
-  # need to deal with duplicate gene names
-  
   # repeat the ids and apply names of each alternative id
-  rv$idLookup <- rep(lookup, 3)
-  names(rv$idLookup) <- c(rv$featureData$AptName,
-                          ifelse(rv$featureData$TargetFullName == '',
-                                 paste0('[', rv$featureData$AptName, ']'),
-                                 rv$featureData$TargetFullName),
+  rv$idLookup <- rep(lookup, 4)
+  names(rv$idLookup) <- c(friendly_seqid,
+                          rv$featureData$AptName,
+                          paste0(rv$featureData$TargetFullName,
+                                 ' [', rv$featureData$AptName, ']'),
                           paste0(rv$featureData$EntrezGeneSymbol,
                                  ' [', rv$featureData$AptName, ']')
   )
@@ -172,7 +259,7 @@ createIdLookup <- function() {
 # this allows cleaner access to the table
 # if an ID is requested and not found, it is returned
 # as is, and can be assumed to be a metaData item
-# rather than a SOMAmer ID, Protein Name, or Gene Symbol
+# rather than a SeqID, Protein Name, or Gene Symbol
 lookupID <- function(id, targetType) {
   targetID <- rv$idLookup[[id]][[targetType]]
   if(is.null(targetID)){

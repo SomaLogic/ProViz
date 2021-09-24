@@ -108,13 +108,13 @@ function(input, output, session) {
          return(NULL)
       }
       
-      varName <- lookupID(input$fltrCatSelect, 'SOMAmer ID')
+      varName <- lookupID(input$fltrCatSelect, 'AptName')
       updateSelectInput(session, 'fltrCatCrit',
                         selected = '',
                         choices = sort(unique(rv$adat[[varName]]))
       )
-
-      varName <- lookupID(input$fltrConSelect, 'SOMAmer ID')
+      
+      varName <- lookupID(input$fltrConSelect, 'AptName')
       rng <- range(rv$adat[[varName]], na.rm = TRUE)
       rng <- c(floor(rng[1]), ceiling(rng[2]))
       if(length(unique(rv$adat[[varName]]) == 1)) {
@@ -129,10 +129,14 @@ function(input, output, session) {
       updateCheckboxInput(session, 'fltrConExcludeNA',
                           value = FALSE)
       
+      if(rv$labelUpdates) {
+         updateProgressBar(session = session, id = 'labelProgbar',
+                           title = 'Changing labels...', value = 10)
+      }
+      
       # get continuous and categorical variables
       con_i <- which(sapply(rv$adat, function(column) {
-         return(is.numeric(column))# &
-                # length(unique(na.omit(column))) > 10)
+         return(is.numeric(column))
       }))
       cat_i <- which(sapply(rv$adat, function(column) {
                                column <- na.omit(column)
@@ -151,6 +155,11 @@ function(input, output, session) {
          lookupID(cn, input$rdoIDChoice)
       })
       names(rv$catColumns) <- NULL
+      
+      if(rv$labelUpdates) {
+         updateProgressBar(session = session, id = 'labelProgbar',
+                           title = 'Changing labels...', value = 20)
+      }
       
       # UI update functions
       z <- sapply(c('pltBxYaxis', 'pltCDFXaxis', 'pltSctrXaxis',
@@ -172,6 +181,11 @@ function(input, output, session) {
                                     rv$catColumns)
       )
 
+      if(rv$labelUpdates) {
+         updateProgressBar(session = session, id = 'labelProgbar',
+                           title = 'Changing labels...', value = 30)
+      }
+      
       # update stat tests panel select boxes with only meta data columns
       metaColumns <- SomaDataIO::getMeta(rv$adat)
       
@@ -183,6 +197,11 @@ function(input, output, session) {
       updateSelectInput(session, 'stat2GrpResp',
                         choices = c('<NONE>', twoGrpCols))
 
+      if(rv$labelUpdates) {
+         updateProgressBar(session = session, id = 'labelProgbar',
+                           title = 'Changing labels...', value = 40)
+      }
+      
       # update correlation variable select box
       metaConColumns <- metaColumns[which(metaColumns %in% rv$conColumns)]
       updateSelectInput(session, 'statCorrResp',
@@ -198,6 +217,11 @@ function(input, output, session) {
       updateSelectInput(session, 'statMultiResp',
                         choices = c('<NONE>', multiGrpCols))
       
+      if(rv$labelUpdates) {
+         updateProgressBar(session = session, id = 'labelProgbar',
+                           title = 'Changing labels...', value = 50)
+      }
+      
       # get variables that could be used for paired/repeated measures tests
       pair_i <- which(sapply(metaColumns, function(col_name) {
          column <- na.omit(rv$adat[[col_name]])
@@ -209,6 +233,11 @@ function(input, output, session) {
       pairCols <- metaColumns[pair_i]
       updateSelectInput(session, 'statMatchCol',
                         choices = c('<NONE>', pairCols))
+      
+      if(rv$labelUpdates) {
+         updateProgressBar(session = session, id = 'labelProgbar',
+                           title = 'Changing labels...', value = 60)
+      }
       
       #update the scatter plot color by variable selection
       if(input$pltSctrColorBy == 'Continuous') {
@@ -239,6 +268,11 @@ function(input, output, session) {
       }
 
       MonitorCatGrpSelections()
+      
+      if(rv$labelUpdates) {
+         updateProgressBar(session = session, id = 'labelProgbar',
+                           title = 'Changing labels...', value = 70)
+      }
       
       # find possible merge columns for adat
       meta_cols <- SomaDataIO::getMeta(rv$adat)
@@ -326,9 +360,30 @@ function(input, output, session) {
    
    # change in choice of ID cascades to UpdateUI
    observeEvent(input$rdoIDChoice, {
+      rv$labelUpdates <- (TRUE & !is.null(rv$adat))
+      
       PreservePlotStates()
+      
+      if(rv$labelUpdates) {
+         updateProgressBar(session = session, id = 'labelProgbar',
+                           title = 'Updating labels...', value = 5)
+      }
+      
       UpdateUI()
+      
+      if(rv$labelUpdates) {
+         updateProgressBar(session = session, id = 'labelProgbar',
+                           title = 'Updating labels...', value = 75)
+      }
+      
       RevertPlotStates()
+      
+      if(rv$labelUpdates) {
+      updateProgressBar(session = session, id = 'labelProgbar',
+                        title = 'Labels updated', value = 100)
+      }
+      
+      rv$labelUpdates <- FALSE
    })
    
    # always update if the data changes
@@ -355,6 +410,7 @@ function(input, output, session) {
    resetGlobals <- function() {
       rv$adat <- NULL
       rv$adatOrig <- NULL
+      
       rv$conColumns <- NULL
       rv$catColumns <- NULL
       rv$metaColumns <- NULL
@@ -364,7 +420,7 @@ function(input, output, session) {
       rv$loadMessage <- 'No ADAT open'
       
       # merged daa
-      rv$mergedData <- NULL
+      rv$mergeData <- NULL
       rv$mergeMessage <- NULL
       
       # grouping variables
@@ -420,6 +476,11 @@ function(input, output, session) {
                       updateProgressBar(session = session, id = 'loadProgbar',
                                         value = 50)
                       
+                      # make a ProViz entry in the header
+                      attributes(adat)$Header.Meta$HEADER$ProViz <- 
+                         paste('Oringal ADAT filename: ', input$adat_file$name, 
+                               ';', sep = '')
+                      
                       # set the variables
                       rv$adat <- adat
                       rv$adatOrig <- rv$adat
@@ -430,7 +491,7 @@ function(input, output, session) {
                       updateProgressBar(session = session, id = 'loadProgbar',
                                         value = 75)
                       
-                      # construct id lookup table 
+                      # construct id lookup table
                       createIdLookup()
                       
                       # update progress
@@ -471,7 +532,7 @@ function(input, output, session) {
    })
 
    observeEvent(input$fltrCatSelect, {
-      varName <- lookupID(input$fltrCatSelect, 'SOMAmer ID')
+      varName <- lookupID(input$fltrCatSelect, 'AptName')
       updateSelectInput(session, 'fltrCatCrit',
                         choices = sort(unique(rv$adat[[varName]]))
       )
@@ -479,24 +540,44 @@ function(input, output, session) {
 
    observeEvent(input$fltrCatApply, {
       i <- integer()
-      varName <- lookupID(input$fltrCatSelect, 'SOMAmer ID')
+      varName <- lookupID(input$fltrCatSelect, 'AptName')
+      modHistory <- paste(attributes(rv$adat)$Header.Meta$HEADER$ProViz,
+                          ' Categorical Filter: Column = "', varName, '"',
+                          sep = '')
       
       if(!is.null(input$fltrCatCrit) ) {
          i <- which(rv$adat[[varName]] %in% input$fltrCatCrit )
+         modHistory <- paste(modHistory,  
+                             ' Filtered values = "', 
+                                    paste(input$fltrCatCrit, collapse = ','),
+                             '"', sep = '')
       }
 
-      if(input$fltrCatExcludeNA ) {
-         i <- union(i, which(rv$adat[[varName]] == '') )
+      if(input$fltrCatExcludeNA) {
+         if(length(i) > 0) {
+            i <- union(i, which(rv$adat[[varName]] == '' |
+                                is.na(rv$adat[[varName]])))
+         } else {
+            i <- which(rv$adat[[varName]] == '' |
+                       is.na(rv$adat[[varName]]))
+         }
+         
+         modHistory <- paste(modHistory, ' ',
+                             'Rows with empty values removed. ', sep = '')
       }
 
       if(length(i) > 0 ) {
          rv$adat <- rv$adat[-i,]
          UpdateUI()
+         
+         modHistory <- paste(modHistory, ' ',
+                             length(i), ' rows removed;', sep = '')
+         attributes(rv$adat)$Header.Meta$HEADER$ProViz <- modHistory
       }
    })
 
    observeEvent(input$fltrConSelect, {
-      varName <- lookupID(input$fltrConSelect, 'SOMAmer ID')
+      varName <- lookupID(input$fltrConSelect, 'AptName')
       
       rng <- range(rv$adat[[varName]], na.rm = TRUE)
       rng <- c(floor(rng[1]), ceiling(rng[2]))
@@ -511,17 +592,42 @@ function(input, output, session) {
    })
 
    observeEvent(input$fltrConApply, {
-      varName <- lookupID(input$fltrConSelect, 'SOMAmer ID')
-      i <- which(rv$adat[[varName]] < input$fltrConCrit[1] |
+      varName <- lookupID(input$fltrConSelect, 'AptName')
+      modHistory <- paste(attributes(rv$adat)$Header.Meta$HEADER$ProViz,
+                          ' Continuous Filter: Column = "', varName, '"', ' ',
+                          sep = '')
+      
+      i <- which(rv$adat[[varName]] < input$fltrConCrit[1] | 
                  rv$adat[[varName]] > input$fltrConCrit[2])
+      if(length(i) > 0){
+         modHistory <- paste(modHistory, ' ',
+                        'Low value = ',  input$fltrConCrit[1], ' ',
+                        'High value = ', input$fltrConCrit[2],
+                        sep = '')
+      } 
 
-      if(input$fltrConExcludeNA ) {
-         i <- union(i, which(is.na(rv$adat[[varName]])) )
+      if(input$fltrConExcludeNA) {
+         if(length(i) > 0) {
+            i <- union(i, which(rv$adat[[varName]] == '' |
+                                   is.na(rv$adat[[varName]])))
+         } else {
+            i <- which(rv$adat[[varName]] == '' |
+                          is.na(rv$adat[[varName]]))
+         }
+         
+         if(length(i) > 0){
+            modHistory <- paste(modHistory, ' ',
+                                'Rows with empty values removed.', sep = '')
+         }
       }
 
       if(length(i) > 0) {
          rv$adat <- rv$adat[-i,]
          UpdateUI()
+         
+         modHistory <- paste(modHistory, ' ',
+                             length(i), ' rows removed;', sep = '')
+         attributes(rv$adat)$Header.Meta$HEADER$ProViz <- modHistory
       }
    })
    
@@ -529,14 +635,14 @@ function(input, output, session) {
    # Handlers for merge tab
    ########################################
    
-   observeEvent(rv$mergedData, {
-      if(is.null(rv$mergedData)) {
+   observeEvent(rv$mergeData, {
+      if(is.null(rv$mergeData)) {
          updateSelectInput(session, 'mergeDataCol', 
                            choices = '<BLAH>')
       }
       
       updateSelectInput(session, 'mergeDataCol',
-                        choices = colnames(rv$mergedData))
+                        choices = colnames(rv$mergeData))
    })
    
    # messages for the merge screen
@@ -561,16 +667,16 @@ function(input, output, session) {
                                           delim = '\t', col_types = cols()))
          } else {
             rv$loadMessage <- rv$loadMessageDefault
-            rv_mergedData <- NULL
+            rv_mergeData <- NULL
          }
          
          if(inherits(data, 'try-error')) {
-            rv$mergedData <- NULL
+            rv$mergeData <- NULL
             rv$loadMessage <- helpText('Error loading data: ', 
                                        br(), data[1])
          } else {
             colnames(data) = gsub(' ', '.', colnames(data))
-            rv$mergedData <- data 
+            rv$mergeData <- data 
          }
       }
    })
@@ -591,25 +697,27 @@ function(input, output, session) {
    output$mergeDataPreview <- DT::renderDataTable(
       server = TRUE,
       options = list(scrollX = TRUE, pageLength = 5), {
-         if(is.null(rv$mergedData)) {
+         if(is.null(rv$mergeData)) {
             return(NULL)
          } else {
-            rv$mergedData
+            rv$mergeData
          }
       }
    )
    
    observeEvent(input$mergeApply, {
-      if(is.null(rv$adat) | is.null(rv$mergedData) |
+      if(is.null(rv$adat) | is.null(rv$mergeData) |
          input$mergeADATCol == '' | input$mergeDataCol == '') {
          return(NULL)
       }
       
+      modHistory <- paste(attributes(rv$adat)$Header.Meta$HEADER$ProViz, ' ',
+                          'Merged data file: ', input$merge_file$name, sep = '')
       by_vec = c(input$mergeDataCol)
       names(by_vec) = input$mergeADATCol
       
       if(input$mergeType == 'Keep All ADAT Rows') {
-         merged_adat <- try(dplyr::left_join(rv$adat, rv$mergedData, 
+         merged_adat <- try(dplyr::left_join(rv$adat, rv$mergeData, 
                                              by = by_vec,
                                              suffix = c('_orig', '_merged')))
          
@@ -620,11 +728,19 @@ function(input, output, session) {
             rv$adat <- merged_adat
             rv$mergeMessage <- rv$mergeMessageDefault
             rv$metaColumns <- SomaDataIO::getMeta(rv$adat)
+            
+            modHistory <- paste(modHistory, ' ',
+                                'ADAT merge column name = "', input$mergeADATCol, '" ',
+                                'Merge file merge column name = "', input$mergeDataCol, '" ', 
+                                'All ADAT rows kept. ',
+                                ncol(rv$mergeData) - 1, ' added columns;', 
+                                sep = '')
+            rv$modHistory <- modHistory
          }
       }
       
       if(input$mergeType == 'Keep Only Intersection') {
-         merged_adat <- try(dplyr::inner_join(rv$adat, rv$mergedData, 
+         merged_adat <- try(dplyr::inner_join(rv$adat, rv$mergeData, 
                                               by = by_vec,
                                               suffix = c('_orig', '_merged')))
          
@@ -635,6 +751,14 @@ function(input, output, session) {
             rv$adat <- merged_adat
             rv$mergeMessage <- rv$mergeMessageDefault
             rv$metaColumns <- SomaDataIO::getMeta(rv$adat)
+            
+            modHistory <- paste(modHistory, ' ',
+                                'ADAT merge column name = "', input$mergeADATCol, '" ',
+                                'Merge file merge column name = "', input$mergeDataCol, '" ', 
+                                'Intersection kept. ',
+                                ncol(rv$mergeData) - 1, ' added columns',
+                                sep = '')
+            rv$modHistory <- modHistory
          }
       }
    })
@@ -663,7 +787,7 @@ function(input, output, session) {
       if(input$grpSourceColName == '<NONE>') {
          return(NULL)
       }
-      varName <- lookupID(input$grpSourceColName, 'SOMAmer ID')
+      varName <- lookupID(input$grpSourceColName, 'AptName')
       
       if(input$grpCreateFrom == 'Continuous') {
          rng <- range(rv$adat[[varName]], na.rm = TRUE)
@@ -700,7 +824,7 @@ function(input, output, session) {
    })
 
    MonitorCatGrpSelections = function() {
-      varName <- lookupID(input$grpSourceColName, 'SOMAmer ID')
+      varName <- lookupID(input$grpSourceColName, 'AptName')
       vals <- unique(rv$adat[[varName]])
       valsA <- which(vals %in% input$grpCatGrpA)
       valsB <- which( vals %in% input$grpCatGrpB)
@@ -731,7 +855,7 @@ function(input, output, session) {
    output$grpWarning <- renderPrint(cat(rv$grpWarning))
 
    observeEvent(input$grpLog10, {
-      varName <- lookupID(input$grpSourceColName, 'SOMAmer ID')
+      varName <- lookupID(input$grpSourceColName, 'AptName')
       rng <- range(rv$adat[[varName]], na.rm = TRUE)
       if(input$grpLog10) {
          rng <- round(log10(rng),2)
@@ -777,7 +901,7 @@ function(input, output, session) {
          rv$grpNewGroupData <- NULL
          return(NULL)
       }
-      varName <- lookupID(input$grpSourceColName, 'SOMAmer ID')
+      varName <- lookupID(input$grpSourceColName, 'AptName')
       
       if(input$grpCreateFrom == 'Continuous') {
          df <- data.frame(rv$adat[[varName]],
@@ -829,6 +953,34 @@ function(input, output, session) {
       
       rv$metaColumns <- c(rv$metaColumns, input$grpNewColName)
       rv$adat[[input$grpNewColName]] <- rv$grpNewGroupData
+      
+      # build the modification history
+      modHistory <- paste(attributes(rv$adat)$Header.Meta$HEADER$ProViz, ' ', sep = '')
+      
+      if(input$grpCreateFrom == 'Continuous') {
+         modHistory <- paste(modHistory, 
+                             ' Group created from continuous column "',
+                             input$grpSourceColName, '" ', 
+                             'New column = "', input$grpNewColName, '" ',
+                             'New group "', input$grpGrpALabel, '" ',
+                             'with values less than ', input$grpConSplit, 
+                             ' New group"', input$grpGrpBLabel, '" ',
+                             'with values greater than or equal to ', input$grpConSplit,
+                             ';', sep = '')
+         
+      } else {
+         modHistory <- paste(modHistory, 
+                             ' Group created from categorical column "',
+                             input$grpSourceColName, '" ', 
+                             'New column = "', input$grpNewColName, '" ',
+                             'New group "', input$grpGrpALabel, '" ',
+                             'with values "', paste(input$grpCatGrpA, collapse = ','), '" ', 
+                             'New group "', input$grpGrpBLabel, '" ',
+                             'with values "', paste(input$grpCatGrpB, collapse = ','), '";',
+                             sep = '')
+         
+      }
+      attributes(rv$adat)$Header.Meta$HEADER$ProViz <- modHistory
    })
 
    output$grpDownloadADAT <- dlHandler
@@ -854,13 +1006,13 @@ function(input, output, session) {
 
          df <- data.frame(SampleId = rv$adat$SampleId,
                           X = rv$adat[[lookupID(input$pltBxXaxis, 
-                                                'SOMAmer ID')]])
+                                                'AptName')]])
          if(input$pltBxYaxisLog10) {
             df$Y <- round(log10(as.numeric(rv$adat[[lookupID(input$pltBxYaxis, 
-                                                             'SOMAmer ID')]])), 2)
+                                                             'AptName')]])), 2)
          } else {
             df$Y <- as.numeric(rv$adat[[lookupID(input$pltBxYaxis, 
-                                                 'SOMAmer ID')]])
+                                                 'AptName')]])
          }
          
          # drop NAs
@@ -935,19 +1087,19 @@ function(input, output, session) {
       }
 
       df <- data.frame(SampleId = rv$adat$SampleId,
-                       X = rv$adat[[lookupID(input$pltCDFXaxis, 'SOMAmer ID')]])
+                       X = rv$adat[[lookupID(input$pltCDFXaxis, 'AptName')]])
       if(input$pltCDFLog10) {
          df$X <- round(log10(as.numeric(rv$adat[[lookupID(input$pltCDFXaxis, 
-                                                          'SOMAmer ID')]])), 2)
+                                                          'AptName')]])), 2)
       } else {
          df$X <- as.numeric(rv$adat[[lookupID(input$pltCDFXaxis, 
-                                              'SOMAmer ID')]])
+                                              'AptName')]])
       }
 
       if(input$pltCDFColorBy == '<NONE>') {
          df$grp <- ''
       } else {
-         df$grp <- rv$adat[[lookupID(input$pltCDFColorBy, 'SOMAmer ID')]]
+         df$grp <- rv$adat[[lookupID(input$pltCDFColorBy, 'AptName')]]
       }
 
       # drop NAs
@@ -1058,9 +1210,9 @@ function(input, output, session) {
 
       df <- data.frame(SampleId = rv$adat$SampleId, 
                        X = as.numeric(rv$adat[[lookupID(input$pltSctrXaxis, 
-                                                        'SOMAmer ID')]]),
+                                                        'AptName')]]),
                        Y = as.numeric(rv$adat[[lookupID(input$pltSctrYaxis,
-                                                        'SOMAmer ID')]]))
+                                                        'AptName')]]))
 
       if(input$pltSctrXaxisLog10) {
          df$X <- round(log10(df$X), 2)
@@ -1074,13 +1226,13 @@ function(input, output, session) {
          df$grp <- ''
       } else if(input$pltSctrColorBy == 'Continuous') {
          df$grp <- as.numeric(rv$adat[[lookupID(input$pltSctrColorByVar, 
-                                                'SOMAmer ID')]])
+                                                'AptName')]])
          if(input$pltSctrColorByLog) {
             df$grp <- round(log10(df$grp), 2)
          }
       } else if(input$pltSctrColorBy == 'Category') {
          df$grp <- factor(rv$adat[[lookupID(input$pltSctrColorByVar, 
-                                            'SOMAmer ID')]])
+                                            'AptName')]])
       }
       
       # drop NAs
@@ -1259,7 +1411,6 @@ function(input, output, session) {
       return(resTable)
    }
   
-   
    # statistical test functions
    getMaxFoldChange <- function(df) {
       # find the maximum fold change between groups
@@ -1298,12 +1449,27 @@ function(input, output, session) {
       
       # get log10 SOMAmers
       adat <- log10(rv$adat)
-   
+     
+      #####
+      # Code to compute the slope of the relationship is present
+      # but commented out.  When slope is computed on the raw RFU scale,
+      # the values are extremely low due to the RFU being in the thousands
+      # to tens of thousands.  If it is computed on the log10(RFU) scale,
+      # the slopes are huge due to now be on order-of-magnitude scale.
+      #####
+      
       # perform the tests 
       tbl <- data.frame(t(sapply(vars, function(v) {
          z <- suppressWarnings(cor.test(adat[[respID]], adat[[v]],
                         method = ifelse(input$statCorrMethod == 'Pearson',
                                         'pearson', 'spearman')))
+         # if(input$statCorrMethod == 'Pearson') {
+         #    lm_df <- data.frame(x = adat[[v]], y = adat[[respID]])
+         # } else {
+         #    lm_df <- data.frame(x = rank(adat[[v]]), 
+         #                        y = rank(adat[[respID]]))
+         # }
+         # l <- lm(y ~ x, lm_df)
          
          # increment the progress bar
          p <- which(vars == v)
@@ -1314,10 +1480,12 @@ function(input, output, session) {
          
          if(input$statCorrMethod == 'Pearson') {
             c(t.statistic = round(as.numeric(z$statistic), 2),
+              # slope = round(unname(coef(l))[2], 2), 
               r = round(as.numeric(z$estimate), 2),
               p.value = z$p.value)
          } else {
             c(S.statistic = round(as.numeric(z$statistic), 2),
+              # slope = round(unnmae(coef(l))[2], 2),
               rho = round(as.numeric(z$estimate), 2),
               p.value = z$p.value)
          }
@@ -1333,7 +1501,8 @@ function(input, output, session) {
       rv$statCorrTable <- df
       
       # user-friendly column names
-      colnames(df)[1:3] = c('SOMAmer', 'Protein Name', 'Gene Symbol')
+      colnames(df)[1:3] <- c('Sequence', 'Protein Name', 'Gene Symbol')
+      
       rv$statCorrTable 
    }
    
@@ -1344,7 +1513,7 @@ function(input, output, session) {
       }
      
       # prepare the results table 
-      respID <- lookupID(input$statMultiResp, 'SOMAmer ID') 
+      respID <- lookupID(input$statMultiResp, 'AptName') 
       vars <- SomaDataIO::getFeatures(rv$adat)
       df <- data.frame(rv$featureData[, c('AptName', 
                                           'TargetFullName', 'EntrezGeneSymbol')])
@@ -1676,6 +1845,11 @@ function(input, output, session) {
          return(NULL)
       }
       
+      # add user-friendly Sequence ID
+      df$SeqID <- sapply(df$AptName, function(aptname) {
+         lookupID(aptname, 'Sequence ID')
+      })
+      
       # set the p-value column name
       if(input$stat2GrpCorrection == 'p-value') {
          pcolumn <- 'p.value'
@@ -1699,7 +1873,7 @@ function(input, output, session) {
       # make the actual plot
       plt <- ggplot(df, aes(x = !!sym(xAxis), y = -log10(!!sym(pcolumn)),
                             color = pt_cols, key = AptName, size = pt_cols,
-                            text = paste0('SOMAmer: ', AptName, '\n',
+                            text = paste0('Sequence ID: ', SeqID, '\n',
                                           'Protein Name: ', TargetFullName, '\n',
                                           'Gene Symbol: ', EntrezGeneSymbol, '\n',
                                           if(input$statTests == 'Correlation') {
@@ -1771,12 +1945,11 @@ function(input, output, session) {
       # generate scatter plot of the selected SOMAmer
       # from the Volcano plot and the endpoint
       resTable <- getStatResultsTable()
-      
       if(!is.null(rv$statTableRowSelect)) {
          row_sel <- rv$statTableRowSelect
          var_name <- resTable$AptName[row_sel]
-         if(input$stat2GrpDataLabel == 'SOMAmer') {
-            lab_name <- var_name
+         if(input$stat2GrpDataLabel == 'Sequence ID') {
+            lab_name <- lookupID(var_name, 'Sequence ID')
          } else if(input$stat2GrpDataLabel == 'Protein Name') {
             lab_name <- 
                rv$featureData$TargetFullName[which(rv$featureData$AptName == 
@@ -1867,12 +2040,11 @@ function(input, output, session) {
       # generate boxplot or cdf of the selected SOMAmer
       # from the Volcano plot or table
       resTable <- getStatResultsTable()
-      
       if(!is.null(rv$statTableRowSelect)) {
          row_sel <- rv$statTableRowSelect
          var_name <- resTable$AptName[row_sel]
-         if(input$stat2GrpDataLabel == 'SOMAmer') {
-            lab_name <- var_name
+         if(input$stat2GrpDataLabel == 'Sequence ID') {
+            lab_name <- lookupID(var_name, 'Sequence ID')
          } else if(input$stat2GrpDataLabel == 'Protein Name') {
             lab_name <- 
                rv$featureData$TargetFullName[which(rv$featureData$AptName == 
@@ -2009,11 +2181,32 @@ function(input, output, session) {
          sprintf('ProViz_%s_table.csv', input$statTests)
       },
       content = function(file) {
-            write.csv(getStatResultsTable(), file, row.names=FALSE)
+            df <- getStatResultsTable()
+            
+            if(is.null(df)) {
+               return(NULL)
+            } else {
+               # create the Sequence ID
+               friendly_seqid <- sapply(df$AptName, function(aptname) {
+                  lookupID(aptname, 'Sequence ID')
+               })
+               
+               # drop AptName in favor of the user-friendly Sequence ID 
+               df <- cbind(friendly_seqid, df[, -1]) 
+               
+               # create friendly column names
+               colnames(df)[1:3] <- c('Sequence ID', 'Protein Name', 'Gene Symbol')
+            }
+            
+            write.csv(df, file, row.names=FALSE)
       }
    )
    
-   output$stat2GrpAnnoTable <- DT::renderDataTable(
+   output$statMessage <- renderUI({
+      rv$statMessage
+   })
+   
+   output$statAnno <- DT::renderDataTable(
       server = TRUE, rownames = FALSE, colnames = '',
       selection = 'none', options = list(dom = 't'), 
       {
@@ -2024,14 +2217,15 @@ function(input, output, session) {
             var_name <- res_table$AptName[rv$statTableRowSelect]
             row_num <- which(rv$featureData$AptName == var_name)
             df <- data.frame(
-               Label = c('SOMAmer', 'Protein Full Name', 'Protein Short Name',
+               Label = c('Sequence ID', 'Protein Full Name', 'Protein Short Name',
                          'UniProt ID', 'Entrez Gene Id', 'Entrez Gene Symbol'),
-               Details = t(rv$featureData[row_num, 
-                            c('AptName', 'TargetFullName', 'Target', 
-                              'UniProt', 'EntrezGeneID',
-                              'EntrezGeneSymbol')]))
+               Details = c(lookupID(rv$featureData$AptName[row_num], 'Sequence ID'),
+                           t(rv$featureData[row_num, 
+                                            c('TargetFullName', 'Target', 
+                                              'UniProt', 'EntrezGeneID',
+                                              'EntrezGeneSymbol')])))
          }
-         df
+         return(df)
       }
    )
    
@@ -2041,15 +2235,31 @@ function(input, output, session) {
       options = list(scrollX = TRUE, deferRender = TRUE), {
          
          if(input$statTests == 'Correlation') {
-            return(rv$statCorrTable)
+            df <- rv$statCorrTable
          } else if(input$statTests == 't-test' |
                    input$statTests == 'U-test' |
                    input$statTests == 'KS-test') {
-            return(rv$stat2GrpTable)
+            df <- rv$stat2GrpTable
          } else if(input$statTests == 'ANOVA' |
                    input$statTests == 'Kruskal-Wallis' |
                    input$statTests == 'Friedman\'s Test') {
-            return(rv$statMultiTable)
+            df <- rv$statMultiTable
+         }
+         
+         if(is.null(df)) {
+            return(NULL)
+         } else {
+            # create the Sequence ID
+            friendly_seqid <- sapply(df$AptName, function(aptname) {
+               lookupID(aptname, 'Sequence ID')
+            })
+            
+            # drop AptName in favor of the user-friendly Sequence ID 
+            df <- cbind(friendly_seqid, df[, -1]) 
+            
+            # create friendly column names
+            colnames(df)[1:3] <- c('Sequence ID', 'Protein Name', 'Gene Symbol')
+            return(df)
          }
    })
    
@@ -2091,17 +2301,47 @@ function(input, output, session) {
    observeEvent(input$statStartTests, {
          updateProgressBar(session = session, id = 'statProgbar', 
                            value = 0, title = 'Running tests...')
+         
          if(input$statTests == 'Correlation') {
-            statCorrTests()
+            res <- try(statCorrTests())
+            if(inherits(res, 'try-error')) {
+               rv$statMessage <- helpText('Error performing correlation tests.',
+                                          br(),
+                                          'Verify variable types are correct.',
+                                          br(), 
+                                          'Error message:',
+                                          res[1])
+            }
          } else if(input$statTests == 't-test' |
                    input$statTests == 'U-test' |
                    input$statTests == 'KS-test') {
-            stat2GrpTests()
+            res <- try(stat2GrpTests())
+            if(inherits(res, 'try-error')) {
+               rv$statMessage <- helpText('Error performing 2-group tests.',
+                                          br(),
+                                          paste('Verify variable types and matching variables are correct. ',
+                                                'Most often, incorrect matching variables are the cause of errors.',
+                                                sep = ''),
+                                          br(), 
+                                          'Error message:',
+                                          res[1])
+            }
          } else if(input$statTests == 'ANOVA' |
                    input$statTests == 'Kruskal-Wallis' |
                    input$statTests == 'Friedman\'s Test') {
-            statMultiGrpTests()
-         }
+            res <- try(statMultiGrpTests())
+            if(inherits(res, 'try-error')) {
+               rv$statMessage <- helpText('Error performing multi-group tests.',
+                                          br(),
+                                          paste('Verify variable types, response variables, and matching variables are correct. ',
+                                                'Most often, incorrect matching or response variables are the cause of errors.',
+                                                sep = ''),
+                                          br(), 
+                                          'Error message:',
+                                          res[1])
+            }
+         } 
+         
          updateProgressBar(session = session, id = 'statProgbar', 
                            value = 100, title = '')
    })
@@ -2134,9 +2374,27 @@ function(input, output, session) {
    })
    
    observeEvent(input$statTests, {
+      # build a message based on the choice of stats test
+      if(input$statTests == 'Correlation') {
+         rv$statMessage <- rv$statMessageCorr
+      } else if(input$statTests == 't-test') {
+         rv$statMessage <- rv$statMessageT
+      } else if(input$statTests == 'U-test') {
+         rv$statMessage <- rv$statMessageU
+      } else if (input$statTests == 'KS-test') {
+         rv$statMessage <- rv$statMessageKS
+      } else if(input$statTests == 'ANOVA') { 
+         rv$statMessage <- rv$statMessageANOVA
+      } else if(input$statTests == 'Kruskal-Wallis') {
+         rv$statMessage <- rv$statMessageKW
+      } else if(input$statTests == 'Friedman\'s Test') {
+         rv$statMessage <- rv$statMessageFriedman
+      }
+      
       # unset the plot selection
       rv$statTableRowSelect <- NULL
       
+      # adjust volcano plot
       if(input$statTests == 'Correlation') {
          updateSliderInput(session, inputId = 'stat2GrpFold',
                            label = 'Correlation',

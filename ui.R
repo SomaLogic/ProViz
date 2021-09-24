@@ -47,8 +47,10 @@ dashboardPage(skin='blue',
          ),
          radioButtons(inputId = 'rdoIDChoice', 
                       label = 'Label SOMAmers by:', 
-                      choices = c('SOMAmer ID', 'Protein Name', 'Gene Symbol')
+                      choices = c('Sequence ID', 'Protein Name', 'Gene Symbol')
          ),
+         progressBar(id = 'labelProgbar', value = 100,
+                     title = 'Labels updated', display_pct = TRUE),
          htmlOutput(outputId = 'docs'),
          htmlOutput(outputId = 'SLlogo')
       )
@@ -691,7 +693,12 @@ dashboardPage(skin='blue',
                           ),
                           fluidRow(
                            column(12,
-                             DT::dataTableOutput(outputId = 'stat2GrpAnnoTable')
+                            htmlOutput(outputId = 'statMessage')
+                            )
+                          ),
+                          fluidRow(
+                           column(12,
+                             DT::dataTableOutput(outputId = 'statAnno')
                            )
                           )
                    ),
@@ -792,7 +799,7 @@ dashboardPage(skin='blue',
                                     fluidRow(
                                      column(12,
                                        radioButtons(inputId = 'stat2GrpDataLabel',
-                                                    choices = c('SOMAmer',
+                                                    choices = c('Sequence ID',
                                                                 'Protein Name', 
                                                                 'Gene Symbol'),
                                                     label = 'Data Label',
