@@ -1679,8 +1679,7 @@ function(input, output, session) {
       
       # order as needed
       if((input$statTests == 't-test' |
-          input$statTests == 'U-test') &
-         input$statMatched & input$statMatchCol != '<NONE>') {
+          input$statTests == 'U-test')) { 
          
          if(input$statMatched & input$statMatchCol != '<NONE>') {
             adat <- adat[order(adat[[input$stat2GrpResp]], 
