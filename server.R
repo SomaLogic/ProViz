@@ -29,6 +29,285 @@
 options(shiny.maxRequestSize = 100 * 1024 ^ 2)
 
 function(input, output, session) {
+   
+   ########################################
+   # Reactive globals to manage dynamic 
+   # interactions
+   # These were moved here to avoid data
+   # sharing of global space between instances
+   # in RSConnect
+   ########################################
+   
+   # reactive storage variable
+   rv <- reactiveValues()
+   
+   # label update process
+   rv$labelMessage = '' 
+   
+   # ADAT variables
+   rv$adat <- NULL
+   rv$adatOrig <- NULL
+         
+   rv$conColumns <- NULL
+   rv$catColumns <- NULL
+   rv$metaColumns <- NULL
+   rv$featureData <- NULL
+   rv$idLookup <- NULL
+   
+   # messages for the load/filter screen
+   rv$loadMessage <- 'No ADAT open'
+   
+   # merge data
+   rv$mergeData <- NULL
+   
+   # messages for the merge screen
+   rv$mergeMessageDefault <-  paste('Only files with comma-separated values ',
+                                    '(.csv) or tab-separated values (.txt) are ',
+                                    'supported for merging.  The first row ',
+                                    'should contain column names.',
+                                    sep = '')
+   rv$mergeMessage <- NULL
+   
+   # grouping variables
+   rv$grpWarning <- '' 
+   rv$grpNewGroupData <- NULL
+   
+   # stats variables/tables
+   rv$stat2GrpTable <- NULL
+   rv$statCorrTable <- NULL
+   rv$statMultiTable <- NULL
+   
+   rv$statTableRowSelect <- NULL
+   
+   # default statMessages
+   rv$statMessageCorr <- HTML(paste(strong('Pearson correlation '),
+                                'tests linear correlations.',
+                                br(),
+                                strong('Spearman correlation '),
+                                'tests rank-correlation.', 
+                                br(),
+                                'Both require a ',
+                                strong('Continuous Response '),
+                                'variable.', sep = '')) -> rv$statMessage # start here by default
+   
+   rv$statMessageT <- HTML(paste(strong('t-tests '),
+                                'compare the means of two groups.',
+                                br(),
+                                'The ', 
+                                strong('Two-group Response '),
+                                'defines the membership into the two groups.  ',
+                                'If ',
+                                strong('Matched Samples '),
+                                'is selected, a ',
+                                strong('Matching Variable '),
+                                'which defines how samples are matched, or paired,',
+                                'must also be selected.  Errors in how the ',
+                                strong('Matching Variable'),
+                                'defines this matching of samples is a common source of errors.'))
+   
+   rv$statMessageU <- HTML(paste(strong('U-tests '),
+                                'compare the medians of two groups.',
+                                br(),
+                                'The ', 
+                                strong('Two-group Response '),
+                                'defines the membership into the two groups.  ',
+                                'If ',
+                                strong('Matched Samples '),
+                                'is selected, a ',
+                                strong('Matching Variable '),
+                                'which defines how samples are matched, or paired,',
+                                'must also be selected.  Errors in how the ',
+                                strong('Matching Variable'),
+                                'defines this matching of samples is a common source of errors.'))
+   
+   rv$statMessageKS <- HTML(paste(strong('KS-tests '),
+                                'compare the distributions of two groups.',
+                                br(),
+                                'The ', 
+                                strong('Two-group Response '),
+                                'defines the membership into the two groups.'))
+   
+   rv$statMessageANOVA <- HTML(paste(strong('ANOVA '),
+                                'compares the means of multiple groups.',
+                                br(),
+                                'The ', 
+                                strong('Multi-group Response '),
+                                'defines the membership into the groups.  ',
+                                'If ',
+                                strong('Matched Samples '),
+                                'is selected, a ',
+                                strong('Matching Variable '),
+                                'which defines how samples are matched',
+                                'must also be selected.  Errors in how the ',
+                                strong('Matching Variable'),
+                                'defines this matching of samples is a common source of errors.'))
+   
+   rv$statMessageKW <- HTML(paste(strong('Kruskal-Wallis '),
+                                'compares the medians of multiple groups.',
+                                br(),
+                                'The ', 
+                                strong('Multi-group Response '),
+                                'defines the membership into the groups.  '))
+   
+   rv$statMessageFriedman <- HTML(paste(strong('Friedman\'s Test '),
+                                'compares the medians of multiple groups when ',
+                                'samples are matched across groups.  The ',
+                                strong('Matching Variable '),
+                                'defines how samples are matched. ',
+                                'Errors in how the ',
+                                strong('Matching Variable'),
+                                'defines this matching of samples is a common source of errors.'))
+
+   # warn on NA removal
+   rv$statNAWarning <- HTML(paste(strong('NOTE:'),
+                                  br(),
+                                  'NAs found in Response or Matching variable.',
+                                  br(),
+                                  'Observations with NAs removed.'))
+  
+   setDefaultStatMessage <- function() {
+      # build a message based on the choice of stats test
+      if(input$statTests == 'Correlation') {
+         rv$statMessage <- rv$statMessageCorr
+      } else if(input$statTests == 't-test') {
+         rv$statMessage <- rv$statMessageT
+      } else if(input$statTests == 'U-test') {
+         rv$statMessage <- rv$statMessageU
+      } else if (input$statTests == 'KS-test') {
+         rv$statMessage <- rv$statMessageKS
+      } else if(input$statTests == 'ANOVA') {
+         rv$statMessage <- rv$statMessageANOVA
+      } else if(input$statTests == 'Kruskal-Wallis') {
+         rv$statMessage <- rv$statMessageKW
+      } else if(input$statTests == 'Friedman\'s Test') {
+         rv$statMessage <- rv$statMessageFriedman
+      }
+   }
+    # default preview messages to be displayed when there is nothing to
+   # display for table or plot
+   rv$loadADATPreviewDefault <-
+      HTML(paste(br(), br(), '<center>',
+                 h3('No ADAT open.'),
+                 '</center>',
+                 br(), br())) -> rv$loadADATPreviewMessage
+  
+   rv$mergeDataPreviewMessageDefault <-
+      HTML(paste(br(), br(), '<center>',
+                 h3('No data file open.'),
+                 '</center>',
+                 br(), br())) -> rv$mergeDataPreviewMessage
+  
+   rv$statTableMessageDefault <-
+      HTML(paste(br(), br(), '<center>',
+                 h3('No test results.'),
+                 '</center>',
+                 br(), br())) -> rv$statTableMessage
+  
+   rv$statDistrMessage <-
+      HTML(paste(br(), br(), '<center>',
+             h3('Make a selection from the Volcano Plot or the Results Table.'),
+             '</center>',
+             br(), br())) -> rv$statDistrMessageDefault
+   
+   ########################################
+   # variables for preserving state of selections and settings
+   # that get adjusted during UI updates
+   
+   # flag to indicate updates in progress - used for conditional UI effects
+   rv$labelUpdates <- FALSE
+   
+   # Group panel
+   rv$grpSelectedCol <- NULL
+   rv$grpSplitSetting <- NULL
+   rv$grpCatGrpA <- NULL
+   rv$grpCatGrpB <- NULL
+   
+   # boxplots
+   rv$pltBxXaxis <- NULL
+   rv$pltBxYaxis <- NULL
+   
+   # cdf
+   rv$pltCDFXaxis <- NULL
+   rv$pltCDFColorBy <- NULL
+   
+   #scatter plot
+   rv$pltSctrXaxis <- NULL
+   rv$pltSctrYaxis <- NULL
+   rv$pltSctrColorByVar <- NULL
+   
+   ####################################
+   # utility functions for background
+   # operations
+   ####################################
+   
+   ecdf_prep <- function(df, data_col = 'X', group_col = 'grp',
+                         label_col = 'SampleId') {
+      # returns a dataframe with ecdf data compatible
+      # with ggplot() and ggplotly()
+      # expects a dataframe with 3 columns in a particular order 
+      
+      x_low <- min(df[[data_col]])
+      x_high <- max(df[[data_col]])
+      
+      cdf_df <- as.data.frame(do.call(rbind, lapply(unique(df[[group_col]]), 
+                                                    function(grp) {
+                                                       if(is.na(grp)){
+                                                          sub_df <- df[which(is.na(df[[group_col]])),
+                                                                       c(data_col, group_col, label_col)] 
+                                                       } else {
+                                                          sub_df <- df[which(df[[group_col]] == grp), 
+                                                                       c(data_col, group_col, label_col)]
+                                                       }
+                                                       sub_df$Y <- ecdf(sub_df[[data_col]])(sub_df[[data_col]])
+                                                       sub_df[[group_col]] <- factor(sub_df[[group_col]])
+                                                       sub_df
+                                                    })))
+      cdf_df[order(cdf_df[[data_col]]), c(colnames(df), 'Y')]
+   }
+   
+   # function to create a lookup table for IDs
+   # allow conversion from any id (SeqID, Protein Name, Gene Symbol)
+   # to any other id
+   createIdLookup <- function() {
+      # create a user-friendly version of the SeqId
+      friendly_seqid <- gsub('seq.', '', rv$featureData$AptName)
+      friendly_seqid <- gsub('\\.', '-', friendly_seqid)
+      
+      #gather the individual IDs into one long vector
+      lookup <- lapply(1:nrow(rv$featureData), function (i) {
+         list('Sequence ID' = friendly_seqid[i],
+              'AptName' = rv$featureData$AptName[i],
+              'Protein Name' = 
+                 paste0(rv$featureData$TargetFullName[i],
+                        ' [', rv$featureData$AptName[i], ']'),
+              'Gene Symbol' = 
+                 paste0(rv$featureData$EntrezGeneSymbol[i],
+                        ' [', rv$featureData$AptName[i], ']')
+         )
+      })
+      
+      # repeat the ids and apply names of each alternative id
+      rv$idLookup <- rep(lookup, 4)
+      names(rv$idLookup) <- c(friendly_seqid,
+                              rv$featureData$AptName,
+                              paste0(rv$featureData$TargetFullName,
+                                     ' [', rv$featureData$AptName, ']'),
+                              paste0(rv$featureData$EntrezGeneSymbol,
+                                     ' [', rv$featureData$AptName, ']')
+      )
+   }
+   # interface function to the idLookup table
+   # this allows cleaner access to the table
+   # if an ID is requested and not found, it is returned
+   # as is, and can be assumed to be a metaData item
+   # rather than a SeqID, Protein Name, or Gene Symbol
+   lookupID <- function(id, targetType) {
+      targetID <- rv$idLookup[[id]][[targetType]]
+      if(is.null(targetID)){
+         targetID <- id
+      }
+      targetID
+   }
 
    ########################################
    # License
@@ -1496,13 +1775,15 @@ function(input, output, session) {
       tbl$Bonferroni <- signif(p.adjust(tbl$p.value, method='bonferroni'), 2)
       df <- cbind(df, tbl)
       df$p.value <- signif(df$p.value, 2)
+
+      # add small value to 0 valued p-values to ensure they are plotted
+      df$p.value[df$p.value == 0] <- 1e-16
+      df$FDR[df$FDR == 0] <- 1e-16
+      df$Bonferroni[df$Bonferroni == 0] <- 1e-16
       
       # store the results table
       rv$statCorrTable <- df
-      
-      # user-friendly column names
-      colnames(df)[1:3] <- c('Sequence', 'Protein Name', 'Gene Symbol')
-      
+     
       rv$statCorrTable 
    }
    
@@ -1515,8 +1796,8 @@ function(input, output, session) {
       # prepare the results table 
       respID <- lookupID(input$statMultiResp, 'AptName') 
       vars <- SomaDataIO::getFeatures(rv$adat)
-      df <- data.frame(rv$featureData[, c('AptName', 
-                                          'TargetFullName', 'EntrezGeneSymbol')])
+      df <- data.frame(rv$featureData[, c('AptName', 'TargetFullName',
+                                          'UniProt', 'EntrezGeneSymbol')])
       
       # work on a local copy
       adat <- rv$adat
@@ -1538,6 +1819,11 @@ function(input, output, session) {
          if(length(na_idx > 0)) {
             adat <- adat[-na_idx, ]
          }
+      }
+
+      # warn on NA removal
+      if(length(na_idx) > 0) {
+         rv$statMessage <- rv$statNAWarning
       }
          
       # log10 SOMAmers
@@ -1563,14 +1849,14 @@ function(input, output, session) {
                                          rm_df_tall)))
                
                max_fold_change <- getMaxFoldChange(
-                                       data.frame(data = rm_df_tall$RFU,
+                                       data.frame(data = 10 ^ rm_df_tall$RFU,
                                                   grps = rm_df_tall$trtmnt)) 
             } else {
                z <- suppressWarnings(aov(as.formula(sprintf('%s ~ %s', 
                                                             v, respID)),
                                          adat))
                max_fold_change <- getMaxFoldChange(
-                                       data.frame(data = adat[[v]],
+                                       data.frame(data = 10 ^ adat[[v]],
                                                   grps = adat[[respID]])) 
             }
             
@@ -1618,13 +1904,13 @@ function(input, output, session) {
                                                        rm_df_tall)))
                
                max_fold_change <- getMaxFoldChange(
-                  data.frame(data = rm_df_tall$RFU,
+                  data.frame(data = 10 ^ rm_df_tall$RFU,
                              grps = rm_df_tall$trtmnt)) 
             } else {
                z <- suppressWarnings(
                   kruskal.test(as.formula(sprintf('%s ~ %s', v, respID)),
                                adat))
-               max_fold_change <- getMaxFoldChange(data.frame(data = adat[[v]],
+               max_fold_change <- getMaxFoldChange(data.frame(data = 10 ^ adat[[v]],
                                                            grps = adat[[respID]])) 
             }
             
@@ -1653,11 +1939,14 @@ function(input, output, session) {
       df <- cbind(df, tbl)
       df$p.value <- signif(df$p.value, 2)
       
+      # add small value to 0 valued p-values to ensure they are plotted
+      df$p.value[df$p.value == 0] <- 1e-16
+      df$FDR[df$FDR == 0] <- 1e-16
+      df$Bonferroni[df$Bonferroni == 0] <- 1e-16
+
       # store the results table
       rv$statMultiTable <- df
       
-      # user-friendly column names
-      colnames(df)[1:3] = c('SOMAmer', 'Protein Name', 'Gene Symbol')
       rv$statMultiTable 
    }
    
@@ -1671,35 +1960,38 @@ function(input, output, session) {
       # prepare the results table 
       respID <- input$stat2GrpResp
       vars <- SomaDataIO::getFeatures(rv$adat)
-      df <- data.frame(rv$featureData[, c('AptName', 
-                                          'TargetFullName', 'EntrezGeneSymbol')])
+      df <- data.frame(rv$featureData[, c('AptName', 'TargetFullName',
+                                          'UniProt', 'EntrezGeneSymbol')])
       
       # work on a local copy
       adat <- rv$adat
       
-      # order as needed
-      if((input$statTests == 't-test' |
-          input$statTests == 'U-test')) { 
-         
-         if(input$statMatched & input$statMatchCol != '<NONE>') {
-            adat <- adat[order(adat[[input$stat2GrpResp]], 
-                               adat[[input$statMatchCol]]), ]
-            
-            na_idx <- which(is.na(adat[[input$stat2GrpResp]]) |
-                               is.na(adat[[input$statMatchCol]]))
-            if(length(na_idx) > 0) {
-               # remove rows with NA in response or match
-               adat <- adat[-na_idx, ]
-            }
-         } else {
-            # remove rows with NA in response 
-            na_idx <- which(is.na(adat[[input$stat2GrpResp]]))
-            if(length(na_idx > 0)) {
-               adat <- adat[-na_idx, ]
-            }
+      # order samples for tests & remove NAs if needed
+      if(input$statMatched & input$statMatchCol != '<NONE>' &
+         input$statTests != 'KS-test') {
+
+         adat <- adat[order(adat[[input$stat2GrpResp]],
+                            adat[[input$statMatchCol]]), ]
+
+         na_idx <- which(is.na(adat[[input$stat2GrpResp]]) |
+                         is.na(adat[[input$statMatchCol]]))
+         if(length(na_idx) > 0) {
+            # remove rows with NA in response or match
+            adat <- adat[-na_idx, ]
+         }
+      } else {
+         # remove rows with NA in response
+         na_idx <- which(is.na(adat[[input$stat2GrpResp]]))
+         if(length(na_idx > 0)) {
+            adat <- adat[-na_idx, ]
          }
       }
       
+      # warn on NA removal
+      if(length(na_idx) > 0) {
+         rv$statMessage <- rv$statNAWarning
+      }
+
       # find the groups
       grps <- sort(unique(adat[[respID]]))
       grp1_idx <- which(adat[[respID]] == grps[1])
@@ -1789,11 +2081,14 @@ function(input, output, session) {
       df <- cbind(df, tbl)
       df$p.value <- signif(df$p.value, 2)
       
+      # add small value to 0 valued p-values to ensure they are plotted
+      df$p.value[df$p.value == 0] <- 1e-16
+      df$FDR[df$FDR == 0] <- 1e-16
+      df$Bonferroni[df$Bonferroni == 0] <- 1e-16
+
       # store the results table
       rv$stat2GrpTable <- df
-      
-      # user-friendly column names
-      colnames(df)[1:3] = c('SOMAmer', 'Protein Name', 'Gene Symbol')
+
       rv$stat2GrpTable 
    }
 
@@ -2194,7 +2489,8 @@ function(input, output, session) {
                df <- cbind(friendly_seqid, df[, -1]) 
                
                # create friendly column names
-               colnames(df)[1:3] <- c('Sequence ID', 'Protein Name', 'Gene Symbol')
+               colnames(df)[1:4] <- c('Sequence ID', 'Protein Name', 'UniProt ID', 
+                                      'Gene Symbol')
             }
             
             write.csv(df, file, row.names=FALSE)
@@ -2217,7 +2513,7 @@ function(input, output, session) {
             row_num <- which(rv$featureData$AptName == var_name)
             df <- data.frame(
                Label = c('Sequence ID', 'Protein Full Name', 'Protein Short Name',
-                         'UniProt ID', 'Entrez Gene Id', 'Entrez Gene Symbol'),
+                         'UniProt ID', 'Entrez Gene ID', 'Entrez Gene Symbol'),
                Details = c(lookupID(rv$featureData$AptName[row_num], 'Sequence ID'),
                            t(rv$featureData[row_num, 
                                             c('TargetFullName', 'Target', 
@@ -2257,7 +2553,8 @@ function(input, output, session) {
             df <- cbind(friendly_seqid, df[, -1]) 
             
             # create friendly column names
-            colnames(df)[1:3] <- c('Sequence ID', 'Protein Name', 'Gene Symbol')
+            colnames(df)[1:4] <- c('Sequence ID', 'Protein Name', 'UniProt ID', 
+                                   'Gene Symbol')
             return(df)
          }
    })
@@ -2298,6 +2595,8 @@ function(input, output, session) {
    })
    
    observeEvent(input$statStartTests, {
+         # set default stat message
+         setDefaultStatMessage()
          updateProgressBar(session = session, id = 'statProgbar', 
                            value = 0, title = 'Running tests...')
          
@@ -2373,22 +2672,7 @@ function(input, output, session) {
    })
    
    observeEvent(input$statTests, {
-      # build a message based on the choice of stats test
-      if(input$statTests == 'Correlation') {
-         rv$statMessage <- rv$statMessageCorr
-      } else if(input$statTests == 't-test') {
-         rv$statMessage <- rv$statMessageT
-      } else if(input$statTests == 'U-test') {
-         rv$statMessage <- rv$statMessageU
-      } else if (input$statTests == 'KS-test') {
-         rv$statMessage <- rv$statMessageKS
-      } else if(input$statTests == 'ANOVA') { 
-         rv$statMessage <- rv$statMessageANOVA
-      } else if(input$statTests == 'Kruskal-Wallis') {
-         rv$statMessage <- rv$statMessageKW
-      } else if(input$statTests == 'Friedman\'s Test') {
-         rv$statMessage <- rv$statMessageFriedman
-      }
+      setDefaultStatMessage()
       
       # unset the plot selection
       rv$statTableRowSelect <- NULL
@@ -2411,4 +2695,3 @@ function(input, output, session) {
       rv$statTableRowSelect <- NULL
    })
 }
-
