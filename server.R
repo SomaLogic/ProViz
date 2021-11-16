@@ -1783,7 +1783,7 @@ function(input, output, session) {
       
       # store the results table
       rv$statCorrTable <- df
-     
+
       rv$statCorrTable 
    }
    
@@ -1951,9 +1951,11 @@ function(input, output, session) {
    }
    
    stat2GrpTests <- function() {
+      
       # perform 2-group tests
       if(is.null(rv$adat) | input$stat2GrpResp == '<NONE>' |
-         (input$statMatched & input$statMatchCol == '<NONE>')) {
+         ((input$statMatched & input$statMatchCol == '<NONE>') &
+          (input$statTests == 't-test' | input$statTests == 'U-test'))) {
          return(NULL)
       }
       
