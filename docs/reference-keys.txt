@@ -1,7 +1,10 @@
+tab:unnamed-chunk-1
+tab:unnamed-chunk-2
 installation-and-prerequisites
 installation
 github
 dockerhub
+example-data
 proviz-navigation
 load-and-filter-adat
 the-load-and-filter-adat-panel
@@ -40,5 +43,6 @@ title-and-size-2
 statistical-tests
 statistical-tests-1
 selecting-a-response
+paired-matched-or-repeated-measures-tests
 plots-1
 statistical-results-table

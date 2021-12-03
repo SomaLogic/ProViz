@@ -82,7 +82,8 @@
 <li class="chapter" data-level="1.1.1" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#github"><i class="fa fa-check"></i><b>1.1.1</b> GitHub</a></li>
 <li class="chapter" data-level="1.1.2" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#dockerhub"><i class="fa fa-check"></i><b>1.1.2</b> DockerHub</a></li>
 </ul></li>
-<li class="chapter" data-level="1.2" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#proviz-navigation"><i class="fa fa-check"></i><b>1.2</b> ProViz Navigation</a></li>
+<li class="chapter" data-level="1.2" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#example-data"><i class="fa fa-check"></i><b>1.2</b> Example Data</a></li>
+<li class="chapter" data-level="1.3" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#proviz-navigation"><i class="fa fa-check"></i><b>1.3</b> ProViz Navigation</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="load-and-filter-adat.html"><a href="load-and-filter-adat.html"><i class="fa fa-check"></i><b>2</b> Load and Filter ADAT</a>
 <ul>
@@ -136,12 +137,11 @@
 </ul></li>
 <li class="chapter" data-level="6" data-path="statistical-tests.html"><a href="statistical-tests.html"><i class="fa fa-check"></i><b>6</b> Statistical Tests</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-tests-1"><i class="fa fa-check"></i><b>6.1</b> Statistical Tests</a>
-<ul>
-<li class="chapter" data-level="6.1.1" data-path="statistical-tests.html"><a href="statistical-tests.html#selecting-a-response"><i class="fa fa-check"></i><b>6.1.1</b> Selecting a Response</a></li>
-<li class="chapter" data-level="6.1.2" data-path="statistical-tests.html"><a href="statistical-tests.html#plots-1"><i class="fa fa-check"></i><b>6.1.2</b> Plots</a></li>
-<li class="chapter" data-level="6.1.3" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-results-table"><i class="fa fa-check"></i><b>6.1.3</b> Statistical Results Table</a></li>
-</ul></li>
+<li class="chapter" data-level="6.1" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-tests-1"><i class="fa fa-check"></i><b>6.1</b> Statistical Tests</a></li>
+<li class="chapter" data-level="6.2" data-path="statistical-tests.html"><a href="statistical-tests.html#selecting-a-response"><i class="fa fa-check"></i><b>6.2</b> Selecting a Response</a></li>
+<li class="chapter" data-level="6.3" data-path="statistical-tests.html"><a href="statistical-tests.html#paired-matched-or-repeated-measures-tests"><i class="fa fa-check"></i><b>6.3</b> Paired, matched or repeated measures tests</a></li>
+<li class="chapter" data-level="6.4" data-path="statistical-tests.html"><a href="statistical-tests.html#plots-1"><i class="fa fa-check"></i><b>6.4</b> Plots</a></li>
+<li class="chapter" data-level="6.5" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-results-table"><i class="fa fa-check"></i><b>6.5</b> Statistical Results Table</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -170,12 +170,9 @@
 <div id="github" class="section level3" number="1.1.1">
 <h3><span class="header-section-number">1.1.1</span> GitHub</h3>
 <p>ProViz is a Shiny application written in R. The source code is available on GitHub in SomaLogic’s <a href="https://github.com/SomaLogic/ProViz">ProViz repository</a>.</p>
-<p>To use ProViz, it is recommended to install RStudio, clone the ProViz repository or download the code, and run it using the RStudio IDE. See <a href="https://shiny.rstudio.com/">RStudio’s Shiny page</a> for details of using RStudio to run a Shiny application. <a href="https://rstudio.com/products/shiny/shiny-server/">RStudio’s Shiny Server</a> can also be used to run ProViz from a server, providing access through a managed web portal.</p>
+<p>To use ProViz, it is recommended to install R and RStudio, clone the ProViz repository or download the code, and run it using the RStudio IDE. See <a href="https://shiny.rstudio.com/">RStudio’s Shiny page</a> for details of using RStudio to run a Shiny application. <a href="https://rstudio.com/products/shiny/shiny-server/">RStudio’s Shiny Server</a> can also be used to run ProViz from a server, providing access through a managed web portal.</p>
 <p>Some additional packages are required for ProViz. Following is a list of the required packages and the versions used during ProViz development and testing. All of the following packages are available through <a href="https://cran.r-project.org/">The Comprehensive R Network - CRAN</a>.</p>
 <ul>
-<li>shiny (1.6.0)</li>
-<li>shinydashboard (0.7.1)</li>
-<li>shinyWidgets (0.6.0)</li>
 <li>DT (0.17)</li>
 <li>dplyr (1.0.6)</li>
 <li>ggbeeswarm (0.6.0)</li>
@@ -183,6 +180,9 @@
 <li>magrittr (2.0.1)</li>
 <li>plotly (4.9.3)</li>
 <li>readr (1.4.0)</li>
+<li>shiny (1.6.0)</li>
+<li>shinydashboard (0.7.1)</li>
+<li>shinyWidgets (0.6.0)</li>
 <li>tidyr (1.1.3)</li>
 </ul>
 <p>Additionally, ProViz uses the SomaDataIO v5.1.0 package available from <a href="https://github.com/SomaLogic/SomaDataIO">SomaLogic’s SomaDataIO GitHub repository</a>. Note that SomaDataIO requires the BioBase package from <a href="https://bioconductor.org/">Bioconductor</a>, which requires a slightly different installation procedure:</p>
@@ -218,12 +218,12 @@ remotes::install_version(&#39;shinyWidgets&#39;, version = &#39;0.6.0&#39;,
 remotes::install_version(&#39;tidyr&#39;, version = &#39;1.1.3&#39;,
                          repos = &#39;http://cran.us.r-project.org&#39;)
 remotes::install_github(&#39;Somalogic/SomaDataIO@v5.1.0&#39;)</code></pre>
-
 <p>Once all dependecies have been installed successfully, open RStudio and navigate to the folder containing the ProViz R code. Open any of the R code files - <code>global.R</code>, <code>ui.R</code>, or <code>server.R</code>. The code window in RStudio will have a button at the top-left that says ‘Run App’. Press this button to start ProViz. See <a href="https://shiny.rstudio.com/">RStudio’s Shiny page</a> for details of using RStudio to run a Shiny application.</p>
 <div class="figure">
 <img src="images/RunApp.png" alt="" />
 <p class="caption">The Run App button on the server.R code window in RStudio.</p>
-
+</div>
+<p>Installation of R and RStudio on different operating systems (Windows, Mac OS, or Linux), may require administrator privileges as well as additional steps in order to complete the installation process. Contact your IT professional for assistance if you are not familiar with performing these types of operations.</p>
 </div>
 <div id="dockerhub" class="section level3" number="1.1.2">
 <h3><span class="header-section-number">1.1.2</span> DockerHub</h3>
@@ -233,7 +233,7 @@ remotes::install_github(&#39;Somalogic/SomaDataIO@v5.1.0&#39;)</code></pre>
 <img src="images/Dashboard.png" alt="" />
 <p class="caption">Docker Dashboard showing the ProViz image available.</p>
 </div>
-<p>The image can be started by clicking run. A dialog box will be presented in which a local port number needs to be set (Local Port) in order for a web browser to communicate with the running container. Any available port can be used, and the default 3838 is most likely a good option. (You may initially see a smaller dialog box with the port setting hidden. Clicking on the triangle at the right will expand the dialog to show all options.)</p>
+<p>In Docker Desktop, the image can be started by clicking run. A dialog box will be presented in which a local port number needs to be set (Local Port) in order for a web browser to communicate with the running container. Any available port can be used, and the default 3838 is most likely a good option. (You may initially see a smaller dialog box with the port setting hidden. Clicking on the triangle at the right will expand the dialog to show all options.)</p>
 <div class="figure">
 <img src="images/Dashboard_port.png" alt="" />
 <p class="caption">Setting the Local Port to 3838.</p>
@@ -244,19 +244,25 @@ remotes::install_github(&#39;Somalogic/SomaDataIO@v5.1.0&#39;)</code></pre>
 <p class="caption">Docker Dashboard showing that the container is running.</p>
 </div>
 <p>When your browser opens, you should see the ProViz main panel.</p>
-<p><img src="images/ProViz_main.png" alt="The main ProViz panel." />
-## Example Data</p>
+<div class="figure">
+<img src="images/ProViz_main.png" alt="" />
+<p class="caption">The main ProViz panel.</p>
+</div>
+<p>Installing Docker or Docker Desktop and setting configurations to enable the application to work may require administrator privileges as well as additional steps. Contact your IT professional for assistance if you are not familiar with performing these types of operations.</p>
+</div>
+</div>
+<div id="example-data" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Example Data</h2>
 <p>The example data used in this tutorial can be found at SomaLogic’s <a href="https://github.com/SomaLogic/SomaLogic-Data">SomaLogic-Data GitHub repository</a> where you can find a description of the file and the ADAT file format. The <code>example_data.adat</code> file consists of 192 samples (including clinical samples and controls) and is representative of a typical ADAT file SomaLogic customer’s receive.</p>
 </div>
-</div>
-<div id="proviz-navigation" class="section level2" number="1.2">
-<h2><span class="header-section-number">1.2</span> ProViz Navigation</h2>
+<div id="proviz-navigation" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> ProViz Navigation</h2>
 <div class="figure">
 <img src="images/ProViz_main.png" alt="" />
 <p class="caption">The main ProViz panel.</p>
 </div>
 <p>In ProViz, you can navigate to different panels using the navigation pane on the left by clicking on the name of the panel. Each chapter in this tutorial gives a brief tutorial on how to use the options in the corresponding panel.</p>
-<p>Users can select how the SOMAmer-associated data will be listed in selection boxes across all ProViz panels by selecting an option under <strong>Label SOMAmers by</strong>: <em>SOMAmer ID</em>, <em>Protein Name</em>, or <em>Gene Symbol</em>. The latter two options are most likely more familiar to most users than SOMAmer IDs. Label types can be changed at any point when using ProViz.</p>
+<p>Users can select how the SOMAmer-associated data will be listed in selection boxes across all ProViz panels by selecting an option under <strong>Label SOMAmers by</strong>: <em>Sequence ID</em>, <em>Protein Name</em>, or <em>Gene Symbol</em>. The latter two options are most likely more familiar to most users than Sequence IDs. Label types can be changed at any point when using ProViz. When labels are changed, there will be a short delay while the user interface is updated with the new labels, and progress bar indicates the status of the updates.</p>
 
 </div>
 </div>
@@ -309,7 +315,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["ProViz_docs.pdf", "ProViz_docs.epub"],
+"download": ["ProViz_UserGuide.pdf"],
 "toc": {
 "collapse": "subsection"
 }
@@ -317,20 +323,6 @@ gitbook.start({
 });
 </script>
 
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    var src = "true";
-    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:")
-      if (/^https?:/.test(src))
-        src = src.replace(/^https?:/, '');
-    script.src = src;
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
 </body>
 
 </html>

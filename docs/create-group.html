@@ -82,7 +82,8 @@
 <li class="chapter" data-level="1.1.1" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#github"><i class="fa fa-check"></i><b>1.1.1</b> GitHub</a></li>
 <li class="chapter" data-level="1.1.2" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#dockerhub"><i class="fa fa-check"></i><b>1.1.2</b> DockerHub</a></li>
 </ul></li>
-<li class="chapter" data-level="1.2" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#proviz-navigation"><i class="fa fa-check"></i><b>1.2</b> ProViz Navigation</a></li>
+<li class="chapter" data-level="1.2" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#example-data"><i class="fa fa-check"></i><b>1.2</b> Example Data</a></li>
+<li class="chapter" data-level="1.3" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#proviz-navigation"><i class="fa fa-check"></i><b>1.3</b> ProViz Navigation</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="load-and-filter-adat.html"><a href="load-and-filter-adat.html"><i class="fa fa-check"></i><b>2</b> Load and Filter ADAT</a>
 <ul>
@@ -136,12 +137,11 @@
 </ul></li>
 <li class="chapter" data-level="6" data-path="statistical-tests.html"><a href="statistical-tests.html"><i class="fa fa-check"></i><b>6</b> Statistical Tests</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-tests-1"><i class="fa fa-check"></i><b>6.1</b> Statistical Tests</a>
-<ul>
-<li class="chapter" data-level="6.1.1" data-path="statistical-tests.html"><a href="statistical-tests.html#selecting-a-response"><i class="fa fa-check"></i><b>6.1.1</b> Selecting a Response</a></li>
-<li class="chapter" data-level="6.1.2" data-path="statistical-tests.html"><a href="statistical-tests.html#plots-1"><i class="fa fa-check"></i><b>6.1.2</b> Plots</a></li>
-<li class="chapter" data-level="6.1.3" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-results-table"><i class="fa fa-check"></i><b>6.1.3</b> Statistical Results Table</a></li>
-</ul></li>
+<li class="chapter" data-level="6.1" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-tests-1"><i class="fa fa-check"></i><b>6.1</b> Statistical Tests</a></li>
+<li class="chapter" data-level="6.2" data-path="statistical-tests.html"><a href="statistical-tests.html#selecting-a-response"><i class="fa fa-check"></i><b>6.2</b> Selecting a Response</a></li>
+<li class="chapter" data-level="6.3" data-path="statistical-tests.html"><a href="statistical-tests.html#paired-matched-or-repeated-measures-tests"><i class="fa fa-check"></i><b>6.3</b> Paired, matched or repeated measures tests</a></li>
+<li class="chapter" data-level="6.4" data-path="statistical-tests.html"><a href="statistical-tests.html#plots-1"><i class="fa fa-check"></i><b>6.4</b> Plots</a></li>
+<li class="chapter" data-level="6.5" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-results-table"><i class="fa fa-check"></i><b>6.5</b> Statistical Results Table</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -181,7 +181,7 @@
 </li>
 <li>For splitting a continuous variable, select <em>Continuous</em> from the <strong>Create From</strong> options.<br />
 </li>
-<li>The column containing the data to be split can be selected from the <strong>Source Column</strong> selection box.</li>
+<li>The column containing the data to be split can be selected from the <strong>Source Column</strong> selection box. The content of this box is adjusted based on whether <em>Continuous</em> or <em>Categorical</em> is chosen from the <strong>Create From</strong> options.</li>
 <li>Labels for the two groups are specified under <strong>Group A Label</strong> and <strong>Group B Label</strong>.</li>
 <li>Adjust the <strong>Group Split Value</strong> slider to identify the split point for the data. Rows with values less than the chosen split will be given the label <em>Group A</em> and rows with values greater than or equal to the chosen split will be given the label <em>Group B</em>.</li>
 <li>Data can be log10 transformed by selecting <strong>Log10 Transform</strong>.</li>
@@ -201,8 +201,9 @@
 </li>
 <li>For splitting a categorical variable, select <em>Categorical</em> from the <strong>Create From</strong> options.<br />
 </li>
-<li>Clicking on the <strong>Group A</strong> or <strong>Group B</strong> select boxes will show the categorical values available from the chosen column. Selections can be made by clicking on the categorical values desired for that group.</li>
+<li>The column containing the data to be split can be selected from the <strong>Source Column</strong> selection box. The content of this box is adjusted based on whether <em>Continuous</em> or <em>Categorical</em> is chosen from the <strong>Create From</strong> options.</li>
 <li>Labels for the two groups are specified under <strong>Group A Label</strong> and <strong>Group B Label</strong>.</li>
+<li>Clicking on the <strong>Group A</strong> or <strong>Group B</strong> select boxes will show the categorical values available from the chosen column. Selections can be made by clicking on the categorical values desired for that group.</li>
 <li>A preview of the original data column and the newly created data column are shown at the right.</li>
 <li>When ready to create the new group, press the <strong>Create New Group Column</strong> button, and the new column will be added to the ADAT.</li>
 </ul>
@@ -263,7 +264,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["ProViz_docs.pdf", "ProViz_docs.epub"],
+"download": ["ProViz_UserGuide.pdf"],
 "toc": {
 "collapse": "subsection"
 }
@@ -271,20 +272,6 @@ gitbook.start({
 });
 </script>
 
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    var src = "true";
-    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:")
-      if (/^https?:/.test(src))
-        src = src.replace(/^https?:/, '');
-    script.src = src;
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
 </body>
 
 </html>

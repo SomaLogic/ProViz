@@ -82,7 +82,8 @@
 <li class="chapter" data-level="1.1.1" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#github"><i class="fa fa-check"></i><b>1.1.1</b> GitHub</a></li>
 <li class="chapter" data-level="1.1.2" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#dockerhub"><i class="fa fa-check"></i><b>1.1.2</b> DockerHub</a></li>
 </ul></li>
-<li class="chapter" data-level="1.2" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#proviz-navigation"><i class="fa fa-check"></i><b>1.2</b> ProViz Navigation</a></li>
+<li class="chapter" data-level="1.2" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#example-data"><i class="fa fa-check"></i><b>1.2</b> Example Data</a></li>
+<li class="chapter" data-level="1.3" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#proviz-navigation"><i class="fa fa-check"></i><b>1.3</b> ProViz Navigation</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="load-and-filter-adat.html"><a href="load-and-filter-adat.html"><i class="fa fa-check"></i><b>2</b> Load and Filter ADAT</a>
 <ul>
@@ -136,12 +137,11 @@
 </ul></li>
 <li class="chapter" data-level="6" data-path="statistical-tests.html"><a href="statistical-tests.html"><i class="fa fa-check"></i><b>6</b> Statistical Tests</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-tests-1"><i class="fa fa-check"></i><b>6.1</b> Statistical Tests</a>
-<ul>
-<li class="chapter" data-level="6.1.1" data-path="statistical-tests.html"><a href="statistical-tests.html#selecting-a-response"><i class="fa fa-check"></i><b>6.1.1</b> Selecting a Response</a></li>
-<li class="chapter" data-level="6.1.2" data-path="statistical-tests.html"><a href="statistical-tests.html#plots-1"><i class="fa fa-check"></i><b>6.1.2</b> Plots</a></li>
-<li class="chapter" data-level="6.1.3" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-results-table"><i class="fa fa-check"></i><b>6.1.3</b> Statistical Results Table</a></li>
-</ul></li>
+<li class="chapter" data-level="6.1" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-tests-1"><i class="fa fa-check"></i><b>6.1</b> Statistical Tests</a></li>
+<li class="chapter" data-level="6.2" data-path="statistical-tests.html"><a href="statistical-tests.html#selecting-a-response"><i class="fa fa-check"></i><b>6.2</b> Selecting a Response</a></li>
+<li class="chapter" data-level="6.3" data-path="statistical-tests.html"><a href="statistical-tests.html#paired-matched-or-repeated-measures-tests"><i class="fa fa-check"></i><b>6.3</b> Paired, matched or repeated measures tests</a></li>
+<li class="chapter" data-level="6.4" data-path="statistical-tests.html"><a href="statistical-tests.html#plots-1"><i class="fa fa-check"></i><b>6.4</b> Plots</a></li>
+<li class="chapter" data-level="6.5" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-results-table"><i class="fa fa-check"></i><b>6.5</b> Statistical Results Table</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -168,7 +168,7 @@
 <p>ProViz provides tools to dynamically create a variety of plots with custom options. Plots can be created using SomaScan Assay data as well as meta data in the ADAT or data imported in the <strong>Merge Data</strong> panel. Plot features such as titles, colors, and lines can be added and customized using selectable options in the ProViz plotting panels.</p>
 <div id="plot-features" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> Plot Features</h2>
-<p>At any point during plotting, moving the mouse over the plot will show a toolbar a the top of the plot.</p>
+<p>At any point during plotting, moving the mouse over the plot will show a toolbar at the top of the plot.</p>
 <div class="figure">
 <img src="images/modebar.png" alt="" />
 <p class="caption">Plot toolbar</p>
@@ -181,9 +181,9 @@
 <li>zoom in - zooms into the plot, keeping the current center</li>
 <li>zoom out - zooms into the plot, keping the current center</li>
 <li>autoscale - resets the coordinates of the plot if it has been zoomed or panned (similar to reset axes, below)</li>
-<li>reset axes - resets coordinates of the plot if it has been zoomed or panned (similar to autoscael, above)</li>
+<li>reset axes - resets coordinates of the plot if it has been zoomed or panned (similar to autoscale, above)</li>
 <li>toggle spike lines - when selected, hovering over points on the graph will also include lines from teh point to the axes</li>
-<li>show closest data on hover - only informaiton about the closest data point will be shown when the point is hovered over</li>
+<li>show closest data on hover - only information about the closest data point will be shown when the point is hovered over</li>
 <li>compare data on hover - if multiple points are plotted at the same location, data for all points will be shown</li>
 <li>Plotly icon - a link to the Plotly website. Plotly is the tool used by ProViz to produce graphs.</li>
 </ul>
@@ -290,8 +290,8 @@
 <img src="images/Scatter_Lines.png" alt="" />
 <p class="caption">The Lines tab in the Plot Settings box.</p>
 </div>
-<p>A linear regression line can be added to the plot by selecting <strong>Regression Line</strong>. The width of the line can be adjusted with the <strong>Regression Line Width</strong> slider, it can be colored by selecting a color from <strong>Regression Line Color</strong>, and the plotting style (solid, dashed, dotted, etc.) can be selected from the <strong>Regression Liney Style</strong> select box. An <span class="math inline">\(R^2\)</span> of the correlation can be added to the plot by selecting an position option from the <strong>Add R^2 to Plot</strong> select box.</p>
-<p>An identity line can be added to the plot by selecting <strong>Identity Line</strong>. Identity lines are useful to illustrate the expected, perfect one-to-one relationship between two variables. Selecting <strong>Make axes equivalent</strong> will create a square plot in which the extents of the X- and Y-axes are the same. The identity line can be adjusted for width with the <strong>Identity Line Width</strong> slider, the color can be selected from the <strong>Identity Line Color</strong> select box, and the plotting style selected from the <strong>Identity Line Style</strong> select box.</p>
+<p>A linear regression line can be added to the plot by selecting <strong>Regression Line</strong>. The width of the line can be adjusted with the <strong>Regression Line Width</strong> slider, it can be colored by selecting a color from <strong>Regression Line Color</strong>, and the plotting style (solid, dashed, dotted, etc.) can be selected from the <strong>Regression Line Style</strong> select box. The correlation can be added to the plot by selecting an position option from the <strong>Add Correlation to Plot</strong> select box.</p>
+<p>An identity line can be added to the plot by selecting <strong>Identity Line</strong>. Identity lines are useful to illustrate the expected, perfect one-to-one relationship between two variables, known as the the concordance. Selecting <strong>Make axes equivalent</strong> will create a square plot in which the extents of the X- and Y-axes are the same. The width of the identity line can be adjusted with the <strong>Identity Line Width</strong> slider, the color can be selected from the <strong>Identity Line Color</strong> select box, and the plotting style selected from the <strong>Identity Line Style</strong> select box.</p>
 </div>
 <div id="title-and-size-2" class="section level3" number="5.5.4">
 <h3><span class="header-section-number">5.5.4</span> Title and Size</h3>
@@ -353,7 +353,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["ProViz_docs.pdf", "ProViz_docs.epub"],
+"download": ["ProViz_UserGuide.pdf"],
 "toc": {
 "collapse": "subsection"
 }
@@ -361,20 +361,6 @@ gitbook.start({
 });
 </script>
 
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    var src = "true";
-    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:")
-      if (/^https?:/.test(src))
-        src = src.replace(/^https?:/, '');
-    script.src = src;
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
 </body>
 
 </html>

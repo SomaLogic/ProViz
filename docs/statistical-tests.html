@@ -82,7 +82,8 @@
 <li class="chapter" data-level="1.1.1" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#github"><i class="fa fa-check"></i><b>1.1.1</b> GitHub</a></li>
 <li class="chapter" data-level="1.1.2" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#dockerhub"><i class="fa fa-check"></i><b>1.1.2</b> DockerHub</a></li>
 </ul></li>
-<li class="chapter" data-level="1.2" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#proviz-navigation"><i class="fa fa-check"></i><b>1.2</b> ProViz Navigation</a></li>
+<li class="chapter" data-level="1.2" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#example-data"><i class="fa fa-check"></i><b>1.2</b> Example Data</a></li>
+<li class="chapter" data-level="1.3" data-path="installation-and-prerequisites.html"><a href="installation-and-prerequisites.html#proviz-navigation"><i class="fa fa-check"></i><b>1.3</b> ProViz Navigation</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="load-and-filter-adat.html"><a href="load-and-filter-adat.html"><i class="fa fa-check"></i><b>2</b> Load and Filter ADAT</a>
 <ul>
@@ -136,12 +137,11 @@
 </ul></li>
 <li class="chapter" data-level="6" data-path="statistical-tests.html"><a href="statistical-tests.html"><i class="fa fa-check"></i><b>6</b> Statistical Tests</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-tests-1"><i class="fa fa-check"></i><b>6.1</b> Statistical Tests</a>
-<ul>
-<li class="chapter" data-level="6.1.1" data-path="statistical-tests.html"><a href="statistical-tests.html#selecting-a-response"><i class="fa fa-check"></i><b>6.1.1</b> Selecting a Response</a></li>
-<li class="chapter" data-level="6.1.2" data-path="statistical-tests.html"><a href="statistical-tests.html#plots-1"><i class="fa fa-check"></i><b>6.1.2</b> Plots</a></li>
-<li class="chapter" data-level="6.1.3" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-results-table"><i class="fa fa-check"></i><b>6.1.3</b> Statistical Results Table</a></li>
-</ul></li>
+<li class="chapter" data-level="6.1" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-tests-1"><i class="fa fa-check"></i><b>6.1</b> Statistical Tests</a></li>
+<li class="chapter" data-level="6.2" data-path="statistical-tests.html"><a href="statistical-tests.html#selecting-a-response"><i class="fa fa-check"></i><b>6.2</b> Selecting a Response</a></li>
+<li class="chapter" data-level="6.3" data-path="statistical-tests.html"><a href="statistical-tests.html#paired-matched-or-repeated-measures-tests"><i class="fa fa-check"></i><b>6.3</b> Paired, matched or repeated measures tests</a></li>
+<li class="chapter" data-level="6.4" data-path="statistical-tests.html"><a href="statistical-tests.html#plots-1"><i class="fa fa-check"></i><b>6.4</b> Plots</a></li>
+<li class="chapter" data-level="6.5" data-path="statistical-tests.html"><a href="statistical-tests.html#statistical-results-table"><i class="fa fa-check"></i><b>6.5</b> Statistical Results Table</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -174,43 +174,276 @@
 <p>Different statistical tests for comparing continuous, two-group data, or multi-group data can be performed on the Statistical Tests panel. The tests available are:</p>
 <ul>
 <li><p>correlation - compares two continuous variables using either Pearson’s or Spearman’s rank-based methods</p></li>
-<li><p>t-test - compares the means of two groups; a paired t-test is also available</p></li>
+<li><p>t-test - compares the means of two groups; a paired t-test is also available is also available by checking <strong>Matched Samples</strong> and providing a properly constructed <strong>Matching Variable</strong></p></li>
 <li><p>U-test - compares the medians of two groups; this is a non-parametric alternative to the t-test; a paired U-test is also available</p></li>
 <li><p>KS-test - compares the distributions of data between two groups</p></li>
-<li><p>ANOVA - Analysis of Variance test of the means of multiple groups; repeated measures ANOVA is also available</p></li>
+<li><p>ANOVA - Analysis of Variance test of the means of multiple groups; repeated measures ANOVA is also available by checking <strong>Matched Samples</strong> and providing a properly constructed <strong>Matching Variable</strong></p></li>
 <li><p>Kruskal-Wallis - compares the medians of multiple groups; this is a non-parametric alternative to ANOVA</p></li>
-<li><p>Friedman’s Test - a non-parametric alternative to repeated measures ANOVA</p></li>
+<li><p>Friedman’s Test - a non-parametric alternative to repeated measures ANOVA; this test is available instead of Kruskal-Walllis when <strong>Matched Samples</strong> is checked</p></li>
 </ul>
-<div id="selecting-a-response" class="section level3" number="6.1.1">
-<h3><span class="header-section-number">6.1.1</span> Selecting a Response</h3>
+</div>
+<div id="selecting-a-response" class="section level2" number="6.2">
+<h2><span class="header-section-number">6.2</span> Selecting a Response</h2>
 <div class="figure">
 <img src="images/StatTest_Settings.png" alt="" />
 <p class="caption">The Settings box in the Statistical Tests panel.</p>
 </div>
 <p>The type of test can be selected from <strong>Test Type</strong>.</p>
-<p>The variable containing the response or the grouping labels can be selected from the select box titled <strong>Continuous Response</strong>, <strong>Two-group Response</strong>, or <strong>Multi-group Response</strong>. The label of the select box will change as different test types are selected. Also, the contents of the select box will be updated with varaibles consistent with the selected test. After selecting a new response variable, tests will be performed for all SOMAmers in the ADAT, which could take a minute or two.</p>
-<p>If a paired t-test, paired U-test, repeated measures ANOVA, or Friedman’s test are required, check the Matched Samples box and select the variable which defines how samples are matched across groups. <strong>All matched tests require a complete dataset in which each treatment group consists of the same number of matched subjects, and all subjects have measurements in each group. If your dataset is incomplete and does not have all measurements for all subjects across all groups, ProViz will attempt to adjust the data as necessary. This may, however result in errors.</strong></p>
+<p>The variable containing the response or the grouping labels can be selected from the select box titled <strong>Continuous Response</strong> (for <strong>Correlation tests</strong>), <strong>Two-group Response</strong> (for <strong>t-tests</strong>, <strong>U-tests</strong>, or <strong>KS-tests</strong>), or <strong>Multi-group Response</strong> (for <strong>ANOVA</strong>, <strong>Kruskal-Wallis</strong> or <strong>Friedman’s Test</strong>). The label of the select box will change as different test types are selected. Also, the contents of the select box will be updated with variables consistent with the selected test. After selecting a new response variable, tests will be performed for all SOMAmers in the ADAT, which could take a minute or two.</p>
+</div>
+<div id="paired-matched-or-repeated-measures-tests" class="section level2" number="6.3">
+<h2><span class="header-section-number">6.3</span> Paired, matched or repeated measures tests</h2>
+<p>If a paired t-test, paired U-test, repeated measures ANOVA, or Friedman’s test are required, check the Matched Samples box and select the variable which defines how samples are matched across groups. <strong>All matched tests require a complete dataset in which each treatment group consists of the same number of matched subjects, and all subjects have measurements in each group. If your dataset is incomplete and does not have all measurements for all subjects across all groups, ProViz will attempt to adjust the data as necessary. This may, however result in errors. If missing values (NAs) are found in any group labels (Two-group Response or Multi-group Response), or any Matching Variable, the observations with those missing values will be removed and a notice will be displayed.</strong></p>
+<p>The following tables illustrate how Grouping and Matching variables should be constructed for the 2-group and multi-group tests, as well as their paired or repeated measures counterparts.</p>
+<p>For a two-group test, such as a t-test, U-test, or KS-test, samples must be divided into 2 groups. In Table 6.1, each sample is assigned to either <em>Group_A</em> or <em>Group_B</em>. If each subject is unique - no repeated samples are taken from the same subject - then only the <em>SampleId</em> and <em>Group_Id</em> columns are needed. In the example in Table 6.1, there would be 10 subjects, 5 in <em>Group_A</em> and 5 in <em>Group_B</em>, and the <em>Matching_Id</em> column is not needed.</p>
+<p>If, however, samples were taken from each subject twice - for example, a pre-treated and post-treated sample taken from every subject - an additional column is required to indicate which samples came from the same subject. In the example in Table 6.1, there would be only 5 subjects, and a sample was taken from each subject twice. The <em>Matching_Id</em> column indicates which samples came from the same subjects across the 2 groups.</p>
+<table>
+<caption><span id="tab:unnamed-chunk-1">Table 6.1: </span>Two-Group Test Grouping and Matching Variable Example</caption>
+<thead>
+<tr class="header">
+<th align="left">SampleId</th>
+<th align="left">Group_Id</th>
+<th align="left">Matching_Id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Sample_1</td>
+<td align="left">Group_A</td>
+<td align="left">Subject_1</td>
+</tr>
+<tr class="even">
+<td align="left">Sample_2</td>
+<td align="left">Group_A</td>
+<td align="left">Subject_2</td>
+</tr>
+<tr class="odd">
+<td align="left">Sample_3</td>
+<td align="left">Group_A</td>
+<td align="left">Subject_3</td>
+</tr>
+<tr class="even">
+<td align="left">Sample_4</td>
+<td align="left">Group_A</td>
+<td align="left">Subject_4</td>
+</tr>
+<tr class="odd">
+<td align="left">Sample_5</td>
+<td align="left">Group_A</td>
+<td align="left">Subject_5</td>
+</tr>
+<tr class="even">
+<td align="left">Sample_6</td>
+<td align="left">Group_B</td>
+<td align="left">Subject_1</td>
+</tr>
+<tr class="odd">
+<td align="left">Sample_7</td>
+<td align="left">Group_B</td>
+<td align="left">Subject_2</td>
+</tr>
+<tr class="even">
+<td align="left">Sample_8</td>
+<td align="left">Group_B</td>
+<td align="left">Subject_3</td>
+</tr>
+<tr class="odd">
+<td align="left">Sample_9</td>
+<td align="left">Group_B</td>
+<td align="left">Subject_4</td>
+</tr>
+<tr class="even">
+<td align="left">Sample_10</td>
+<td align="left">Group_B</td>
+<td align="left">Subject_5</td>
+</tr>
+<tr class="odd">
+<td align="left">Sample_1</td>
+<td align="left">Group_A</td>
+<td align="left">Subject_1</td>
+</tr>
+<tr class="even">
+<td align="left">Sample_2</td>
+<td align="left">Group_A</td>
+<td align="left">Subject_2</td>
+</tr>
+<tr class="odd">
+<td align="left">Sample_3</td>
+<td align="left">Group_A</td>
+<td align="left">Subject_3</td>
+</tr>
+<tr class="even">
+<td align="left">Sample_4</td>
+<td align="left">Group_A</td>
+<td align="left">Subject_4</td>
+</tr>
+<tr class="odd">
+<td align="left">Sample_5</td>
+<td align="left">Group_A</td>
+<td align="left">Subject_5</td>
+</tr>
+<tr class="even">
+<td align="left">Sample_6</td>
+<td align="left">Group_B</td>
+<td align="left">Subject_1</td>
+</tr>
+<tr class="odd">
+<td align="left">Sample_7</td>
+<td align="left">Group_B</td>
+<td align="left">Subject_2</td>
+</tr>
+<tr class="even">
+<td align="left">Sample_8</td>
+<td align="left">Group_B</td>
+<td align="left">Subject_3</td>
+</tr>
+<tr class="odd">
+<td align="left">Sample_9</td>
+<td align="left">Group_B</td>
+<td align="left">Subject_4</td>
+</tr>
+<tr class="even">
+<td align="left">Sample_10</td>
+<td align="left">Group_B</td>
+<td align="left">Subject_5</td>
+</tr>
+</tbody>
+</table>
+<p>For a multi-group test, such as ANOVA, Kruskal-Wallis, repeated measures ANOVA and Friedman’s Test, the Grouping and Matching works similarly but with more than two groups.</p>
+<p>If each subject is unique - no repeated samples are taken from the same subject - then only the <em>SampleId</em> and <em>Group_Id</em> columns are needed. In the example shown in Table 6.2, there would be 20 subjects, 5 in each group and the <em>Matching_Id</em> column is not needed.</p>
+<p>If, however, samples were taken from each subject twice - for example, a time course study with samples taken from each subject at each of 4 timepoints - an additional column is required to indicate which samples came from the same subject. In the example in Table 6.2, there would be only 5 subjects, and a sample was taken from each subject four times. The <em>Matching_Id</em> column indicates which samples came from the same subjects across the 4 groups.</p>
+<table>
+<caption><span id="tab:unnamed-chunk-2">Table 6.2: </span>Multi-Group Test Grouping and Matching Variable Example</caption>
+<thead>
+<tr class="header">
+<th align="left">SampleId</th>
+<th align="left">Group_Id</th>
+<th align="left">Matching_Id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Sample_1</td>
+<td align="left">Group_A</td>
+<td align="left">Subject_1</td>
+</tr>
+<tr class="even">
+<td align="left">Sample_2</td>
+<td align="left">Group_A</td>
+<td align="left">Subject_2</td>
+</tr>
+<tr class="odd">
+<td align="left">Sample_3</td>
+<td align="left">Group_A</td>
+<td align="left">Subject_3</td>
+</tr>
+<tr class="even">
+<td align="left">Sample_4</td>
+<td align="left">Group_A</td>
+<td align="left">Subject_4</td>
+</tr>
+<tr class="odd">
+<td align="left">Sample_5</td>
+<td align="left">Group_A</td>
+<td align="left">Subject_5</td>
+</tr>
+<tr class="even">
+<td align="left">Sample_6</td>
+<td align="left">Group_B</td>
+<td align="left">Subject_1</td>
+</tr>
+<tr class="odd">
+<td align="left">Sample_7</td>
+<td align="left">Group_B</td>
+<td align="left">Subject_2</td>
+</tr>
+<tr class="even">
+<td align="left">Sample_8</td>
+<td align="left">Group_B</td>
+<td align="left">Subject_3</td>
+</tr>
+<tr class="odd">
+<td align="left">Sample_9</td>
+<td align="left">Group_B</td>
+<td align="left">Subject_4</td>
+</tr>
+<tr class="even">
+<td align="left">Sample_10</td>
+<td align="left">Group_B</td>
+<td align="left">Subject_5</td>
+</tr>
+<tr class="odd">
+<td align="left">Sample_11</td>
+<td align="left">Group_C</td>
+<td align="left">Subject_1</td>
+</tr>
+<tr class="even">
+<td align="left">Sample_12</td>
+<td align="left">Group_C</td>
+<td align="left">Subject_2</td>
+</tr>
+<tr class="odd">
+<td align="left">Sample_13</td>
+<td align="left">Group_C</td>
+<td align="left">Subject_3</td>
+</tr>
+<tr class="even">
+<td align="left">Sample_14</td>
+<td align="left">Group_C</td>
+<td align="left">Subject_4</td>
+</tr>
+<tr class="odd">
+<td align="left">Sample_15</td>
+<td align="left">Group_C</td>
+<td align="left">Subject_5</td>
+</tr>
+<tr class="even">
+<td align="left">Sample_16</td>
+<td align="left">Group_D</td>
+<td align="left">Subject_1</td>
+</tr>
+<tr class="odd">
+<td align="left">Sample_17</td>
+<td align="left">Group_D</td>
+<td align="left">Subject_2</td>
+</tr>
+<tr class="even">
+<td align="left">Sample_18</td>
+<td align="left">Group_D</td>
+<td align="left">Subject_3</td>
+</tr>
+<tr class="odd">
+<td align="left">Sample_19</td>
+<td align="left">Group_D</td>
+<td align="left">Subject_4</td>
+</tr>
+<tr class="even">
+<td align="left">Sample_20</td>
+<td align="left">Group_D</td>
+<td align="left">Subject_5</td>
+</tr>
+</tbody>
+</table>
 <p>Once a test has been conducted, the <em>Statistical Results Table</em> will contain all test results and can be downloaded as a comma-separated file (.csv) by clicking the <strong>Download Results</strong> button.</p>
 </div>
-<div id="plots-1" class="section level3" number="6.1.2">
-<h3><span class="header-section-number">6.1.2</span> Plots</h3>
+<div id="plots-1" class="section level2" number="6.4">
+<h2><span class="header-section-number">6.4</span> Plots</h2>
 <div class="figure">
 <img src="images/StatTest_Volcano.png" alt="" />
 <p class="caption">The Volcano Plot and Distribution Plot in the Statistical Tests panel.</p>
 </div>
-<p>After the statistical test is complete and the results table has been loaded, a volcano plot is displayed. For the t-test and U-test, this plot illustrates each SOMAmer as a point with the X-axis being the log2(fold change) and the Y-axis being -log10(p-value). For a correlation test, the X-axis will illustrate the Pearson’s Correlation Coefficient. For ANOVA and Kruskal-Wallis, the X-axis will illustrate the maximum fold-change between groups. The left slider (<strong>Fold Change (log2)</strong> for all tests except correlation, and <strong>Correlation</strong> for the correlation test) and the <strong>p-value</strong> slider can be used to adjust the vertical and horizontal red lines in the plot, which represent cutoff values for identifying biomarkers of interest. Selecting <em>p-value</em>, <em>FDR</em>, or <em>Bonferroni</em> will determine which type of p-value correction is used for plotting.</p>
-<p>Hovering over points on the volcano plot will provide a pop-out detailing information of the SOMAmer associated with that point. Additionally, selecting a point by clicking on it will result in a plot illustrating the selected point’s details. For correlation tests, a scatter plot of the SOMAmer data versus the response will be displayed. For all other tests, boxplots or CDF plots for that SOMAmer are shown - the plot can be changed between boxplot and CDF by selecting under <strong>Plot Options</strong>. Data can be log10 transformed by selecting <strong>Log10</strong> and individual points can be displayed by selecting <strong>Beeswarm</strong>. Hovering over points on this plot will provide additional information about the specific sample associated with that point, and hovering over the boxplot will provide summary statistics. The Y-axis of the plot can be labeled with the SOMAmer Id, Protein Name, or Gene Symbol by selecting the appropriate item under <strong>Data Label</strong>.</p>
+<p>After the statistical test is complete and the results table has been loaded, a volcano plot is displayed. For the t-test and U-test, this plot illustrates each SOMAmer-detected protein as a point with the X-axis being the log2(fold change) and the Y-axis being -log10(p-value). For a correlation test, the X-axis will illustrate the Pearson’s Correlation Coefficient. For ANOVA, Kruskal-Wallis, and Friedman’s Test, the X-axis will illustrate the maximum fold-change between medians of all groups. The left slider (<strong>Fold Change (log2)</strong> for all tests except correlation, and <strong>Correlation</strong> for the correlation test) and the <strong>p-value</strong> slider can be used to adjust the vertical and horizontal red lines in the plot, which represent cutoff values for identifying biomarkers of interest. Selecting <em>p-value</em>, <em>FDR</em>, or <em>Bonferroni</em> will determine which type of p-value correction is used for plotting.</p>
+<p>Hovering over points on the volcano plot will provide a pop-out detailing information of the SOMAmer reagent associated with that point. Additionally, a table will be displayed below the <strong>Statistical Tests</strong> box with summary information as well as a plot to the right illustrating the data behind the selected point. For correlation tests, a scatter plot of the SOMAmer-detected protein data versus the response will be displayed. For all other tests, boxplots or CDF plots for that SOMAmer-detected protein are shown - the plot can be changed between boxplot and CDF by selecting under <strong>Plot Options</strong>. Data can be log10 transformed by selecting <strong>Log10</strong> and individual points can be displayed by selecting <strong>Beeswarm</strong>. Hovering over points on this plot will provide additional information about the specific sample associated with that point, and hovering over the boxplot will provide summary statistics. The Y-axis of the plot can be labeled with the Sequence ID, Protein Name, or Gene Symbol by selecting the appropriate item under <strong>Data Label</strong>.</p>
 <p>For matched tests, matched observations across groups can be connected with lines by selecting the <strong>Plot Matched</strong> checkbox on the Distribution Plot.</p>
 </div>
-<div id="statistical-results-table" class="section level3" number="6.1.3">
-<h3><span class="header-section-number">6.1.3</span> Statistical Results Table</h3>
+<div id="statistical-results-table" class="section level2" number="6.5">
+<h2><span class="header-section-number">6.5</span> Statistical Results Table</h2>
 <div class="figure">
 <img src="images/StatTest_ResultsTable.png" alt="" />
 <p class="caption">The Statistical Results Table in the Statistical Tests panel.</p>
 </div>
-<p>Results of the statistical test performed for all SOMAmers will be displayed in the <strong>Statistical Results Table</strong>. All protein identifiers (<em>SOMAmer Id</em>, <em>Protein Name</em>, <em>Gene Symbol</em>) will be displayed along with <em>Fold Change</em>, <em>Maximum Fold Change</em>, or <em>r</em> (Pearson’s correlation coefficient), depending on the chosen test. Additional columns contain, the test statistic, p-value, and p-values adjusted for multiple testing by False Discovery Rate (FDR) or Bonferroni correction. The table can be sorted by clicking on the double arrow next to any column name, or searched for protein name or gene symbol. Selecting a row in the table will result in that point being illustrated in the volcano plot as well as a distribution or scatter plot.</p>
+<p>Results of the statistical test performed for all SOMAmer reagents will be displayed in the <strong>Statistical Results Table</strong>. All protein identifiers (<em>SOMAmer ID</em>, <em>Protein Name</em>, <em>UniProt ID</em>, <em>Gene Symbol</em>) will be displayed along with <em>Fold Change</em>, <em>Maximum Fold Change</em>, or <em>r</em> (Pearson’s correlation coefficient), depending on the chosen test. Additional columns contain, the test statistic, p-value, and p-values adjusted for multiple testing by False Discovery Rate (FDR) or Bonferroni correction. The table can be sorted by clicking on the double arrow next to any column name, or searched for protein name or gene symbol. Selecting a row in the table will result in that point being illustrated in the volcano plot as well as a distribution or scatter plot.</p>
 
-</div>
 </div>
 </div>
             </section>
@@ -262,7 +495,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["ProViz_docs.pdf", "ProViz_docs.epub"],
+"download": ["ProViz_UserGuide.pdf"],
 "toc": {
 "collapse": "subsection"
 }
@@ -270,20 +503,6 @@ gitbook.start({
 });
 </script>
 
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    var src = "true";
-    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:")
-      if (/^https?:/.test(src))
-        src = src.replace(/^https?:/, '');
-    script.src = src;
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
 </body>
 
 </html>

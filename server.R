@@ -84,7 +84,7 @@ function(input, output, session) {
                                 'tests linear correlations.',
                                 br(),
                                 strong('Spearman correlation '),
-                                'tests rank-correlation.', 
+                                'tests rank-based correlations.', 
                                 br(),
                                 'Both require a ',
                                 strong('Continuous Response '),
@@ -1783,7 +1783,6 @@ function(input, output, session) {
       
       # store the results table
       rv$statCorrTable <- df
-
       rv$statCorrTable 
    }
    
@@ -1927,7 +1926,7 @@ function(input, output, session) {
                  p.value = NA)
             } else {
                c(Max.Fold.Change = signif(max_fold_change, 2),
-                 chi.squared = round(as.numeric(z$statistic, 2)),
+                 chi.squared = round(as.numeric(z$statistic), 2),
                  p.value = z$p.value)
             }
          })))
@@ -1971,7 +1970,7 @@ function(input, output, session) {
       # order samples for tests & remove NAs if needed
       if(input$statMatched & input$statMatchCol != '<NONE>' &
          input$statTests != 'KS-test') {
-
+         
          adat <- adat[order(adat[[input$stat2GrpResp]],
                             adat[[input$statMatchCol]]), ]
 
@@ -2450,10 +2449,20 @@ function(input, output, session) {
          ggdf <- ecdf_prep(df[, 1:3], data_col =  'X', group_col = 'grp',
                            label_col = 'SampleId')
          
+         legend_label <- if(input$statTests == "t-test" |
+                            input$statTests == "U-test" |
+                            input$statTests == "KS-test") {
+            input$stat2GrpResp
+         } else if(input$statTests == "ANOVA" |
+                   input$statTests == "Kruskal-Wallis" |
+                   input$statTests == "Friedman\'s Test") {
+            input$statMultiResp
+         }
+         
          plt <- ggplot(ggdf, aes(x = X, y = Y, group = grp,
                                  text = paste0('SampleId: ', SampleId, '\n',
                                                lab_name, ': ', round(X, 2), '\n', 
-                                               input$stat2GrpResp, ': ', grp, '\n',
+                                               legend_label, ': ', grp, '\n',
                                                'Cumulative prob: ', round(Y, 2)
                                  ))) +
             geom_step(aes(color = grp)) + 
@@ -2462,7 +2471,7 @@ function(input, output, session) {
             ylab('Cumulative Probability') +
             theme_minimal() +
             theme(plot.margin = margin(2, 1, 1, 1, 'lines')) +
-            guides(color = guide_legend(title = input$stat2GrpResp))
+            guides(color = guide_legend(title = legend_label))
          
          pltly <- ggplotly(plt, tooltip = 'text')
       }
