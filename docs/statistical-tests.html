@@ -182,17 +182,17 @@
 <li><p>Friedman’s Test - a non-parametric alternative to repeated measures ANOVA; this test is available instead of Kruskal-Walllis when <strong>Matched Samples</strong> is checked</p></li>
 </ul>
 </div>
-<div id="selecting-a-response" class="section level2" number="6.2">
-<h2><span class="header-section-number">6.2</span> Selecting a Response</h2>
+<div id="selecting-a-response" class="section level2 hasAnchor" number="6.2">
+<h2><span class="header-section-number">6.2</span> Selecting a Response<a href="statistical-tests.html#selecting-a-response" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div class="figure">
 <img src="images/StatTest_Settings.png" alt="" />
 <p class="caption">The Settings box in the Statistical Tests panel.</p>
 </div>
 <p>The type of test can be selected from <strong>Test Type</strong>.</p>
-<p>The variable containing the response or the grouping labels can be selected from the select box titled <strong>Continuous Response</strong> (for <strong>Correlation tests</strong>), <strong>Two-group Response</strong> (for <strong>t-tests</strong>, <strong>U-tests</strong>, or <strong>KS-tests</strong>), or <strong>Multi-group Response</strong> (for <strong>ANOVA</strong>, <strong>Kruskal-Wallis</strong> or <strong>Friedman’s Test</strong>). The label of the select box will change as different test types are selected. Also, the contents of the select box will be updated with variables consistent with the selected test. After selecting a new response variable, tests will be performed for all SOMAmers in the ADAT, which could take a minute or two.</p>
+<p>The variable containing the response or the grouping labels can be selected from the select box titled <strong>Continuous Response</strong> (for <strong>Correlation tests</strong>), <strong>Two-group Response</strong> (for <strong>t-tests</strong>, <strong>U-tests</strong>, or <strong>KS-tests</strong>), or <strong>Multi-group Response</strong> (for <strong>ANOVA</strong>, <strong>Kruskal-Wallis</strong> or <strong>Friedman’s Test</strong>). The label of the select box will change as different test types are selected. Also, the contents of the select box will be updated with variables consistent with the selected test. After selecting a new response variable, tests will be performed for all SOMAmer reagents in the ADAT, which could take a minute or two.</p>
 </div>
-<div id="paired-matched-or-repeated-measures-tests" class="section level2" number="6.3">
-<h2><span class="header-section-number">6.3</span> Paired, matched or repeated measures tests</h2>
+<div id="paired-matched-or-repeated-measures-tests" class="section level2 hasAnchor" number="6.3">
+<h2><span class="header-section-number">6.3</span> Paired, matched or repeated measures tests<a href="statistical-tests.html#paired-matched-or-repeated-measures-tests" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>If a paired t-test, paired U-test, repeated measures ANOVA, or Friedman’s test are required, check the Matched Samples box and select the variable which defines how samples are matched across groups. <strong>All matched tests require a complete dataset in which each treatment group consists of the same number of matched subjects, and all subjects have measurements in each group. If your dataset is incomplete and does not have all measurements for all subjects across all groups, ProViz will attempt to adjust the data as necessary. This may, however result in errors. If missing values (NAs) are found in any group labels (Two-group Response or Multi-group Response), or any Matching Variable, the observations with those missing values will be removed and a notice will be displayed.</strong></p>
 <p>The following tables illustrate how Grouping and Matching variables should be constructed for the 2-group and multi-group tests, as well as their paired or repeated measures counterparts.</p>
 <p>For a two-group test, such as a t-test, U-test, or KS-test, samples must be divided into 2 groups. In Table 6.1, each sample is assigned to either <em>Group_A</em> or <em>Group_B</em>. If each subject is unique - no repeated samples are taken from the same subject - then only the <em>SampleId</em> and <em>Group_Id</em> columns are needed. In the example in Table 6.1, there would be 10 subjects, 5 in <em>Group_A</em> and 5 in <em>Group_B</em>, and the <em>Matching_Id</em> column is not needed.</p>
@@ -426,8 +426,8 @@
 </table>
 <p>Once a test has been conducted, the <em>Statistical Results Table</em> will contain all test results and can be downloaded as a comma-separated file (.csv) by clicking the <strong>Download Results</strong> button.</p>
 </div>
-<div id="plots-1" class="section level2" number="6.4">
-<h2><span class="header-section-number">6.4</span> Plots</h2>
+<div id="plots-1" class="section level2 hasAnchor" number="6.4">
+<h2><span class="header-section-number">6.4</span> Plots<a href="statistical-tests.html#plots-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div class="figure">
 <img src="images/StatTest_Volcano.png" alt="" />
 <p class="caption">The Volcano Plot and Distribution Plot in the Statistical Tests panel.</p>
@@ -436,8 +436,8 @@
 <p>Hovering over points on the volcano plot will provide a pop-out detailing information of the SOMAmer reagent associated with that point. Additionally, a table will be displayed below the <strong>Statistical Tests</strong> box with summary information as well as a plot to the right illustrating the data behind the selected point. For correlation tests, a scatter plot of the SOMAmer-detected protein data versus the response will be displayed. For all other tests, boxplots or CDF plots for that SOMAmer-detected protein are shown - the plot can be changed between boxplot and CDF by selecting under <strong>Plot Options</strong>. Data can be log10 transformed by selecting <strong>Log10</strong> and individual points can be displayed by selecting <strong>Beeswarm</strong>. Hovering over points on this plot will provide additional information about the specific sample associated with that point, and hovering over the boxplot will provide summary statistics. The Y-axis of the plot can be labeled with the Sequence ID, Protein Name, or Gene Symbol by selecting the appropriate item under <strong>Data Label</strong>.</p>
 <p>For matched tests, matched observations across groups can be connected with lines by selecting the <strong>Plot Matched</strong> checkbox on the Distribution Plot.</p>
 </div>
-<div id="statistical-results-table" class="section level2" number="6.5">
-<h2><span class="header-section-number">6.5</span> Statistical Results Table</h2>
+<div id="statistical-results-table" class="section level2 hasAnchor" number="6.5">
+<h2><span class="header-section-number">6.5</span> Statistical Results Table<a href="statistical-tests.html#statistical-results-table" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div class="figure">
 <img src="images/StatTest_ResultsTable.png" alt="" />
 <p class="caption">The Statistical Results Table in the Statistical Tests panel.</p>
@@ -496,6 +496,10 @@ gitbook.start({
 "text": null
 },
 "download": ["ProViz_UserGuide.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
 "toc": {
 "collapse": "subsection"
 }

@@ -2,7 +2,7 @@
 #
 # MIT License
 # 
-# Copyright © 2021 SomaLogic, Inc.
+# Copyright © 2022 SomaLogic Operating Co., Inc.
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy 
 # of the ProViz software and associated documentation files (the "Software"),
@@ -10,8 +10,8 @@
 # rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
 # sell copies of the Software, and to permit persons to whom the Software is 
 # furnished to do so, subject to the following conditions outlined below. 
-# Further,  ProViz and SomaLogic are trademarks owned by SomaLogic, Inc. No 
-# license is hereby granted to these trademarks other than for purposes of 
+# Further,  ProViz and SomaLogic are trademarks owned by SomaLogic Operating Co., Inc. 
+# No license is hereby granted to these trademarks other than for purposes of 
 # identifying the origin or source of the Software.
 # 
 # The above copyright notice and this permission notice shall be included in all
@@ -324,7 +324,7 @@ function(input, output, session) {
       br(),
       helpText('MIT License'),
       br(),
-      helpText('Copyright © 2021 SomaLogic, Inc.'),
+      helpText('Copyright © 2022 SomaLogic Operating Co., Inc.'),
       br(),
       helpText(paste('Permission is hereby granted, free of charge, to any person obtaining a copy',
          'of the ProViz software and associated documentation files (the "Software"),',
@@ -332,8 +332,8 @@ function(input, output, session) {
          'rights to use, copy, modify, merge, publish, distribute, sublicense, and/or',
          'sell copies of the Software, and to permit persons to whom the Software is',
          'furnished to do so, subject to the following conditions outlined below.', 
-         'Further,  ProViz and SomaLogic are trademarks owned by SomaLogic, Inc. No', 
-         'license is hereby granted to these trademarks other than for purposes of', 
+         'Further,  ProViz and SomaLogic are trademarks owned by SomaLogic Operating Co., Inc.', 
+         'No license is hereby granted to these trademarks other than for purposes of', 
          'identifying the origin or source of the Software.')),
       br(),
       helpText(paste('The above copyright notice and this permission notice shall be included in all',
@@ -992,6 +992,18 @@ function(input, output, session) {
       
       modHistory <- paste(attributes(rv$adat)$Header.Meta$HEADER$ProViz, ' ',
                           'Merged data file: ', input$merge_file$name, sep = '')
+      
+      # if classes are not the same, join will fail
+      # if the disagree and the ADAT has a charcter class type,
+      # force the data file to use character type and try the merge.
+      # This is common with SampleID with SomaDataIO forces to be a character
+      # but often has numerical values.
+      if( !identical(class(rv$adat[[input$mergeADATCol]]),  
+                     class(rv$mergeData[[input$mergeDataCol]])) &
+          inherits(rv$adat[[input$mergeADATCol]], 'character') ) {
+        rv$mergeData[[input$mergeDataCol]] = as.character(rv$mergeData[[input$mergeDataCol]])
+      }
+      
       by_vec = c(input$mergeDataCol)
       names(by_vec) = input$mergeADATCol
       
@@ -1722,10 +1734,10 @@ function(input, output, session) {
       
       # prepare the results table 
       respID <- input$statCorrResp -> rv$statCorrResp
-      vars <- SomaDataIO::getFeatures(rv$adat)
-      df <- data.frame(rv$featureData[, c('AptName', 
-                                          'TargetFullName', 'EntrezGeneSymbol')])
-      
+      vars <- SomaDataIO::getAnalytes(rv$adat)
+      df <- data.frame(rv$featureData[, c('AptName', 'TargetFullName',
+                                          'UniProt', 'EntrezGeneSymbol')])
+    
       # get log10 SOMAmers
       adat <- log10(rv$adat)
      
@@ -1794,7 +1806,7 @@ function(input, output, session) {
      
       # prepare the results table 
       respID <- lookupID(input$statMultiResp, 'AptName') 
-      vars <- SomaDataIO::getFeatures(rv$adat)
+      vars <- SomaDataIO::getAnalytes(rv$adat)
       df <- data.frame(rv$featureData[, c('AptName', 'TargetFullName',
                                           'UniProt', 'EntrezGeneSymbol')])
       
@@ -1960,7 +1972,7 @@ function(input, output, session) {
       
       # prepare the results table 
       respID <- input$stat2GrpResp
-      vars <- SomaDataIO::getFeatures(rv$adat)
+      vars <- SomaDataIO::getAnalytes(rv$adat)
       df <- data.frame(rv$featureData[, c('AptName', 'TargetFullName',
                                           'UniProt', 'EntrezGeneSymbol')])
       

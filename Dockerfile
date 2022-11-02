@@ -15,7 +15,7 @@ RUN R -e "remotes::install_version('shinydashboard', version = '0.7.1', repos = 
 RUN R -e "remotes::install_version('shinyWidgets', version = '0.6.0', repos = 'http://cran.us.r-project.org')"
 RUN R -e "remotes::install_version('tidyr', version = '1.1.3', repos = 'http://cran.us.r-project.org')"
 
-RUN R -e "remotes::install_github('Somalogic/SomaDataIO@v5.1.0')"
+RUN R -e "remotes::install_github('Somalogic/SomaDataIO@v5.3.1')"
 
 RUN mkdir /srv/shiny-server/ProViz
 COPY global.R /srv/shiny-server/ProViz/.

@@ -2,7 +2,7 @@
 #
 # MIT License
 # 
-# Copyright © 2021 SomaLogic, Inc.
+# Copyright © 2022 SomaLogic Operating Co., Inc.
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy 
 # of the ProViz software and associated documentation files (the "Software"),
@@ -10,8 +10,8 @@
 # rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
 # sell copies of the Software, and to permit persons to whom the Software is 
 # furnished to do so, subject to the following conditions outlined below. 
-# Further,  ProViz and SomaLogic are trademarks owned by SomaLogic, Inc. No 
-# license is hereby granted to these trademarks other than for purposes of 
+# Further,  ProViz and SomaLogic are trademarks owned by SomaLogic Operating Co., Inc.
+# No license is hereby granted to these trademarks other than for purposes of 
 # identifying the origin or source of the Software.
 # 
 # The above copyright notice and this permission notice shall be included in all
