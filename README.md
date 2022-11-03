@@ -1,6 +1,6 @@
 # ProViz
 
-ProViz is a basic data visualization and analysis tool developed at SomaLogic.  ProViz imports an ADAT file (SomaLogic's data file format) and allows users to perform various exploratory data analytic processes:
+ProViz is a basic data visualization and analysis tool developed at SomaLogic Operating Co., Inc.  ProViz imports an ADAT file (SomaLogic's data file format) and allows users to perform various exploratory data analytic processes:
 
 * Merge additional sample data with the data contained in the ADAT
 * Filter the ADAT to only the samples with desired characteristics
@@ -18,9 +18,9 @@ ProViz is distributed under the MIT License and use of ProViz constitutes accept
 
 MIT License
 
-Copyright © 2021 SomaLogic, Inc.
+Copyright © 2022 SomaLogic Operating Co., Inc.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of the ProViz software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions outlined below. Further, ProViz and SomaLogic are trademarks owned by SomaLogic, Inc. No license is hereby granted to these trademarks other than for purposes of identifying the origin or source of the Software.
+Permission is hereby granted, free of charge, to any person obtaining a copy of the ProViz software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions outlined below. Further, ProViz and SomaLogic are trademarks owned by SomaLogic Operating Co., Inc. No license is hereby granted to these trademarks other than for purposes of identifying the origin or source of the Software.
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
