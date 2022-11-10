@@ -1,4 +1,4 @@
-FROM rocker/shiny:4.0.3
+FROM rocker/shiny:4.2.2
 
 RUN apt-get update && apt-get install libcurl4-openssl-dev libssl-dev -y
 
